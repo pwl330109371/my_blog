@@ -1,0 +1,102 @@
+<!--
+ * @Author: your name
+ * @Date: 2020-11-12 18:47:15
+ * @LastEditTime: 2020-11-12 18:50:33
+ * @LastEditors: Please set LastEditors
+ * @Description: In User Settings Edit
+ * @FilePath: \my_blog\src\views\home\index.vue
+-->
+<template>
+    <div class="outer">
+        <GiantScreen />
+        <div class="content-wrap">
+            <Article
+                :datas="requestDatas"
+                :isLoading="isLoading"
+                :isNext="isNext"
+            />
+        </div>
+    </div>
+</template>
+<script>
+import GiantScreen from '@/components/GiantScreen'
+import Article from '@/components/Article'
+import { bottomHandle, clearBottomHandle } from '@/utils'
+import { getArticleList } from '@/api/article'
+export default {
+    name: 'home',
+    components: { GiantScreen, Article },
+    data() {
+        return {
+            requestDatas: [],
+            page: {
+                pageSize: 5,
+                pageNum: 1,
+                isHome: true
+            },
+            len: 0,
+            isLoading: false,
+            isNext: true
+        }
+    },
+    created() {
+        this.getArticleList()
+    },
+    activated() {
+        bottomHandle(
+            () => this.isNext,
+            () => {
+                this.isLoading = true
+                this.page.pageNum += 1
+                this.getArticleList()
+            }
+        )
+    },
+    deactivated() {
+        clearBottomHandle()
+    },
+    methods: {
+        async getArticleList() {
+            const { data } = await getArticleList()
+            const { len, total, list } = data
+            setTimeout(() => {
+                this.requestDatas.push(...list)
+                this.pageLoad = false
+                this.isLoading = false
+                this.len += len
+                this.isNext = this.len !== total
+            }, 500)
+        }
+    }
+}
+</script>
+<style lang="scss" scoped>
+.outer {
+    overflow: hidden;
+}
+.content-wrap {
+    position: relative;
+    padding: 100px 0;
+    &::after {
+        content: '';
+        left: 50%;
+        transform: translateX(-50%);
+        top: 0;
+        position: absolute;
+        background: #eaeaea;
+        z-index: 0;
+        width: 1px;
+        height: 100%;
+    }
+}
+@media screen and (max-width: 1200px) {
+    .content-wrap {
+        width: 900px;
+    }
+}
+@media screen and (max-width: 900px) {
+    .content-wrap {
+        width: 100%;
+    }
+}
+</style>

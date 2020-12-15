@@ -18,8 +18,8 @@ export default {
     data() {
         return {
             page: {
-                pageSize: 15,
-                pageNum: 1
+                pageSize: 10,
+                currentPage: 1
             },
             requestDatas: [],
             pageLoad: true,
@@ -32,6 +32,7 @@ export default {
     watch: {
         requestDatas: {
             handler() {
+                console.log(123123)
                 this.$nextTick(() => {
                     new WOW({
                         live: false,
@@ -49,7 +50,7 @@ export default {
         bottomHandle(
             () => this.isNext,
             () => {
-                this.page.pageNum += 1
+                this.page.currentPage += 1
                 this.getArticleList()
             }
         )
@@ -60,7 +61,8 @@ export default {
     methods: {
         async getArticleList() {
             this.isLoading = true
-            const { data } = await getArticleList()
+            console.log('11111111111111', this.page)
+            const { data } = await getArticleList(this.page)
             const { len, total, list } = data
             setTimeout(() => {
                 this.requestDatas.push(...list)

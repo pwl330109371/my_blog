@@ -1,8 +1,8 @@
 /*
  * @Author: your name
  * @Date: 2020-11-12 16:13:13
- * @LastEditTime: 2020-11-21 10:55:37
- * @LastEditors: Please set LastEditors
+ * @LastEditTime: 2020-12-15 22:58:34
+ * @LastEditors: Peng wenlei
  * @Description:router 路由配置
  * @FilePath: \my_blog\src\router\index.js
  */
@@ -16,7 +16,10 @@ const routes = [
         path: '/',
         name: 'home',
         component: () =>
-            import(/* webpackChunkName: "about" */ '../views/home/')
+            import(/* webpackChunkName: "about" */ '../views/home/'),
+        meta: {
+            keepAlive: true
+        }
     },
     {
         path: '/articleList',

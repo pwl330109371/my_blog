@@ -1,14 +1,17 @@
 <!--
  * @Author: your name
  * @Date: 2020-11-12 16:13:13
- * @LastEditTime: 2020-11-12 18:59:21
- * @LastEditors: Please set LastEditors
+ * @LastEditTime: 2020-12-15 22:57:44
+ * @LastEditors: Peng wenlei
  * @Description: In User Settings Edit
  * @FilePath: \my_blog\src\App.vue
 -->
 <template>
     <div id="app">
-        <router-view />
+        <keep-alive>
+            <router-view v-if="$route.meta.keepAlive"></router-view>
+        </keep-alive>
+        <router-view v-if="!$route.meta.keepAlive"></router-view>
     </div>
 </template>
 

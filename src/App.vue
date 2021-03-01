@@ -1,16 +1,30 @@
 <!--
  * @Author: your name
  * @Date: 2020-11-12 16:13:13
- * @LastEditTime: 2020-11-12 18:59:21
+ * @LastEditTime: 2021-03-01 11:29:17
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \my_blog\src\App.vue
 -->
 <template>
     <div id="app">
-        <router-view />
+        <keep-alive :include="whiteList" :exclude="blackList" :max="amount">
+            <router-view />
+        </keep-alive>
     </div>
 </template>
+
+<script>
+export default {
+    data() {
+        return {
+            whiteList: ['home'], // 白名单
+            blackList: [], // 黑名单
+            amount: 3 // 缓存最大数量
+        }
+    }
+}
+</script>
 
 <style lang="scss">
 #app {
@@ -23,11 +37,9 @@
 
 #nav {
     padding: 30px;
-
     a {
         font-weight: bold;
         color: #2c3e50;
-
         &.router-link-exact-active {
             color: #42b983;
         }

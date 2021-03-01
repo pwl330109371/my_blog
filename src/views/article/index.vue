@@ -46,6 +46,7 @@ export default {
         this.getArticleList()
     },
     activated() {
+        console.log(123)
         bottomHandle(
             () => this.isNext,
             () => {

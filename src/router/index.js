@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2020-11-12 16:13:13
- * @LastEditTime: 2020-11-21 10:55:37
+ * @LastEditTime: 2021-03-01 14:58:56
  * @LastEditors: Please set LastEditors
  * @Description:router 路由配置
  * @FilePath: \my_blog\src\router\index.js
@@ -29,6 +29,12 @@ const routes = [
         name: 'Detail',
         component: () =>
             import(/* webpackChunkName: "about" */ '../views/article/detail')
+    },
+    {
+        path: '/wode',
+        name: 'Wode',
+        component: () =>
+            import(/* webpackChunkName: "about" */ '../views/wode/')
     }
 ]
 

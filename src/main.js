@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2020-11-12 16:13:13
- * @LastEditTime: 2020-11-21 11:36:23
+ * @LastEditTime: 2021-03-01 15:07:02
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \my_blog\src\main.js
@@ -21,6 +21,8 @@ Vue.component('Header', Header)
 
 // 引入 iconfont
 import '@/assets/font/iconfont.css'
+
+// 富文本渲染主题样式
 import 'highlight.js/styles/atom-one-dark.css'
 import '@/style/normalize.scss'
 import '@/style/prism.css'

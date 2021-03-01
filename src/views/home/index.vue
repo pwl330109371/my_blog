@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2020-11-12 18:47:15
- * @LastEditTime: 2020-11-12 18:50:33
+ * @LastEditTime: 2021-03-01 10:54:35
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \my_blog\src\views\home\index.vue
@@ -43,6 +43,7 @@ export default {
         this.getArticleList()
     },
     activated() {
+        console.log(123)
         bottomHandle(
             () => this.isNext,
             () => {

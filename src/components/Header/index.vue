@@ -18,7 +18,7 @@
                 v-if="showLike"
                 @click="$emit('like', isLike)"
             ></i>
-            <router-link :to="{ name: 'Self' }">
+            <router-link :to="{ name: 'Wode' }">
                 <img
                     src="https://qiheizhiya.oss-cn-shenzhen.aliyuncs.com/image/adminAvatar.jpg"
                     alt

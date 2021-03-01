@@ -1,19 +1,28 @@
 <!--
  * @Author: your name
  * @Date: 2020-11-12 16:13:13
- * @LastEditTime: 2020-12-21 21:30:35
- * @LastEditors: Peng wenlei
  * @Description: In User Settings Edit
  * @FilePath: \my_blog\src\App.vue
 -->
 <template>
     <div id="app">
-        <keep-alive>
-            <router-view v-if="$route.meta.keepAlive"></router-view>
+        <keep-alive :include="whiteList" :exclude="blackList" :max="amount">
+            <router-view />
         </keep-alive>
-        <router-view v-if="!$route.meta.keepAlive"></router-view>
     </div>
 </template>
+
+<script>
+export default {
+    data() {
+        return {
+            whiteList: ['home'], // 白名单
+            blackList: [], // 黑名单
+            amount: 3 // 缓存最大数量
+        }
+    }
+}
+</script>
 
 <style lang="scss">
 #app {
@@ -29,7 +38,6 @@
     a {
         font-weight: bold;
         color: #2c3e50;
-
         &.router-link-exact-active {
             color: #42b983;
         }

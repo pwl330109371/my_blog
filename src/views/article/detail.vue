@@ -1,23 +1,17 @@
 <template>
     <div class="flex flex-column align-center">
         <scrollBar />
-        <Header
-            @like="likeChange"
-            :isLike="detail.isLike"
-            :midText="detail.title"
-            :showLike="true"
-            :music="detail.musicUrl"
-        />
+        <Header @like="likeChange" :isLike="detail.isLike" :midText="detail.title" :showLike="true" :music="detail.musicUrl" />
         <div class="detail">
             <h1 class="title">{{ detail.title }}</h1>
             <div class="status flex align-center">
                 <!-- <span>{{ detail.date }}</span> -->
                 <span>2020-11-12</span>
-                <span>阅读：{{ detail.count }}</span>
+                <span>阅读：{{ detail.visitsNum }}</span>
                 <span>字数：{{ content.length }}</span>
                 <!-- <span>评论：{{ commentList.total }}</span> -->
                 <span>评论：10</span>
-                <span>喜欢: {{ detail.praiseCount }}</span>
+                <span>喜欢: {{ detail.likeNum }}</span>
             </div>
             <div class="content markdown-body">
                 <!-- <pre class="language-markup">
@@ -26,18 +20,8 @@
                 <div v-html="content" v-highlight></div>
             </div>
             <div id="hash"></div>
-            <MessageInput
-                :aiteName="aiteName"
-                @tagClose="tagClose"
-                @comment="comment"
-                :rows="rows"
-            />
-            <MessageList
-                @reply="reply"
-                :lists="commentList"
-                :isLoading="isLoading"
-                :isNext="isNext"
-            />
+            <MessageInput :aiteName="aiteName" @tagClose="tagClose" @comment="comment" :rows="rows" />
+            <MessageList @reply="reply" :lists="commentList" :isLoading="isLoading" :isNext="isNext" />
         </div>
     </div>
 </template>
@@ -96,15 +80,16 @@ export default {
     methods: {
         async getDetail(id) {
             let params = {
-                id
+                articleId: id
             }
             const { data } = await getArticleDetail(params)
+            console.log(data)
             // const data = await this.$store.dispatch(
             //     'dataHandle',
             //     result.data.data
             // )
-            document.title = data.title // 动态设置页面的title
-            this.detail = data
+            document.title = data.data.title // 动态设置页面的title
+            this.detail = data.data
         },
         markdownRender() {
             marked.setOptions({
@@ -119,7 +104,6 @@ export default {
                 xhtml: false
             })
             this.content = marked(this.detail.content)
-            console.log(this.content)
         },
         // 子层评论
         reply(data) {

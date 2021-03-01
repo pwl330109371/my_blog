@@ -1,8 +1,13 @@
 /*
  * @Author: your name
  * @Date: 2020-11-12 16:13:13
- * @LastEditTime: 2020-12-21 21:29:35
+<<<<<<< HEAD
+ * @LastEditTime: 2021-03-01 21:46:10
  * @LastEditors: Peng wenlei
+=======
+ * @LastEditTime: 2021-03-01 18:27:12
+ * @LastEditors: Please set LastEditors
+>>>>>>> 567bd84578935c65aa58cf42edc80fe5c0c51017
  * @Description:router 路由配置
  * @FilePath: \my_blog\src\router\index.js
  */
@@ -31,9 +36,9 @@ const routes = [
         component: () => import(/* webpackChunkName: "about" */ '../views/article/detail')
     },
     {
-        path: '/self',
-        name: 'self',
-        component: () => import(/* webpackChunkName: "chunk-all" */ '../views/selfInfo')
+        path: '/wode',
+        name: 'Wode',
+        component: () => import(/* webpackChunkName: "about" */ '../views/wode/')
     }
 ]
 

@@ -19,7 +19,7 @@ export default {
         return {
             page: {
                 pageSize: 10,
-                currentPage: 1
+                pageIndex: 1
             },
             requestDatas: [],
             pageLoad: true,
@@ -47,10 +47,11 @@ export default {
         this.getArticleList()
     },
     activated() {
+        console.log(123)
         bottomHandle(
             () => this.isNext,
             () => {
-                this.page.currentPage += 1
+                this.page.pageIndex += 1
                 this.getArticleList()
             }
         )
@@ -63,6 +64,7 @@ export default {
             this.isLoading = true
             console.log('11111111111111', this.page)
             const { data } = await getArticleList(this.page)
+            console.log(data)
             const { len, total, list } = data
             setTimeout(() => {
                 this.requestDatas.push(...list)

@@ -1,24 +1,13 @@
 <template>
     <div>
-        <div
-            class="article flex align-center fadeInUp"
-            :class="`wow${item.index}`"
-            v-for="item in datas"
-            :key="item._id"
-        >
-            <div
-                class="img-outer flex align-center justify-center"
-                @click="toDetail(item._id)"
-            >
-                <img
-                    src="https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/41ae74b4ffb1499b89548935c993192d~tplv-k3u1fbpfcp-watermark.image"
-                    alt
-                />
+        <div class="article flex align-center fadeInUp" :class="`wow${item.index}`" v-for="item in datas" :key="item.id">
+            <div class="img-outer flex align-center justify-center" @click="toDetail(item.id)">
+                <img :src="item.picture" alt />
             </div>
             <div class="text-outer">
                 <div class="info">
                     <div class="time">
-                        2020-11-12
+                        {{ item.updatedAt }}
                         <!-- {{ item.month }} {{ item.day }}, {{ item.year }} -->
                     </div>
                     <div class="title" @click="toDetail(item._id)">
@@ -28,11 +17,11 @@
                     <div class="handle flex align-center">
                         <div class="handle-thunk flex align-center">
                             <i class="iconfont icon-view"></i>
-                            <span>{{ item.count }}</span>
+                            <span>{{ item.visitsNum }}</span>
                         </div>
                         <div class="handle-thunk flex align-center">
                             <i class="iconfont icon-xinheart118"></i>
-                            <span>{{ item.praiseCount }}</span>
+                            <span>{{ item.likeNum }}</span>
                         </div>
                         <div class="handle-thunk flex align-center">
                             <i class="iconfont icon-pinglun"></i>
@@ -44,9 +33,7 @@
         </div>
         <div class="loader flex align-center justify-center">
             <Loader v-show="isLoading" />
-            <span class="notMany" v-show="!isLoading && !isNext"
-                >没有更多了~~O(∩_∩)O</span
-            >
+            <span class="notMany" v-show="!isLoading && !isNext">没有更多了~~O(∩_∩)O</span>
         </div>
     </div>
 </template>
@@ -128,6 +115,7 @@ export default {
             flex: 0 0 auto;
             width: 100%;
             height: 100%;
+            background: #fff;
         }
     }
     .text-outer {
@@ -155,8 +143,7 @@ export default {
                     cursor: pointer;
                     &:hover {
                         text-decoration: none;
-                        background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 4'%3E%3Cpath fill='none' stroke='blue' d='M0 3.5c5 0 5-3 10-3s5 3 10 3 5-3 10-3 5 3 10 3'/%3E%3C/svg%3E")
-                            repeat-x 0 100%;
+                        background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 4'%3E%3Cpath fill='none' stroke='blue' d='M0 3.5c5 0 5-3 10-3s5 3 10 3 5-3 10-3 5 3 10 3'/%3E%3C/svg%3E") repeat-x 0 100%;
                         background-size: 20px auto;
                         animation: waveMove 1s infinite linear;
                     }

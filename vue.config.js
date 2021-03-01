@@ -152,7 +152,7 @@ module.exports = {
         hotOnly: true, // 热更新
         proxy: {
             '^/api': {
-                target: 'http://192.168.0.105:3000',
+                target: 'http://192.168.0.105:3000/',
                 // target: 'http://192.168.1.145:3000/',
                 // target: 'http://115.159.117.118:3000/',
                 // target: 'http://localhost:3000',

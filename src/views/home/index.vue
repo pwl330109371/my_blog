@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2020-11-12 18:47:15
- * @LastEditTime: 2020-12-15 23:02:41
+ * @LastEditTime: 2021-03-01 22:03:52
  * @LastEditors: Peng wenlei
  * @Description: In User Settings Edit
  * @FilePath: \my_blog\src\views\home\index.vue
@@ -10,11 +10,7 @@
     <div class="outer">
         <GiantScreen />
         <div class="content-wrap">
-            <Article
-                :datas="requestDatas"
-                :isLoading="isLoading"
-                :isNext="isNext"
-            />
+            <Article :datas="requestDatas" :isLoading="isLoading" :isNext="isNext" />
         </div>
     </div>
 </template>
@@ -30,8 +26,9 @@ export default {
         return {
             requestDatas: [],
             page: {
+                keyword: '',
                 pageSize: 10,
-                currentPage: 1
+                pageIndex: 1
             },
             len: 0,
             isLoading: false,
@@ -42,11 +39,12 @@ export default {
         this.getArticleList()
     },
     activated() {
+        console.log(123)
         bottomHandle(
             () => this.isNext,
             () => {
                 this.isLoading = true
-                this.page.currentPage += 1
+                this.page.pageIndex += 1
                 this.getArticleList()
             }
         )
@@ -57,12 +55,14 @@ export default {
     methods: {
         async getArticleList() {
             const { data } = await getArticleList(this.page)
-            const { len, total, list } = data
+            console.log(data)
+            const { total, rows } = data.data
             setTimeout(() => {
-                this.requestDatas.push(...list)
+                console.log(rows)
+                this.requestDatas.push(...rows)
                 this.pageLoad = false
                 this.isLoading = false
-                this.len += len
+                // this.len += len
                 this.isNext = this.len !== total
             }, 500)
         }

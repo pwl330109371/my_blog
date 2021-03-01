@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2020-11-12 16:56:17
- * @LastEditTime: 2020-11-12 17:03:00
+ * @LastEditTime: 2021-03-01 10:53:21
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \my_blog\src\utils\index.js
@@ -72,7 +72,7 @@ export function clearBottomHandle() {
 }
 
 function scrollChange(isScroll, callback) {
-    if (!isScroll()) return
+    if (!isScroll) return
     // 滚动的距离
     const scrollTop = Math.ceil(
         document.documentElement.scrollTop ||

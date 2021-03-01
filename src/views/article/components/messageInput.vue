@@ -82,7 +82,6 @@ export default {
             const valiData = [
                 { data: this.userContent, msg: '留言内容不能为空' }
             ]
-            
             if (!this.userName) {
                 // 如果需要填用户名，则用户名不能为空
                 valiData.push({ data: this.userName, msg: '用户名不能为空' })

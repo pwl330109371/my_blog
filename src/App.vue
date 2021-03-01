@@ -1,8 +1,13 @@
 <!--
  * @Author: your name
  * @Date: 2020-11-12 16:13:13
- * @LastEditTime: 2021-03-01 11:29:17
+<<<<<<< HEAD
+ * @LastEditTime: 2021-03-01 18:26:52
  * @LastEditors: Please set LastEditors
+=======
+ * @LastEditTime: 2020-12-15 22:57:44
+ * @LastEditors: Peng wenlei
+>>>>>>> d8664bb4a792a39748528e3a03e1d1eb8a87000b
  * @Description: In User Settings Edit
  * @FilePath: \my_blog\src\App.vue
 -->

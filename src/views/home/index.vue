@@ -30,9 +30,8 @@ export default {
         return {
             requestDatas: [],
             page: {
-                pageSize: 5,
-                pageNum: 1,
-                isHome: true
+                pageSize: 10,
+                currentPage: 1
             },
             len: 0,
             isLoading: false,
@@ -48,7 +47,7 @@ export default {
             () => this.isNext,
             () => {
                 this.isLoading = true
-                this.page.pageNum += 1
+                this.page.currentPage += 1
                 this.getArticleList()
             }
         )
@@ -58,7 +57,7 @@ export default {
     },
     methods: {
         async getArticleList() {
-            const { data } = await getArticleList()
+            const { data } = await getArticleList(this.page)
             const { len, total, list } = data
             setTimeout(() => {
                 this.requestDatas.push(...list)

@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2020-11-12 16:13:13
- * @LastEditTime: 2020-12-15 22:58:34
+ * @LastEditTime: 2020-12-21 21:29:35
  * @LastEditors: Peng wenlei
  * @Description:router 路由配置
  * @FilePath: \my_blog\src\router\index.js
@@ -15,8 +15,7 @@ const routes = [
     {
         path: '/',
         name: 'home',
-        component: () =>
-            import(/* webpackChunkName: "about" */ '../views/home/'),
+        component: () => import(/* webpackChunkName: "about" */ '../views/home/'),
         meta: {
             keepAlive: true
         }
@@ -24,14 +23,17 @@ const routes = [
     {
         path: '/articleList',
         name: 'ArticleList',
-        component: () =>
-            import(/* webpackChunkName: "about" */ '../views/article/')
+        component: () => import(/* webpackChunkName: "about" */ '../views/article/')
     },
     {
         path: '/detail/:id',
         name: 'Detail',
-        component: () =>
-            import(/* webpackChunkName: "about" */ '../views/article/detail')
+        component: () => import(/* webpackChunkName: "about" */ '../views/article/detail')
+    },
+    {
+        path: '/self',
+        name: 'self',
+        component: () => import(/* webpackChunkName: "chunk-all" */ '../views/selfInfo')
     }
 ]
 

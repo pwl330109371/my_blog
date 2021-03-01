@@ -1,8 +1,8 @@
 /*
  * @Author: pwl
  * @Date: 2020-11-12 18:08:41
- * @LastEditTime: 2020-11-12 18:09:30
- * @LastEditors: Please set LastEditors
+ * @LastEditTime: 2021-01-07 21:00:06
+ * @LastEditors: Peng wenlei
  * @Description: cookie sessionStrong 封装
  * @FilePath: \my_blog\src\utils\auth.js
  */
@@ -30,9 +30,7 @@ export function getSessionStorage(item) {
 
 // 设置sessionStorage
 export function setSessionStorage(key, value) {
-    return typeof value === 'object'
-        ? sessionStorage.setItem(key, JSON.stringify(value))
-        : sessionStorage.setItem(key, JSON.stringify(`${value}`))
+    return typeof value === 'object' ? sessionStorage.setItem(key, JSON.stringify(value)) : sessionStorage.setItem(key, JSON.stringify(`${value}`))
 }
 
 // 删除sessionStorage

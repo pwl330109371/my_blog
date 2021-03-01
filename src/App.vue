@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2020-11-12 16:13:13
- * @LastEditTime: 2020-12-15 22:57:44
+ * @LastEditTime: 2020-12-21 21:30:35
  * @LastEditors: Peng wenlei
  * @Description: In User Settings Edit
  * @FilePath: \my_blog\src\App.vue
@@ -26,7 +26,6 @@
 
 #nav {
     padding: 30px;
-
     a {
         font-weight: bold;
         color: #2c3e50;

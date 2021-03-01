@@ -2,31 +2,20 @@
     <div class="max">
         <div id="scene" class="img-outer">
             <div data-depth="0.4" class="layer">
-                <img
-                    src="https://qiheizhiya.oss-cn-shenzhen.aliyuncs.com/image/main.jpg"
-                    class="moveImg"
-                    :width="imgWidth"
-                    :height="imgHeight"
-                />
+                <img src="https://image.raindays.cn/Mood/image/1594348066004.png" class="moveImg" :width="imgWidth" :height="imgHeight" />
             </div>
         </div>
         <div class="header flex align-center space-between">
             <img src="@img/textlogo.png" alt="" />
-            <router-link :to="{ name: 'Home' }" tag="div" class="icon"
-                ><i class="el-icon-s-unfold"></i
-            ></router-link>
+            <router-link :to="{ name: 'Home' }" tag="div" class="icon"><i class="el-icon-s-unfold"></i></router-link>
         </div>
         <div class="mask"></div>
         <div class="info">
-            <div class="time">
-                {{ date.month }} {{ date.day }}, {{ date.year }}
-            </div>
+            <div class="time">{{ date.month }} {{ date.day }}, {{ date.year }}</div>
             <div class="title">
                 欢迎光临！！
                 <transition name="el-fade-in-linear">
-                    <span v-show="!hiddenText" class="tipsText"
-                        >请向下滚动</span
-                    >
+                    <span v-show="!hiddenText" class="tipsText">请向下滚动</span>
                 </transition>
             </div>
             <div class="content">
@@ -162,7 +151,7 @@ export default {
     left: 0;
     height: 100%;
     width: 100%;
-    background-color: #4c50cf86;
+    background-color: rgba(176, 14, 37, 0.7);
     clip-path: polygon(0 0, 25% 0, 60% 100%, 0 100%);
     pointer-events: none;
 }

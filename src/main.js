@@ -24,7 +24,7 @@ import '@/assets/font/iconfont.css'
 
 // 富文本渲染主题样式
 import 'highlight.js/styles/atom-one-dark.css'
-import '@/style/normalize.scss'
+import '@/style/index.scss'
 import '@/style/prism.css'
 
 // 高亮富文本

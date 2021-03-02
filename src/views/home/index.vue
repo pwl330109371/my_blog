@@ -1,8 +1,8 @@
 <!--
  * @Author: your name
  * @Date: 2020-11-12 18:47:15
- * @LastEditTime: 2021-03-01 22:03:52
- * @LastEditors: Peng wenlei
+ * @LastEditTime: 2021-03-02 10:43:41
+ * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \my_blog\src\views\home\index.vue
 -->
@@ -10,7 +10,11 @@
     <div class="outer">
         <GiantScreen />
         <div class="content-wrap">
-            <Article :datas="requestDatas" :isLoading="isLoading" :isNext="isNext" />
+            <Article
+                :datas="requestDatas"
+                :isLoading="isLoading"
+                :isNext="isNext"
+            />
         </div>
     </div>
 </template>
@@ -58,11 +62,10 @@ export default {
             console.log(data)
             const { total, rows } = data.data
             setTimeout(() => {
-                console.log(rows)
                 this.requestDatas.push(...rows)
                 this.pageLoad = false
                 this.isLoading = false
-                // this.len += len
+                this.len = this.requestDatas.length
                 this.isNext = this.len !== total
             }, 500)
         }

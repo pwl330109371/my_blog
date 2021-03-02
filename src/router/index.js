@@ -1,13 +1,8 @@
 /*
  * @Author: your name
  * @Date: 2020-11-12 16:13:13
-<<<<<<< HEAD
- * @LastEditTime: 2021-03-01 21:46:10
- * @LastEditors: Peng wenlei
-=======
- * @LastEditTime: 2021-03-01 18:27:12
+ * @LastEditTime: 2021-03-02 15:07:45
  * @LastEditors: Please set LastEditors
->>>>>>> 567bd84578935c65aa58cf42edc80fe5c0c51017
  * @Description:router 路由配置
  * @FilePath: \my_blog\src\router\index.js
  */
@@ -19,8 +14,18 @@ Vue.use(VueRouter)
 const routes = [
     {
         path: '/',
-        name: 'home',
-        component: () => import(/* webpackChunkName: "about" */ '../views/home/'),
+        name: 'indexPage',
+        component: () =>
+            import(/* webpackChunkName: "about" */ '../views/indexPage/'),
+        meta: {
+            keepAlive: true
+        }
+    },
+    {
+        path: '/home',
+        name: 'Home',
+        component: () =>
+            import(/* webpackChunkName: "about" */ '../views/home/'),
         meta: {
             keepAlive: true
         }
@@ -28,17 +33,20 @@ const routes = [
     {
         path: '/articleList',
         name: 'ArticleList',
-        component: () => import(/* webpackChunkName: "about" */ '../views/article/')
+        component: () =>
+            import(/* webpackChunkName: "about" */ '../views/article/')
     },
     {
         path: '/detail/:id',
         name: 'Detail',
-        component: () => import(/* webpackChunkName: "about" */ '../views/article/detail')
+        component: () =>
+            import(/* webpackChunkName: "about" */ '../views/article/detail')
     },
     {
         path: '/wode',
         name: 'Wode',
-        component: () => import(/* webpackChunkName: "about" */ '../views/wode/')
+        component: () =>
+            import(/* webpackChunkName: "about" */ '../views/wode/')
     }
 ]
 

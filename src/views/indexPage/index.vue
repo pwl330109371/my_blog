@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2021-03-02 15:02:28
- * @LastEditTime: 2021-03-02 15:08:52
+ * @LastEditTime: 2021-03-03 16:21:10
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \my_blog\src\views\indexPage\index.vue
@@ -10,15 +10,15 @@
     <div class="index-page">
         <div class="index-page-left">
             <div class="index-page-title">
-                <h3>文渤教育</h3>
-                <p>WEN BO EDUCATION</p>
+                <h3>从前慢</h3>
+                <p>BEFORE SLOW</p>
             </div>
             <transition name="bounce">
                 <div class="index-page-text" v-show="show">
-                    <h1 class="welcome-title">欢迎使用</h1>
+                    <h1 class="welcome-title">欢迎来到从前慢的时光驿站!</h1>
                     <div class="welcome-xian"></div>
                     <div class="welcome-text">
-                        Welcome to the smart campus platform
+                        Welcome to time station!
                     </div>
                     <div class="index-page-btn">
                         <button @click="goHome">点击进入</button>
@@ -93,7 +93,7 @@ export default {
             max-width: 413px;
             margin: 8.6% 100px;
             .welcome-title {
-                font-size: 4rem;
+                font-size: 0.9rem;
                 color: #0f1741;
                 font-weight: Regular;
                 font-family: '华康简综艺', Times, serif;
@@ -102,6 +102,7 @@ export default {
                 width: 100px;
                 height: 3px;
                 margin-top: 5%;
+                margin-left: 5px;
                 margin-bottom: 4%;
                 background: rgba(15, 23, 65, 1);
                 opacity: 1;
@@ -118,11 +119,7 @@ export default {
                 button {
                     width: 200px;
                     height: 71px;
-                    background: linear-gradient(
-                        180deg,
-                        rgba(178, 228, 254, 1) 0%,
-                        rgba(136, 212, 248, 1) 100%
-                    );
+                    background: linear-gradient(180deg, rgba(178, 228, 254, 1) 0%, rgba(136, 212, 248, 1) 100%);
                     box-shadow: 0px 10px 20px rgba(120, 204, 243, 0.6);
                     opacity: 1;
                     border-radius: 333px;

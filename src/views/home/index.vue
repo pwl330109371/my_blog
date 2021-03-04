@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2020-11-12 18:47:15
- * @LastEditTime: 2021-03-01 22:03:52
+ * @LastEditTime: 2021-03-02 20:54:06
  * @LastEditors: Peng wenlei
  * @Description: In User Settings Edit
  * @FilePath: \my_blog\src\views\home\index.vue
@@ -38,6 +38,12 @@ export default {
     created() {
         this.getArticleList()
     },
+    computed: {
+        // isLoginWatch 为 true 为登录状态  false 没有登录
+        isLoginWatch() {
+            return localStorage.getItem('loginStatus') ? true : false
+        }
+    },
     activated() {
         console.log(123)
         bottomHandle(
@@ -62,7 +68,7 @@ export default {
                 this.requestDatas.push(...rows)
                 this.pageLoad = false
                 this.isLoading = false
-                // this.len += len
+                this.len = this.requestDatas.length
                 this.isNext = this.len !== total
             }, 500)
         }

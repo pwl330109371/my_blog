@@ -1,8 +1,8 @@
 <!--
  * @Author: your name
  * @Date: 2021-03-01 14:58:10
- * @LastEditTime: 2021-03-01 21:54:42
- * @LastEditors: Peng wenlei
+ * @LastEditTime: 2021-03-05 14:51:38
+ * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \my_blog\src\views\wode\index.vue
 -->
@@ -66,7 +66,7 @@ export default {
         },
         async getDetail() {
             const { data } = await getAboutMe(1)
-            this.markdownRender(data.data.content)
+            this.markdownRender(data.content)
         }
     }
 }

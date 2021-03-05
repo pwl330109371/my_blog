@@ -13,13 +13,11 @@ const cdn = {
         'element-ui': 'ELEMENT'
     },
     css: ['https://lib.baomitu.com/element-ui/2.13.2/theme-chalk/index.css'],
-    js: [
-        'https://cdn.bootcss.com/vue/2.6.10/vue.min.js',
-        'https://cdn.bootcss.com/vue-router/3.1.3/vue-router.min.js',
-        'https://cdn.bootcss.com/vuex/3.1.2/vuex.min.js',
-        'https://lib.baomitu.com/element-ui/2.13.2/index.js',
-        'https://cdn.bootcss.com/axios/0.19.2/axios.min.js'
-    ]
+    js: ['https://cdn.bootcss.com/vue/2.6.10/vue.min.js', 'https://cdn.bootcss.com/vue-router/3.1.3/vue-router.min.js', 'https://cdn.bootcss.com/vuex/3.1.2/vuex.min.js', 'https://lib.baomitu.com/element-ui/2.13.2/index.js', 'https://cdn.bootcss.com/axios/0.19.2/axios.min.js']
+}
+
+function resolve(dir) {
+    return path.join(__dirname, dir)
 }
 
 module.exports = {
@@ -27,9 +25,7 @@ module.exports = {
     publicPath: '/',
     assetsDir: './',
     // 输出文件目录
-    outputDir: isProduction
-        ? path.resolve(__dirname, '../public/pc')
-        : 'devdist',
+    outputDir: isProduction ? path.resolve(__dirname, '../public/pc') : 'devdist',
     // eslint-loader 是否在保存的时候检查
     lintOnSave: false,
     // 默认情况下，生成的静态资源在它们的文件名中包含了 hash 以便更好的控制缓存。
@@ -50,6 +46,22 @@ module.exports = {
             }
             return args
         })
+        // set svg-sprite-loader
+        config.module
+            .rule('svg')
+            .exclude.add(resolve('src/icons'))
+            .end()
+        config.module
+            .rule('icons')
+            .test(/\.svg$/)
+            .include.add(resolve('src/icons'))
+            .end()
+            .use('svg-sprite-loader')
+            .loader('svg-sprite-loader')
+            .options({
+                symbolId: 'icon-[name]'
+            })
+            .end()
     },
 
     configureWebpack: config => {
@@ -63,6 +75,7 @@ module.exports = {
                 '@c': path.resolve(__dirname, './src/components')
             }
         }
+
         if (isProduction) {
             // 不打包这些资源
             config.externals = cdn.externals

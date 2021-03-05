@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2020-11-12 18:47:15
- * @LastEditTime: 2021-03-02 10:43:41
+ * @LastEditTime: 2021-03-05 14:51:29
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \my_blog\src\views\home\index.vue
@@ -60,7 +60,7 @@ export default {
         async getArticleList() {
             const { data } = await getArticleList(this.page)
             console.log(data)
-            const { total, rows } = data.data
+            const { total, rows } = data
             setTimeout(() => {
                 this.requestDatas.push(...rows)
                 this.pageLoad = false

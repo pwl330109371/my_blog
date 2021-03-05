@@ -3,7 +3,7 @@
  * @作者: L
  * @Date: 2020-09-25
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2020-11-12 17:41:01
+ * @LastEditTime: 2021-03-05 14:49:46
  * @Author: L
  */
 import axios from 'axios'
@@ -37,7 +37,7 @@ serve.interceptors.response.use(
     response => {
         const res = response
         if (res.status === 200) {
-            return res
+            return res.data
         } else {
             return Promise.reject(res.msg || 'Error')
         }

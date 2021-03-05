@@ -35,6 +35,7 @@
  }
  html { font-size: calc(1em + 1vw); }
  html {
+    height: 100%;
     line-height: 1.15; /* 1 */
     -webkit-text-size-adjust: 100%; /* 2 */
   }
@@ -47,6 +48,7 @@
    */
   
   body {
+    height: 100%;
     margin: 0;
     font-size: 15px;
     color: #303133;

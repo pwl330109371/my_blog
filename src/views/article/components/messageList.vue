@@ -1,29 +1,17 @@
 <template>
     <div class="message">
         <span>评论列表</span>
-        <span>（{{ lists.total }}）</span>
-        <div class="messageList" v-for="list in lists.datas" :key="list.id">
+        <span>（{{ lists.length }}）</span>
+        <div class="messageList" v-for="list in lists" :key="list.id">
             <div class="parent">
                 <div class="ml-info flex align-center space-between">
                     <div class="avatar-name flex align-center">
-                        <img :src="list.user.avatar" />
+                        <img :src="list.user.picture" />
                     </div>
                     <div class="reply-date flex align-center space-between">
-                        <div class="name flex align-center">
-                            {{ list.user.userName
-                            }}<el-tag
-                                class="master"
-                                effect="dark"
-                                size="mini"
-                                v-if="list.user.id === 1"
-                                >站主</el-tag
-                            >
-                        </div>
+                        <div class="name flex align-center">{{ list.user.nickName }}<el-tag class="master" effect="dark" size="mini" v-if="list.user.id === 1">站主</el-tag></div>
                         <div class="flex algin-center">
-                            <div
-                                class="reply"
-                                @click="setInput(list.user, list.id)"
-                            >
+                            <div class="reply" @click="setInput(list.user, list.id)">
                                 回复
                             </div>
                             <div class="date">{{ list.createdAt }}</div>
@@ -32,31 +20,15 @@
                 </div>
                 <div class="ml-result">{{ list.content }}</div>
             </div>
-            <div
-                class="children"
-                v-for="children in list.children"
-                :key="children.item"
-            >
+            <div class="children" v-for="children in list.replyComments" :key="children.item">
                 <div class="ml-info flex align-center space-between">
                     <div class="avatar-name flex align-center">
                         <img :src="children.user.avatar" />
                     </div>
                     <div class="reply-date flex align-center space-between">
-                        <div class="name flex align-center">
-                            {{ children.user.userName
-                            }}<el-tag
-                                class="master"
-                                effect="dark"
-                                size="mini"
-                                v-if="children.user.id === 1"
-                                >站主</el-tag
-                            >
-                        </div>
+                        <div class="name flex align-center">{{ children.user.userName }}<el-tag class="master" effect="dark" size="mini" v-if="children.user.id === 1">站主</el-tag></div>
                         <div class="flex algin-center">
-                            <div
-                                class="reply"
-                                @click="setInput(children.user, list.id)"
-                            >
+                            <div class="reply" @click="setInput(children.user, list.id)">
                                 回复
                             </div>
                             <div class="date">{{ children.createdAt }}</div>

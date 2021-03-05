@@ -63,7 +63,7 @@ export default {
             const month = date.getMonth() + 1
             const day = date.getDate()
             const result = `${year}-${month}-${day} ${123}`
-            this.date = await this.$store.dispatch('dataHandle', {
+            this.date = await this.$store.dispatch('app/dataHandle', {
                 createdAt: result
             })
         },

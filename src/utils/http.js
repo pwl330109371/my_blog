@@ -2,8 +2,8 @@
  * @文件描述: 请求配置
  * @作者: L
  * @Date: 2020-09-25
- * @LastEditors: Please set LastEditors
- * @LastEditTime: 2020-11-12 17:41:01
+ * @LastEditors: Peng wenlei
+ * @LastEditTime: 2021-03-05 22:19:55
  * @Author: L
  */
 import axios from 'axios'
@@ -37,8 +37,21 @@ serve.interceptors.response.use(
     response => {
         const res = response
         if (res.status === 200) {
-            return res
+            if (res.data.code === 200) {
+                return res.data
+            } else {
+                Message({
+                    type: 'error',
+                    message: res.data.msg,
+                    offset: 60
+                })
+            }
         } else {
+            Message({
+                type: 'error',
+                message: res.msg,
+                offset: 60
+            })
             return Promise.reject(res.msg || 'Error')
         }
     },

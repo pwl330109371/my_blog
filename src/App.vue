@@ -6,9 +6,11 @@
 -->
 <template>
     <div id="app">
-        <keep-alive :include="whiteList" :exclude="blackList" :max="amount">
-            <router-view />
-        </keep-alive>
+        <transition name="fade-transform" mode="out-in">
+            <keep-alive :include="whiteList" :exclude="blackList" :max="amount">
+                <router-view />
+            </keep-alive>
+        </transition>
     </div>
 </template>
 

@@ -83,13 +83,12 @@ export default {
                 articleId: id
             }
             const { data } = await getArticleDetail(params)
-            console.log(data)
             // const data = await this.$store.dispatch(
             //     'dataHandle',
             //     result.data.data
             // )
-            document.title = data.data.title // 动态设置页面的title
-            this.detail = data.data
+            document.title = data.title // 动态设置页面的title
+            this.detail = data
         },
         markdownRender() {
             marked.setOptions({
@@ -136,14 +135,11 @@ export default {
 
         // 获取评论列表
         async getComData() {
-            const data = {
-                ...this.page,
-                articleId: this.$route.params.id
-            }
-            const result = await getCommentList(data)
-            const { len, total } = result.data.data
+            const result = await getCommentList(this.$route.params.id)
+            console.log(result)
+            const { len, total } = result.data
             setTimeout(() => {
-                this.commentList = result.data.data
+                this.commentList = result.data.commentList
                 console.log(this.commentList)
                 this.len += len
                 this.isNext = this.len < total
@@ -174,7 +170,6 @@ export default {
                 })
             }
         },
-
         setInputHeight() {
             const width = document.documentElement.clientWidth
             width <= 600 && (this.rows = 4)

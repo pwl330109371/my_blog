@@ -18,7 +18,7 @@
 export default {
     data() {
         return {
-            whiteList: ['home'], // 白名单
+            whiteList: ['home', 'detail'], // 白名单
             blackList: [], // 黑名单
             amount: 3 // 缓存最大数量
         }

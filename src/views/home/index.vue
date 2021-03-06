@@ -62,6 +62,9 @@ export default {
     deactivated() {
         clearBottomHandle()
     },
+	destroyed() {
+		clearBottomHandle()
+	},
     methods: {
         async getArticleList() {
             const { data } = await getArticleList(this.page)

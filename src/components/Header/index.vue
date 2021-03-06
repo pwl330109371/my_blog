@@ -12,6 +12,12 @@
             {{ midText }}
         </div>
         <div class="right flex align-center">
+			<i
+			    class="iconfont"
+			    :class="isLike ? 'el-icon-star-on' : 'el-icon-star-on'"
+			    v-if="showLike"
+			    @click="$emit('like', isLike)"
+			></i>
             <i
                 class="iconfont"
                 :class="isLike ? 'icon-xin' : 'icon-xinheart118'"

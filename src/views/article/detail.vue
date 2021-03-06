@@ -34,7 +34,8 @@ import scrollBar from './components/scrollBar'
 import MessageInput from './components/messageInput'
 import { addComment, getCommentList } from '@/api/articleComments'
 import { getArticleDetail, addFavorite } from '@/api/article'
-import { bottomHandle } from '@/utils'
+import { isCollection, collectionArticle, unCollectionArticle} from '@/api/collection'
+import { bottomHandle, clearBottomHandle } from '@/utils'
 export default {
     name: 'detail',
     components: { MessageList, scrollBar, MessageInput },
@@ -47,6 +48,7 @@ export default {
             floorId: '',
             userContent: '',
             content: '',
+			isCollection: null, // 是否收藏 1 收藏 2 未收藏
             page: {
                 pageSize: 10,
                 pageNum: 1
@@ -57,6 +59,19 @@ export default {
             isNext: true
         }
     },
+	computed: {
+		token() {
+			return this.$store.state.user.token
+		},
+		articleId() {
+			return this.$route.params.id
+		}
+	},
+	watch: {
+		token() {
+			this.isCollection()
+		}
+	},
     async created() {
         await this.getDetail(
             this.$route.params.id
@@ -76,8 +91,21 @@ export default {
                 this.getComData()
             }
         )
+		if (this.token) {
+			this.isCollection()
+		} 
     },
     methods: {
+		// 收藏文章
+		async isCollection() {
+			const params = {
+				articleId: this.articleId
+			}
+			const { data } = await isCollection(params)
+			this.isCollection = data
+			console.log(data)
+		},
+		// 获取文章详情数据
         async getDetail(id) {
             let params = {
                 articleId: id
@@ -132,7 +160,6 @@ export default {
                 })
             } catch (e) {}
         },
-
         // 获取评论列表
         async getComData() {
             const result = await getCommentList(this.$route.params.id)
@@ -173,7 +200,13 @@ export default {
         setInputHeight() {
             const width = document.documentElement.clientWidth
             width <= 600 && (this.rows = 4)
-        }
+        },
+		deactivated() {
+		    clearBottomHandle()
+		},
+		destroyed() {
+			clearBottomHandle()
+		}
     }
 }
 </script>

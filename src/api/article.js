@@ -17,7 +17,7 @@ export function getArticleList(params) {
     })
 }
 
-// 获取文章列表
+// 获取文章详情
 export function getArticleDetail(params) {
     return http({
         url: '/api/article/getArticleDetail',
@@ -34,3 +34,4 @@ export function addFavorite(params) {
         params
     })
 }
+

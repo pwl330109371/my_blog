@@ -1,7 +1,7 @@
 <template>
     <div class="flex flex-column align-center">
         <scrollBar />
-        <Header @like="likeChange" :isLike="detail.isLike" :midText="detail.title" :showLike="true" :music="detail.musicUrl" />
+        <Header @like="likeChange" :isLike="isStar" :midText="detail.title" :showLike="true" :music="detail.musicUrl" />
         <div class="detail">
             <h1 class="title">{{ detail.title }}</h1>
             <div class="status flex align-center">
@@ -33,7 +33,7 @@ import MessageList from './components/messageList'
 import scrollBar from './components/scrollBar'
 import MessageInput from './components/messageInput'
 import { addComment, getCommentList } from '@/api/articleComments'
-import { getArticleDetail, addFavorite } from '@/api/article'
+import { getArticleDetail } from '@/api/article'
 import { isCollection, collectionArticle, unCollectionArticle} from '@/api/collection'
 import { bottomHandle, clearBottomHandle } from '@/utils'
 export default {
@@ -41,14 +41,13 @@ export default {
     components: { MessageList, scrollBar, MessageInput },
     data() {
         return {
-            detail: {},
-            commentList: [],
-            userName: '',
-            aiteName: '',
-            floorId: '',
-            userContent: '',
-            content: '',
-			isCollection: null, // 是否收藏 1 收藏 2 未收藏
+            detail: {}, // 详情数据
+            commentList: [], // 评论列表
+            aiteName: '', // 被评论人昵称
+            floorId: '', // 主评论id
+			toUid: '', // 被评论人id
+            content: '', // 评论输入框内容
+			isStar: 2, // 是否收藏 1 收藏 2 未收藏
             page: {
                 pageSize: 10,
                 pageNum: 1
@@ -69,7 +68,10 @@ export default {
 	},
 	watch: {
 		token() {
-			this.isCollection()
+			this.$nextTick(() => {
+				this.likeChange(2)
+				// this.isCollection()
+			})
 		}
 	},
     async created() {
@@ -79,6 +81,7 @@ export default {
         ) // 获取详情
         await this.markdownRender() // markdown 加载
         this.setInputHeight()
+		console.log(this.$route)
     },
     mounted() {
         this.getComData() // 加载留言列表
@@ -100,10 +103,10 @@ export default {
 		async isCollection() {
 			const params = {
 				articleId: this.articleId
+				// articleId: 1
 			}
 			const { data } = await isCollection(params)
-			this.isCollection = data
-			console.log(data)
+			this.isStar = data
 		},
 		// 获取文章详情数据
         async getDetail(id) {
@@ -134,8 +137,9 @@ export default {
         },
         // 子层评论
         reply(data) {
-            this.aiteName = data.userName
+            this.aiteName = data.nickName
             this.floorId = data.parentId
+			this.toUid = data.id
         },
         // 清楚掉aite后 删除艾特信息
         tagClose() {
@@ -145,11 +149,12 @@ export default {
         // 评论提交
         async comment(content) {
             const data = {
-                articleId: this.$route.params.id,
-                userId: JSON.parse(localStorage.getItem('userInfo')).id,
-                content
+                articleId: this.articleId,
+                content,
+				type: this.aiteName ? 2 : 1, // 如果 this.aiteName 那么便是二级回复,
+				replyId: this.floorId, // 主评论id
+				toUid: this.toUid // 被评论人id
             }
-            this.floorId && (data.floorId = this.floorId)
             try {
                 const reqResult = await addComment(data)
                 this.getComData()
@@ -175,20 +180,21 @@ export default {
         },
         // 设置喜欢这篇文章
         async likeChange(e) {
-            if (!e) {
-                // 未喜欢这篇文章
+			// 未喜欢这篇文章
+            if (e === 2) {
                 const data = {
-                    articleId: this.detail.id,
-                    userId: JSON.parse(localStorage.getItem('userInfo')).id
+                    articleId: this.detail.id
                 }
-                const result = await addFavorite(data)
-                this.$message({
-                    type: 'success',
-                    message: '相识虽浅,似是经年',
-                    offset: 60
-                })
-                this.$set(this.detail, 'isLike', true)
-                this.$set(this.detail, 'likeNum', this.detail.likeNum + 1)
+                const { code } = await collectionArticle(data)
+				if ( code === 200) {
+					this.$message({
+					    type: 'success',
+					    message: '相识虽浅,似是经年',
+					    offset: 60
+					})
+					this.isStar = 1
+					this.$set(this.detail, 'likeNum', this.detail.likeNum + 1)
+				}
             } else {
                 this.$message({
                     type: 'error',

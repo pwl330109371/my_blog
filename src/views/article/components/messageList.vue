@@ -164,6 +164,7 @@ export default {
             white-space: pre-wrap;
             font-size: 14px;
             word-break: break-all;
+			text-align: left;
         }
     }
 }
@@ -208,6 +209,7 @@ export default {
                         display: block;
                         border-bottom: none;
                         margin-bottom: 2px;
+						text-align: left;
                         .master {
                             font-size: 10px;
                             margin-left: 10px;
@@ -234,6 +236,7 @@ export default {
                 padding-left: 0;
                 margin-top: 10px;
                 word-break: break-all;
+				padding-left: 48px;
             }
         }
     }

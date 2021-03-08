@@ -11,7 +11,7 @@ import { getToken, setToken, removeToken } from '@/utils/auth'
 
 const getDefaultState = () => {
     return {
-        token: getToken(),
+        token: localStorage.token || getToken() || null,
         userId: '',
         name: '',
         avatar: ''
@@ -43,11 +43,12 @@ const actions = {
     login({ commit }, userInfo) {
         const { username, password } = userInfo
         return new Promise((resolve, reject) => {
-            login({ userName: username.trim(), password: password })
+            login({ userName: username.trim(), password })
                 .then(response => {
                     const { data } = response
                     commit('SET_TOKEN', data.token)
                     commit('SET_USERID', data.userId)
+					localStorage.token = data.token
                     setToken(data.token)
                     resolve()
                 })

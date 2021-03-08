@@ -7,7 +7,7 @@
  * @FilePath: \my_blog\src\components\Button\index.vue
 -->
 <template>
-    <button class="btn btn-gradient" @click="click" :style="styles">
+    <button class="btn btn-gradient" @click="click" :disabled='disabled' :style="styles">
         {{ text }}
     </button>
 </template>
@@ -21,7 +21,11 @@ export default {
         styles: {
             type: Object,
             default: () => {}
-        }
+        },
+		disabled: {
+			type: Boolean,
+			default: false
+		}
     },
     methods: {
         click() {
@@ -44,10 +48,10 @@ export default {
     z-index: 5;
     &-gradient {
         color: #fff;
-        background: linear-gradient(90deg, #353535, #c9c6c6);
+        background: linear-gradient(90deg, #63c3ff, #00ffff);
         background-size: 300%;
         border-radius: 2em;
-        opacity: 0.5;
+        opacity: 0.8;
         &::before {
             position: absolute;
             content: '';

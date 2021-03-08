@@ -12,15 +12,9 @@
             {{ midText }}
         </div>
         <div class="right flex align-center">
-			<i
-			    class="iconfont"
-			    :class="isLike ? 'el-icon-star-on' : 'el-icon-star-on'"
-			    v-if="showLike"
-			    @click="$emit('like', isLike)"
-			></i>
             <i
                 class="iconfont"
-                :class="isLike ? 'icon-xin' : 'icon-xinheart118'"
+                :class="isLike === 1 ? 'icon-xin' : 'icon-xinheart118'"
                 v-if="showLike"
                 @click="$emit('like', isLike)"
             ></i>
@@ -79,8 +73,8 @@ export default {
                 'https://qiheizhiya.oss-cn-shenzhen.aliyuncs.com/image/xingzhisuozai.mp3'
         },
         isLike: {
-            type: Boolean,
-            default: false
+            type: Number,
+            default: 2
         },
         midText: {
             type: String,

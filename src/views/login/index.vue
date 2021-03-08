@@ -137,7 +137,9 @@ export default {
                         this.$store
                             .dispatch('user/login', this.loginForm)
                             .then(() => {
-                                this.$router.push({ path: this.redirect || '/' })
+                                // this.$router.push({ path: this.redirect || '/' })
+								// this.$router.go(-1)
+								this.$router.go(-1)
                                 this.loading = false
                             })
                             .catch(() => {
@@ -152,7 +154,8 @@ export default {
                                         .dispatch('user/login', this.loginForm)
                                         .then(() => {
                                             this.$message
-                                            this.$router.push({ path: this.redirect || '/' })
+                                            // this.$router.push({ path: this.redirect || '/' })
+											this.$router.go(-1)
                                             this.loading = false
                                         })
                                         .catch(() => {

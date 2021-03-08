@@ -8,8 +8,8 @@
  */
 import axios from 'axios'
 import { getCookie } from '@/utils/auth'
-import { Message } from 'element-ui'
-// import route from '@/router'
+import { Message, MessageBox } from 'element-ui'
+import route from '@/router'
 // 设置axios请求默认配置
 const serve = axios.create({
     baseURL: '', // api的base_url前缀
@@ -40,31 +40,48 @@ serve.interceptors.response.use(
             if (res.data.code === 200) {
                 return res.data
             } else {
-                Message({
-                    type: 'error',
-                    message: res.data.msg,
-                    offset: 60
-                })
+				// 没有登录
+				if (res.data.code === -1) {
+					// 返回 401 清除token信息并跳转到登录页面
+					MessageBox.confirm('进行登录后才能操作哦！', '确定', {
+					  confirmButtonText: '确定',
+					  showCancelButton: false,
+					  closeOnClickModal: false,
+					  showClose: false,
+					  closeOnPressEscape: false,
+					  center: true,
+					  type: 'warning'
+					}).then(() => {
+						route.push('/login')
+					})
+				} else {
+					Message({
+						type: 'error',
+						message: res.data.msg,
+						offset: 60
+					})
+				}
             }
-        } else {
-            Message({
-                type: 'error',
-                message: res.msg,
-                offset: 60
-            })
-            return Promise.reject(res.msg || 'Error')
         }
     },
     error => {
-        if (error.response) {
-            localStorage.removeItem('token')
-            localStorage.removeItem('userInfo')
-            Message({
-                type: 'error',
-                message: '登陆已过期,请重新登陆',
-                offset: 60
-            })
-        }
+		if (error.response) {
+		  switch (error.response.status) {
+		    case 401:
+			    // 返回 401 清除token信息并跳转到登录页面
+			    MessageBox.confirm('您登录时间过长，请重新返回登录页面进行登录', '确定登出', {
+					confirmButtonText: '重新登录',
+					showCancelButton: false,
+					closeOnClickModal: false,
+					showClose: false,
+					closeOnPressEscape: false,
+					type: 'warning'
+			    }).then(() => {
+				   route.push('/login')
+			    })
+			    break
+		  }
+		}
         return Promise.reject(error) // 返回接口返回的错误信息
     }
 )

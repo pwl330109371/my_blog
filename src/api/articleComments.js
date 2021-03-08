@@ -14,7 +14,7 @@ import http from '@/utils/http'
  * @param {number} articleId 文章id
  * @param {string} content 评论内容
  * @param {number} commentId 主评论id(二级评论才传)
- * @param {number} replyId 被回复的目标评论id 子评论才传
+ * @param {number} replyId 被回复的目标评论id 二级评论才传
  * @param {number} type 1 是主评论 2 是子评论
  * @param {number} toUid 被评论人id 子评论才传
  * @param {*}

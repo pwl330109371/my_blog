@@ -62,6 +62,9 @@ export default {
 		token() {
 			return this.$store.state.user.token
 		},
+		userId() {
+			return this.$store.state.user.userId
+		},
 		articleId() {
 			return this.$route.params.id
 		}
@@ -149,10 +152,10 @@ export default {
         // 评论提交
         async comment(content) {
             const data = {
-                articleId: this.articleId,
-                content,
+                articleId: this.articleId, // 文章id
+				commentId: this.floorId,  // 主评论id
+                content, // 评论内容
 				type: this.aiteName ? 2 : 1, // 如果 this.aiteName 那么便是二级回复,
-				replyId: this.floorId, // 主评论id
 				toUid: this.toUid // 被评论人id
             }
             try {

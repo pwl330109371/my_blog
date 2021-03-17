@@ -9,12 +9,16 @@
                         <img :src="list.user.picture" />
                     </div>
                     <div class="reply-date flex align-center space-between">
-                        <div class="name flex align-center">{{ list.user.nickName }}<el-tag class="master" effect="dark" size="mini" v-if="list.user.id === 1">站主</el-tag></div>
+                        <div class="name flex align-center">
+							{{ list.user.nickName }}
+							<el-tag class="master" effect="dark" size="mini" v-if="list.user.role === 1">站主</el-tag>
+							<el-tag class="master" effect="dark" size="mini" v-if="list.user.role === 2">管理员</el-tag>
+						</div>
                         <div class="flex algin-center">
                             <div class="reply" @click="setInput(list.user, list.id)">
                                 回复
                             </div>
-                            <div class="date">{{ list.createdAt }}</div>
+                            <div class="date">{{ list.createdAt | formatTime }}</div>
                         </div>
                     </div>
                 </div>
@@ -33,12 +37,18 @@
 						</el-image>
                     </div>
                     <div class="reply-date flex align-center space-between">
-                        <div class="name flex align-center">{{ children.user.nickName }}<el-tag class="master" effect="dark" size="mini" v-if="children.user.id === 1">站主</el-tag></div>
+                        <div class="name flex align-center">
+							{{ children.user.nickName }}
+							<el-tag class="master" effect="dark" size="mini" v-if="children.user.role === 1">站主</el-tag>
+							<el-tag class="master" effect="dark" size="mini" v-if="children.user.role === 2">管理员</el-tag>
+							<!-- <el-tag class="master" effect="dark" size="mini" v-if="children.user.role === 2">管理员</el-tag> -->
+							@{{children.targetUser.nickName}}
+						</div>
                         <div class="flex algin-center">
                             <div class="reply" @click="setInput(children.user, list.id)">
                                 回复
                             </div>
-                            <div class="date">{{ children.createdAt }}</div>
+                            <div class="date">{{ children.createdAt| formatTime }}</div>
                         </div>
                     </div>
                 </div>
@@ -54,6 +64,7 @@
 
 <script>
 import Loader from '@c/Loading'
+import { formatTime } from '@/utils/'
 export default {
     props: {
         lists: {
@@ -75,6 +86,11 @@ export default {
             replyShow: ''
         }
     },
+	filters: {
+		formatTime(val) {
+			return formatTime(val)
+		}
+	},
     methods: {
         setInput(data, parentId) {
             const hash = document.getElementById('hash')
@@ -123,7 +139,7 @@ export default {
         }
         .ml-info {
             .avatar-name {
-                img {
+                img, .el-image {
                     width: 44px;
                     height: 44px;
                     border-radius: 50%;

@@ -96,7 +96,7 @@ export default {
             loginRules: {
                 username: [{ required: true, trigger: 'blur', validator: validateUsername }],
                 password: [{ required: true, trigger: 'blur', validator: validatePassword }],
-                confirmPwd: [{ required: true, trigger: 'blur', validator: validatePass2 }],
+                confirmPwd: [{ required: true, trigger: 'blur', validator: validatePass2 }]
             },
             type: 1, // 1登录 2注册
             loading: false,

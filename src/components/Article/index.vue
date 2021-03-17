@@ -7,7 +7,7 @@
             <div class="text-outer">
                 <div class="info">
                     <div class="time">
-                        {{ item.updatedAt }}
+                        {{ item.updatedAt | formatDate }}
                         <!-- {{ item.month }} {{ item.day }}, {{ item.year }} -->
                     </div>
                     <div class="title" @click="toDetail(item._id)">
@@ -40,7 +40,7 @@
 <script>
 import Loader from '@/components/Loading'
 import { WOW } from 'wowjs'
-
+import { formatDate } from '@/utils/'
 export default {
     components: { Loader },
     props: {
@@ -82,6 +82,11 @@ export default {
             }
         }
     },
+	filters: {
+		formatDate(val) {
+			return formatDate(val, 'yyyy-MM-dd hh:mm:ss')
+		}
+	},
     methods: {
         toDetail(id) {
             this.$router.push({ name: 'Detail', params: { id } })

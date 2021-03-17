@@ -5,11 +5,10 @@
         <div class="detail">
             <h1 class="title">{{ detail.title }}</h1>
             <div class="status flex align-center">
-                <!-- <span>{{ detail.date }}</span> -->
-                <span>2020-11-12</span>
+                <span>{{ detail.createdAt | formatDate}}</span>
                 <span>阅读：{{ detail.visitsNum }}</span>
                 <span>字数：{{ content.length }}</span>
-                <!-- <span>评论：{{ commentList.total }}</span> -->
+				<!-- <span>评论：{{ commentList.total }}</span> -->
                 <span>评论：10</span>
                 <span>喜欢: {{ detail.likeNum }}</span>
             </div>
@@ -35,7 +34,7 @@ import MessageInput from './components/messageInput'
 import { addComment, getCommentList } from '@/api/articleComments'
 import { getArticleDetail } from '@/api/article'
 import { isCollection, collectionArticle, unCollectionArticle} from '@/api/collection'
-import { bottomHandle, clearBottomHandle } from '@/utils'
+import { bottomHandle, clearBottomHandle, formatDate } from '@/utils'
 export default {
     name: 'detail',
     components: { MessageList, scrollBar, MessageInput },
@@ -75,6 +74,11 @@ export default {
 				this.likeChange(2)
 				// this.isCollection()
 			})
+		}
+	},
+	filters: {
+		formatDate(val) {
+			return formatDate(val, 'yyyy-MM-dd hh:mm:ss')
 		}
 	},
     async created() {

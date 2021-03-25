@@ -1,7 +1,7 @@
 /*
  * @Author: pwl
  * @Date: 2021-03-01 15:02:17
- * @LastEditTime: 2021-03-05 21:08:38
+ * @LastEditTime: 2021-03-25 21:28:10
  * @LastEditors: Peng wenlei
  * @Description: In User Settings Edit
  * @FilePath: \my_blog\src\api\collection.js
@@ -18,7 +18,7 @@ export function isCollection(data) {
     return http({
         url: '/api/collection/isCollection',
         method: 'post',
-		data
+        data
     })
 }
 
@@ -32,7 +32,7 @@ export function collectionArticle(data) {
     return http({
         url: '/api/collection/collectionArticle',
         method: 'post',
-		data
+        data
     })
 }
 
@@ -46,7 +46,7 @@ export function unCollectionArticle(data) {
     return http({
         url: '/api/collection/unCollectionArticle',
         method: 'post',
-		data
+        data
     })
 }
 

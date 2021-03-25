@@ -75,7 +75,6 @@ module.exports = {
                 '@c': path.resolve(__dirname, './src/components')
             }
         }
-
         if (isProduction) {
             // 不打包这些资源
             config.externals = cdn.externals

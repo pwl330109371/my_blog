@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2021-03-03 10:54:16
- * @LastEditTime: 2021-03-05 22:11:53
+ * @LastEditTime: 2021-03-25 21:58:24
  * @LastEditors: Peng wenlei
  * @Description: In User Settings Edit
  * @FilePath: \vue-blog-admin\src\views\login\index1.vue
@@ -96,7 +96,7 @@ export default {
             loginRules: {
                 username: [{ required: true, trigger: 'blur', validator: validateUsername }],
                 password: [{ required: true, trigger: 'blur', validator: validatePassword }],
-                confirmPwd: [{ required: true, trigger: 'blur', validator: validatePass2 }],
+                confirmPwd: [{ required: true, trigger: 'blur', validator: validatePass2 }]
             },
             type: 1, // 1登录 2注册
             loading: false,
@@ -134,13 +134,15 @@ export default {
                 if (valid) {
                     this.loading = true
                     if (this.type === 1) {
+                        debugger
                         this.$store
                             .dispatch('user/login', this.loginForm)
-                            .then(() => {
-                                // this.$router.push({ path: this.redirect || '/' })
-								// this.$router.go(-1)
-								this.$router.go(-1)
-                                this.loading = false
+                            .then(userId => {
+                                this.$store.dispatch('user/getInfoFun', userId).then(() => {
+                                    this.loading = false
+                                    // this.$router.push('/home')
+                                    this.$router.go(-1)
+                                })
                             })
                             .catch(() => {
                                 this.loading = false
@@ -155,7 +157,7 @@ export default {
                                         .then(() => {
                                             this.$message
                                             // this.$router.push({ path: this.redirect || '/' })
-											this.$router.go(-1)
+                                            this.$router.go(-1)
                                             this.loading = false
                                         })
                                         .catch(() => {

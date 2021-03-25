@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 <template>
     <div class="flex flex-column align-center">
         <scrollBar />
@@ -5,8 +6,7 @@
         <div class="detail">
             <h1 class="title">{{ detail.title }}</h1>
             <div class="status flex align-center">
-                <!-- <span>{{ detail.date }}</span> -->
-                <span>2020-11-12</span>
+                <span>{{ detail.createdAt | formatDate }}</span>
                 <span>阅读：{{ detail.visitsNum }}</span>
                 <span>字数：{{ content.length }}</span>
                 <!-- <span>评论：{{ commentList.total }}</span> -->
@@ -35,7 +35,7 @@ import MessageInput from './components/messageInput'
 import { addComment, getCommentList } from '@/api/articleComments'
 import { getArticleDetail } from '@/api/article'
 import { isCollection, collectionArticle, unCollectionArticle } from '@/api/collection'
-import { bottomHandle, clearBottomHandle } from '@/utils'
+import { bottomHandle, clearBottomHandle, formatDate } from '@/utils'
 export default {
     name: 'detail',
     components: { MessageList, scrollBar, MessageInput },
@@ -62,6 +62,9 @@ export default {
         token() {
             return this.$store.state.user.token
         },
+        userId() {
+            return this.$store.state.user.userId
+        },
         articleId() {
             return this.$route.params.id
         }
@@ -72,6 +75,11 @@ export default {
                 this.likeChange(2)
                 // this.isCollection()
             })
+        }
+    },
+    filters: {
+        formatDate(val) {
+            return formatDate(val, 'yyyy-MM-dd hh:mm:ss')
         }
     },
     async created() {
@@ -149,11 +157,10 @@ export default {
         // 评论提交
         async comment(content) {
             const data = {
-                articleId: this.articleId,
-                content,
-                commentId: '',
+                articleId: this.articleId, // 文章id
+                commentId: this.floorId, // 主评论id
+                content, // 评论内容
                 type: this.aiteName ? 2 : 1, // 如果 this.aiteName 那么便是二级回复,
-                replyId: this.floorId, // 主评论id
                 toUid: this.toUid // 被评论人id
             }
             try {
@@ -164,7 +171,9 @@ export default {
                     message: '评论成功~~',
                     offset: 60
                 })
-            } catch (e) {}
+            } catch (e) {
+                console.log(e)
+            }
         },
         // 获取评论列表
         async getComData() {

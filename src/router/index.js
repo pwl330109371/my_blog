@@ -55,6 +55,16 @@ const routes = [
         }
     },
     {
+        path: '/rainy',
+        name: 'Rainy',
+        component: () =>
+            import(/* webpackChunkName: "about" */ '../views/rainy/'),
+        meta: {
+            keepAlive: true,
+            title: '听雨'
+        }
+    },
+    {
         path: '/login',
         name: 'Login',
         component: () =>

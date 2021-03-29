@@ -1,8 +1,8 @@
 <!--
  * @Author: your name
  * @Date: 2021-03-03 10:54:16
- * @LastEditTime: 2021-03-05 22:11:53
- * @LastEditors: Peng wenlei
+ * @LastEditTime: 2021-03-29 18:33:40
+ * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \vue-blog-admin\src\views\login\index1.vue
 -->
@@ -138,8 +138,8 @@ export default {
                             .dispatch('user/login', this.loginForm)
                             .then(() => {
                                 // this.$router.push({ path: this.redirect || '/' })
-								// this.$router.go(-1)
-								this.$router.go(-1)
+                                // this.$router.go(-1)
+                                this.$router.go(-1)
                                 this.loading = false
                             })
                             .catch(() => {
@@ -155,7 +155,7 @@ export default {
                                         .then(() => {
                                             this.$message
                                             // this.$router.push({ path: this.redirect || '/' })
-											this.$router.go(-1)
+                                            this.$router.go(-1)
                                             this.loading = false
                                         })
                                         .catch(() => {
@@ -201,6 +201,13 @@ export default {
     box-shadow: -15px 15px 15px rgba(6, 17, 47, 0.7);
     z-index: 99999;
     transition: max-height ease-out 0.6s;
+}
+
+@media screen and (max-width: 760px) {
+    .loginmain {
+        margin-left: 20px;
+        margin-right: 20px;
+    }
 }
 .login-hg {
     max-height: 330px;

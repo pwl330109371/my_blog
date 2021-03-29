@@ -97,7 +97,7 @@ export default {
 <style lang="scss" scoped>
 .article {
     position: relative;
-    z-index: 2;
+    z-index: 1;
     &:not(:first-of-type) {
         margin-top: 100px;
     }

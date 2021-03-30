@@ -3,19 +3,37 @@ const isProduction = process.env.NODE_ENV === 'production'
 // const CompressionPlugin = require('compression-webpack-plugin')
 // const BundleAnalyzerPlugin = require('webpack-bundle-analyzer')
 //     .BundleAnalyzerPlugin
-
-const cdn = {
-    externals: {
-        vue: 'Vue',
-        vuex: 'Vuex',
-        'vue-router': 'VueRouter',
-        axios: 'axios',
-        'element-ui': 'ELEMENT'
-    },
-    css: ['https://lib.baomitu.com/element-ui/2.13.2/theme-chalk/index.css'],
-    js: ['https://cdn.bootcss.com/vue/2.6.10/vue.min.js', 'https://cdn.bootcss.com/vue-router/3.1.3/vue-router.min.js', 'https://cdn.bootcss.com/vuex/3.1.2/vuex.min.js', 'https://lib.baomitu.com/element-ui/2.13.2/index.js', 'https://cdn.bootcss.com/axios/0.19.2/axios.min.js']
+// cdn预加载使用
+const externals = {
+    vue: 'Vue',
+    'vue-router': 'VueRouter',
+    vuex: 'Vuex',
+    axios: 'axios',
+    'element-ui': 'ELEMENT',
+    'js-cookie': 'Cookies',
+    nprogress: 'NProgress'
 }
 
+const cdn = {
+    // 开发环境
+    dev: {
+        css: ['https://unpkg.com/element-ui/lib/theme-chalk/index.css', 'https://cdn.bootcss.com/nprogress/0.2.0/nprogress.min.css'],
+        js: []
+    },
+    // 生产环境
+    build: {
+        css: ['https://unpkg.com/element-ui/lib/theme-chalk/index.css', 'https://cdn.bootcss.com/nprogress/0.2.0/nprogress.min.css'],
+        js: [
+            'https://cdn.jsdelivr.net/npm/vue@2.5.17/dist/vue.min.js',
+            'https://cdn.jsdelivr.net/npm/vue-router@3.0.1/dist/vue-router.min.js',
+            'https://cdn.jsdelivr.net/npm/vuex@3.0.1/dist/vuex.min.js',
+            'https://cdn.jsdelivr.net/npm/axios@0.18.0/dist/axios.min.js',
+            'https://unpkg.com/element-ui/lib/index.js',
+            'https://cdn.bootcss.com/js-cookie/2.2.0/js.cookie.min.js',
+            'https://cdn.bootcss.com/nprogress/0.2.0/nprogress.min.js'
+        ]
+    }
+}
 function resolve(dir) {
     return path.join(__dirname, dir)
 }
@@ -42,7 +60,7 @@ module.exports = {
         config.plugin('html').tap(args => {
             // 生产环境或本地需要cdn时，才注入cdn
             if (isProduction) {
-                args[0].cdn = cdn
+                args[0].cdn = cdn.build
             }
             return args
         })
@@ -77,7 +95,7 @@ module.exports = {
         }
         if (isProduction) {
             // 不打包这些资源
-            config.externals = cdn.externals
+            config.externals = externals
             // 公共代码抽离
             config.optimization.splitChunks.cacheGroups = {
                 vendor: {
@@ -165,8 +183,8 @@ module.exports = {
         proxy: {
             '^/api': {
                 // target: 'http://192.168.0.105:3000/',
-                target: 'http://192.168.1.145:3000/',
-                // target: 'http://115.159.117.118:3000/',
+                // target: 'http://192.168.1.145:3000/',
+                target: 'http://115.159.117.118:3001/',
                 // target: 'http://localhost:3000',
                 ws: true,
                 changeOrigin: true

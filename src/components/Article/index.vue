@@ -7,7 +7,7 @@
             <div class="text-outer">
                 <div class="info">
                     <div class="time">
-                        {{ item.updatedAt | formatDate }}
+                        {{ item.createdAt | formatDate }}
                         <!-- {{ item.month }} {{ item.day }}, {{ item.year }} -->
                     </div>
                     <div class="title" @click="toDetail(item._id)">
@@ -24,7 +24,7 @@
                             <span>{{ item.likeNum }}</span>
                         </div>
                         <div class="handle-thunk flex align-center">
-                            <i class="iconfont icon-pinglun"></i>
+                            <i class="el-icon-edit"></i>
                             <span>{{ item.content.length }}</span>
                         </div>
                     </div>
@@ -82,11 +82,11 @@ export default {
             }
         }
     },
-	filters: {
-		formatDate(val) {
-			return formatDate(val, 'yyyy-MM-dd hh:mm:ss')
-		}
-	},
+    filters: {
+        formatDate(val) {
+            return formatDate(val, 'yyyy-MM-dd hh:mm:ss')
+        }
+    },
     methods: {
         toDetail(id) {
             this.$router.push({ name: 'Detail', params: { id } })
@@ -220,7 +220,7 @@ export default {
                             margin-right: 2px;
                         }
                         &::after {
-                            content: '评论数';
+                            content: '文章字数';
                         }
                     }
                     &:nth-of-type(2):hover {

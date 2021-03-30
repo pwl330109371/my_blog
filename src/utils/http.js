@@ -12,8 +12,7 @@ import { Message, MessageBox } from 'element-ui'
 import route from '@/router'
 // 设置axios请求默认配置
 const serve = axios.create({
-    baseURL: '', // api的base_url前缀
-    // baseURL: 'localhost:3000/api/', // api的base_url前缀
+    baseURL: process.env.VUE_APP_BASE_API, // api的base_url前缀
     timeout: 1000 * 30 // 请求超时
 })
 

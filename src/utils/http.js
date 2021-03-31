@@ -2,8 +2,8 @@
  * @文件描述: 请求配置
  * @作者: L
  * @Date: 2020-09-25
- * @LastEditors: Peng wenlei
- * @LastEditTime: 2021-03-05 22:19:55
+ * @LastEditors: Please set LastEditors
+ * @LastEditTime: 2021-03-31 17:50:52
  * @Author: L
  */
 import axios from 'axios'
@@ -22,8 +22,6 @@ serve.interceptors.request.use(
         if (getCookie('token')) {
             config.headers.Authorization = getCookie('token')
         }
-        console.log(config.method.toLowerCase())
-
         return config
     },
     error => {
@@ -39,48 +37,48 @@ serve.interceptors.response.use(
             if (res.data.code === 200) {
                 return res.data
             } else {
-				// 没有登录
-				if (res.data.code === -1) {
-					// 返回 401 清除token信息并跳转到登录页面
-					MessageBox.confirm('进行登录后才能操作哦！', '确定', {
-					  confirmButtonText: '确定',
-					  showCancelButton: false,
-					  closeOnClickModal: false,
-					  showClose: false,
-					  closeOnPressEscape: false,
-					  center: true,
-					  type: 'warning'
-					}).then(() => {
-						route.push('/login')
-					})
-				} else {
-					Message({
-						type: 'error',
-						message: res.data.msg,
-						offset: 60
-					})
-				}
+                // 没有登录
+                if (res.data.code === -1) {
+                    // 返回 401 清除token信息并跳转到登录页面
+                    MessageBox.confirm('进行登录后才能操作哦！', '确定', {
+                        confirmButtonText: '确定',
+                        showCancelButton: false,
+                        closeOnClickModal: false,
+                        showClose: false,
+                        closeOnPressEscape: false,
+                        center: true,
+                        type: 'warning'
+                    }).then(() => {
+                        route.push('/login')
+                    })
+                } else {
+                    Message({
+                        type: 'error',
+                        message: res.data.msg,
+                        offset: 60
+                    })
+                }
             }
         }
     },
     error => {
-		if (error.response) {
-		  switch (error.response.status) {
-		    case 401:
-			    // 返回 401 清除token信息并跳转到登录页面
-			    MessageBox.confirm('您登录时间过长，请重新返回登录页面进行登录', '确定登出', {
-					confirmButtonText: '重新登录',
-					showCancelButton: false,
-					closeOnClickModal: false,
-					showClose: false,
-					closeOnPressEscape: false,
-					type: 'warning'
-			    }).then(() => {
-				   route.push('/login')
-			    })
-			    break
-		  }
-		}
+        if (error.response) {
+            switch (error.response.status) {
+            case 401:
+                // 返回 401 清除token信息并跳转到登录页面
+                MessageBox.confirm('您登录时间过长，请重新返回登录页面进行登录', '确定登出', {
+                        confirmButtonText: '重新登录',
+                    showCancelButton: false,
+                    closeOnClickModal: false,
+                    showClose: false,
+                    closeOnPressEscape: false,
+                    type: 'warning'
+                }).then(() => {
+                    route.push('/login')
+                })
+                break
+            }
+        }
         return Promise.reject(error) // 返回接口返回的错误信息
     }
 )

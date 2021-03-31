@@ -5,10 +5,10 @@
         <div class="detail">
             <h1 class="title">{{ detail.title }}</h1>
             <div class="status flex align-center">
-                <span>{{ detail.createdAt | formatDate}}</span>
+                <span>{{ detail.createdAt | formatDate }}</span>
                 <span>阅读：{{ detail.visitsNum }}</span>
                 <span>字数：{{ content.length }}</span>
-				<!-- <span>评论：{{ commentList.total }}</span> -->
+                <!-- <span>评论：{{ commentList.total }}</span> -->
                 <span>评论：10</span>
                 <span>喜欢: {{ detail.likeNum }}</span>
             </div>
@@ -33,7 +33,7 @@ import scrollBar from './components/scrollBar'
 import MessageInput from './components/messageInput'
 import { addComment, getCommentList } from '@/api/articleComments'
 import { getArticleDetail } from '@/api/article'
-import { isCollection, collectionArticle, unCollectionArticle} from '@/api/collection'
+import { isCollection, collectionArticle, unCollectionArticle } from '@/api/collection'
 import { bottomHandle, clearBottomHandle, formatDate } from '@/utils'
 export default {
     name: 'detail',
@@ -44,9 +44,9 @@ export default {
             commentList: [], // 评论列表
             aiteName: '', // 被评论人昵称
             floorId: '', // 主评论id
-			toUid: '', // 被评论人id
+            toUid: '', // 被评论人id
             content: '', // 评论输入框内容
-			isStar: 2, // 是否收藏 1 收藏 2 未收藏
+            isStar: 2, // 是否收藏 1 收藏 2 未收藏
             page: {
                 pageSize: 10,
                 pageNum: 1
@@ -57,38 +57,39 @@ export default {
             isNext: true
         }
     },
-	computed: {
-		token() {
-			return this.$store.state.user.token
-		},
-		userId() {
-			return this.$store.state.user.userId
-		},
-		articleId() {
-			return this.$route.params.id
-		}
-	},
-	watch: {
-		token() {
-			this.$nextTick(() => {
-				this.likeChange(2)
-				// this.isCollection()
-			})
-		}
-	},
-	filters: {
-		formatDate(val) {
-			return formatDate(val, 'yyyy-MM-dd hh:mm:ss')
-		}
-	},
-    async created() {
-        await this.getDetail(
-            this.$route.params.id
-            // JSON.parse(localStorage.getItem('userInfo')).id
-        ) // 获取详情
+    computed: {
+        token() {
+            return this.$store.state.user.token
+        },
+        userId() {
+            return this.$store.state.user.userId
+        },
+        articleId() {
+            return this.$route.params.id
+        }
+    },
+    watch: {
+        token() {
+            this.$nextTick(() => {
+                this.likeChange(2)
+                // this.isCollection()
+            })
+        }
+    },
+    filters: {
+        formatDate(val) {
+            return formatDate(val, 'yyyy-MM-dd hh:mm:ss')
+        }
+    },
+    async activated() {
+        await this.getDetail(this.$route.params.id) // 获取详情
         await this.markdownRender() // markdown 加载
         this.setInputHeight()
-		console.log(this.$route)
+    },
+    async created() {
+        await this.getDetail(this.$route.params.id) // 获取详情
+        await this.markdownRender() // markdown 加载
+        this.setInputHeight()
     },
     mounted() {
         this.getComData() // 加载留言列表
@@ -101,30 +102,26 @@ export default {
                 this.getComData()
             }
         )
-		if (this.token) {
-			this.isCollection()
-		} 
+        if (this.token) {
+            this.isCollection()
+        }
     },
     methods: {
-		// 收藏文章
-		async isCollection() {
-			const params = {
-				articleId: this.articleId
-				// articleId: 1
-			}
-			const { data } = await isCollection(params)
-			this.isStar = data
-		},
-		// 获取文章详情数据
+        // 收藏文章
+        async isCollection() {
+            const params = {
+                articleId: this.articleId
+                // articleId: 1
+            }
+            const { data } = await isCollection(params)
+            this.isStar = data
+        },
+        // 获取文章详情数据
         async getDetail(id) {
             let params = {
                 articleId: id
             }
             const { data } = await getArticleDetail(params)
-            // const data = await this.$store.dispatch(
-            //     'dataHandle',
-            //     result.data.data
-            // )
             document.title = data.title // 动态设置页面的title
             this.detail = data
         },
@@ -146,7 +143,7 @@ export default {
         reply(data) {
             this.aiteName = data.nickName
             this.floorId = data.parentId
-			this.toUid = data.id
+            this.toUid = data.id
         },
         // 清楚掉aite后 删除艾特信息
         tagClose() {
@@ -157,10 +154,10 @@ export default {
         async comment(content) {
             const data = {
                 articleId: this.articleId, // 文章id
-				commentId: this.floorId,  // 主评论id
+                commentId: this.floorId, // 主评论id
                 content, // 评论内容
-				type: this.aiteName ? 2 : 1, // 如果 this.aiteName 那么便是二级回复,
-				toUid: this.toUid // 被评论人id
+                type: this.aiteName ? 2 : 1, // 如果 this.aiteName 那么便是二级回复,
+                toUid: this.toUid // 被评论人id
             }
             try {
                 const reqResult = await addComment(data)
@@ -187,21 +184,21 @@ export default {
         },
         // 设置喜欢这篇文章
         async likeChange(e) {
-			// 未喜欢这篇文章
+            // 未喜欢这篇文章
             if (e === 2) {
                 const data = {
                     articleId: this.detail.id
                 }
                 const { code } = await collectionArticle(data)
-				if ( code === 200) {
-					this.$message({
-					    type: 'success',
-					    message: '相识虽浅,似是经年',
-					    offset: 60
-					})
-					this.isStar = 1
-					this.$set(this.detail, 'likeNum', this.detail.likeNum + 1)
-				}
+                if (code === 200) {
+                    this.$message({
+                        type: 'success',
+                        message: '相识虽浅,似是经年',
+                        offset: 60
+                    })
+                    this.isStar = 1
+                    this.$set(this.detail, 'likeNum', this.detail.likeNum + 1)
+                }
             } else {
                 this.$message({
                     type: 'error',
@@ -214,12 +211,12 @@ export default {
             const width = document.documentElement.clientWidth
             width <= 600 && (this.rows = 4)
         },
-		deactivated() {
-		    clearBottomHandle()
-		},
-		destroyed() {
-			clearBottomHandle()
-		}
+        deactivated() {
+            clearBottomHandle()
+        },
+        destroyed() {
+            clearBottomHandle()
+        }
     }
 }
 </script>

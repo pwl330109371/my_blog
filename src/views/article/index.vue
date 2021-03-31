@@ -1,8 +1,5 @@
 <template>
-    <div
-        class="flex flex-column align-center"
-        v-loading.fullscreen.lock="pageLoad"
-    >
+    <div class="flex flex-column align-center" v-loading.fullscreen.lock="pageLoad">
         <Header />
         <Article :datas="requestDatas" />
     </div>
@@ -19,7 +16,8 @@ export default {
         return {
             page: {
                 pageSize: 10,
-                pageIndex: 1
+                pageIndex: 1,
+                keyword: ''
             },
             requestDatas: [],
             pageLoad: true,
@@ -62,15 +60,13 @@ export default {
     methods: {
         async getArticleList() {
             this.isLoading = true
-            console.log('11111111111111', this.page)
             const { data } = await getArticleList(this.page)
-            console.log(data)
-            const { len, total, list } = data
+            const { total, rows } = data
             setTimeout(() => {
-                this.requestDatas.push(...list)
+                this.requestDatas.push(...rows)
                 this.pageLoad = false
                 this.isLoading = false
-                this.len += len
+                this.len = this.requestDatas.length
                 this.isNext = this.len !== total
             }, 500)
         }
@@ -130,8 +126,7 @@ export default {
                         }
                         span:nth-of-type(odd):hover {
                             text-decoration: none;
-                            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 4'%3E%3Cpath fill='none' stroke='blue' d='M0 3.5c5 0 5-3 10-3s5 3 10 3 5-3 10-3 5 3 10 3'/%3E%3C/svg%3E")
-                                repeat-x 0 100%;
+                            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 4'%3E%3Cpath fill='none' stroke='blue' d='M0 3.5c5 0 5-3 10-3s5 3 10 3 5-3 10-3 5 3 10 3'/%3E%3C/svg%3E") repeat-x 0 100%;
                             background-size: 20px auto;
                             animation: waveMove 1s infinite linear;
                         }

@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2020-11-12 16:56:17
- * @LastEditTime: 2021-03-30 11:44:43
+ * @LastEditTime: 2021-03-31 11:16:07
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \my_blog\src\utils\index.js
@@ -61,7 +61,6 @@ export async function valiFunc(arr) {
 }
 
 export function parseTime(time, cFormat) {
-    console.log(time)
     if (arguments.length === 0) {
         return null
     }
@@ -102,7 +101,6 @@ export function parseTime(time, cFormat) {
  * @returns {string}
  */
 export function formatTime(time, option) {
-    console.log(time)
     if (('' + time).length === 10) {
         time = parseInt(time) * 1000
     } else {
@@ -133,7 +131,6 @@ export function formatTime(time, option) {
 export function formatDate(date, format) {
     if (typeof format === 'string') format = format.replace(/-/g, '/').replace(/\./g, '/') // 兼容safari
     var dateObj = new Date(date)
-    console.log(dateObj)
     var year = dateObj.getFullYear()
     var month = dateObj.getMonth() + 1
     var day = dateObj.getDate()

@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2020-11-12 16:13:13
- * @LastEditTime: 2021-03-05 18:32:40
+ * @LastEditTime: 2021-03-31 11:25:37
  * @LastEditors: Please set LastEditors
  * @Description:router 路由配置
  * @FilePath: \my_blog\src\router\index.js
@@ -79,6 +79,7 @@ const routes = [
 const router = new VueRouter({
     mode: 'history',
     base: process.env.BASE_URL,
+    scrollBehavior: () => ({ y: 0 }),
     routes
 })
 

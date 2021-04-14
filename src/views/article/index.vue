@@ -1,25 +1,44 @@
 <template>
-    <div
-        class="flex flex-column align-center"
-        v-loading.fullscreen.lock="pageLoad"
-    >
+    <div class="flex flex-column align-center" v-loading.fullscreen.lock="pageLoad">
         <Header />
-        <Article :datas="requestDatas" />
+        <div class="list">
+            <ul class="monUl">
+                <router-link tag="ul" :to="{ name: 'Detail', params: { id: thunk.id } }" class="mContent fadeInUp" :class="`wow${thunk.index}`" v-for="thunk in requestDatas" :key="thunk.id">
+                    <li class="monTitle">{{ thunk.createdAt | formatDate }}</li>
+                    <li class="mCLi flex space-between">
+                        <div class="mCLeft flex align-center">
+                            <img :src="thunk.picture" :title="thunk.title" :alt="thunk.title" />
+                            <div class="mCLText flex flex-column space-around">
+                                <span>{{ thunk.title }}</span>
+                                <span>{{ thunk.likeNum }} 喜欢 / {{ thunk.visitsNum }} 读</span>
+                            </div>
+                        </div>
+                        <span class="mCRight flex align-center">{{ thunk.day }}</span>
+                    </li>
+                </router-link>
+            </ul>
+        </div>
+        <div class="footer">
+            <Loader v-show="isLoading && !pageLoad" />
+            <span class="notMany" v-show="!isLoading && !pageLoad">没有更多了~~O(∩_∩)O</span>
+        </div>
     </div>
 </template>
 <script>
-import Article from '@/components/Article'
+import Loader from '@/components/Loading'
 import { WOW } from 'wowjs'
-import { bottomHandle, clearBottomHandle } from '@/utils'
+import { bottomHandle, clearBottomHandle, formatDate } from '@/utils'
 import { getArticleList } from '@/api/article'
+
 export default {
     name: 'articleList',
-    components: { Article },
+    components: { Loader },
     data() {
         return {
             page: {
                 pageSize: 10,
-                pageIndex: 1
+                pageIndex: 1,
+                keyword: ''
             },
             requestDatas: [],
             pageLoad: true,
@@ -43,6 +62,11 @@ export default {
             }
         }
     },
+    filters: {
+        formatDate(val) {
+            return formatDate(val, 'yyyy-MM-dd hh:mm')
+        }
+    },
     created() {
         this.getArticleList()
     },
@@ -62,15 +86,13 @@ export default {
     methods: {
         async getArticleList() {
             this.isLoading = true
-            console.log('11111111111111', this.page)
             const { data } = await getArticleList(this.page)
-            console.log(data)
-            const { len, total, list } = data
+            const { total, rows } = data
             setTimeout(() => {
-                this.requestDatas.push(...list)
+                this.requestDatas.push(...rows)
                 this.pageLoad = false
                 this.isLoading = false
-                this.len += len
+                this.len = this.requestDatas.length
                 this.isNext = this.len !== total
             }, 500)
         }
@@ -80,7 +102,7 @@ export default {
 
 <style lang="scss" scoped>
 .list {
-    width: 640px;
+    width: 960px;
     padding: 80px 0 0px;
     .monUl {
         .monTitle {
@@ -130,8 +152,7 @@ export default {
                         }
                         span:nth-of-type(odd):hover {
                             text-decoration: none;
-                            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 4'%3E%3Cpath fill='none' stroke='blue' d='M0 3.5c5 0 5-3 10-3s5 3 10 3 5-3 10-3 5 3 10 3'/%3E%3C/svg%3E")
-                                repeat-x 0 100%;
+                            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 4'%3E%3Cpath fill='none' stroke='blue' d='M0 3.5c5 0 5-3 10-3s5 3 10 3 5-3 10-3 5 3 10 3'/%3E%3C/svg%3E") repeat-x 0 100%;
                             background-size: 20px auto;
                             animation: waveMove 1s infinite linear;
                         }
@@ -139,6 +160,7 @@ export default {
                             color: #a1a0d6;
                             font-size: 13px;
                             letter-spacing: 0;
+                            text-align: left;
                         }
                     }
                 }

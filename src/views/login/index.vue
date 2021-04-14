@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2021-03-03 10:54:16
- * @LastEditTime: 2021-03-29 22:40:05
+ * @LastEditTime: 2021-04-14 21:53:30
  * @LastEditors: Peng wenlei
  * @Description: In User Settings Edit
  * @FilePath: \vue-blog-admin\src\views\login\index1.vue
@@ -136,12 +136,11 @@ export default {
                     if (this.type === 1) {
                         this.$store
                             .dispatch('user/login', this.loginForm)
-                            .then(userId => {
-                                this.$store.dispatch('user/getInfoFun', userId).then(() => {
-                                    this.loading = false
-                                    // this.$router.push('/home')
-                                    this.$router.go(-1)
-                                })
+                            .then(() => {
+                                // this.$router.push({ path: this.redirect || '/' })
+                                // this.$router.go(-1)
+                                this.$router.go(-1)
+                                this.loading = false
                             })
                             .catch(() => {
                                 this.loading = false
@@ -202,6 +201,13 @@ export default {
     box-shadow: -15px 15px 15px rgba(6, 17, 47, 0.7);
     z-index: 99999;
     transition: max-height ease-out 0.6s;
+}
+
+@media screen and (max-width: 760px) {
+    .loginmain {
+        margin-left: 20px;
+        margin-right: 20px;
+    }
 }
 .login-hg {
     max-height: 330px;

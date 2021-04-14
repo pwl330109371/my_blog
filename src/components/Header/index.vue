@@ -2,61 +2,24 @@
     <div class="header" ref="head">
         <div class="left flex align-center">
             <img @click="toIndex" src="@img/textlogo.png" alt />
-            <i
-                class="iconfont"
-                @click="changeMusic"
-                :class="isPlay ? 'icon-zanting' : 'icon-bofang'"
-            ></i>
+            <i class="iconfont" @click="changeMusic" :class="isPlay ? 'icon-zanting' : 'icon-bofang'"></i>
         </div>
         <div class="mid" :class="musicIcon === 'show' ? 'show' : 'hid'">
             {{ midText }}
         </div>
         <div class="right flex align-center">
-            <i
-                class="iconfont"
-                :class="isLike === 1 ? 'icon-xin' : 'icon-xinheart118'"
-                v-if="showLike"
-                @click="$emit('like', isLike)"
-            ></i>
+            <i class="iconfont" :class="isLike === 1 ? 'icon-xin' : 'icon-xinheart118'" v-if="showLike" @click="$emit('like', isLike)"></i>
             <router-link :to="{ name: 'Wode' }">
-                <img
-                    src="https://qiheizhiya.oss-cn-shenzhen.aliyuncs.com/image/adminAvatar.jpg"
-                    alt
-                />
+                <img src="https://qiheizhiya.oss-cn-shenzhen.aliyuncs.com/image/adminAvatar.jpg" alt />
             </router-link>
         </div>
-        <div
-            class="progressBar"
-            :style="{ width: progressBarWidth + '%' }"
-        ></div>
+        <div class="progressBar" :style="{ width: progressBarWidth + '%' }"></div>
         <div class="music-btn" @click="changeMusic" :class="[musicIcon]">
-            <svg
-                class="progress-circle"
-                viewBox="0 0 100 100"
-                version="1.1"
-                xmlns="http://www.w3.org/2000/svg"
-            >
-                <circle
-                    class="progress-background"
-                    r="50"
-                    cx="50"
-                    cy="50"
-                    fill="transparent"
-                />
-                <circle
-                    class="progress-bar"
-                    r="50"
-                    cx="50"
-                    cy="50"
-                    fill="transparent"
-                    :stroke-dasharray="dashArray"
-                    :stroke-dashoffset="dashOffset"
-                />
+            <svg class="progress-circle" viewBox="0 0 100 100" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                <circle class="progress-background" r="50" cx="50" cy="50" fill="transparent" />
+                <circle class="progress-bar" r="50" cx="50" cy="50" fill="transparent" :stroke-dasharray="dashArray" :stroke-dashoffset="dashOffset" />
             </svg>
-            <span
-                class="iconfont"
-                :class="isPlay ? 'icon-zanting' : 'icon-bofang'"
-            ></span>
+            <span class="iconfont" :class="isPlay ? 'icon-zanting' : 'icon-bofang'"></span>
         </div>
         <audio loop id="music" :src="music"></audio>
     </div>
@@ -69,8 +32,7 @@ export default {
     props: {
         music: {
             type: String,
-            default:
-                'https://qiheizhiya.oss-cn-shenzhen.aliyuncs.com/image/xingzhisuozai.mp3'
+            default: 'https://qiheizhiya.oss-cn-shenzhen.aliyuncs.com/image/xingzhisuozai.mp3'
         },
         isLike: {
             type: Number,
@@ -131,10 +93,7 @@ export default {
         listenPlay() {
             if (this.startListen) return
             this.audioDom.ontimeupdate = () => {
-                const currentTime = (
-                    (this.audioDom.currentTime / this.audioDom.duration) *
-                    100
-                ).toFixed(0)
+                const currentTime = ((this.audioDom.currentTime / this.audioDom.duration) * 100).toFixed(0)
                 this.progressBarWidth = currentTime
             }
         },
@@ -154,13 +113,8 @@ export default {
             }, 200)
         },
         scrollHandle() {
-            const scrollTop =
-                document.documentElement.scrollTop ||
-                document.body.scrollTop ||
-                window.pageYOffset
-            scrollTop >= 60
-                ? (this.musicIcon = 'show')
-                : (this.musicIcon = 'exit')
+            const scrollTop = document.documentElement.scrollTop || document.body.scrollTop || window.pageYOffset
+            scrollTop >= 60 ? (this.musicIcon = 'show') : (this.musicIcon = 'exit')
         }
     }
 }

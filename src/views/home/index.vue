@@ -1,20 +1,16 @@
 <!--
- * @Author: your name
+ * @Author: pwl
  * @Date: 2020-11-12 18:47:15
- * @LastEditTime: 2021-03-05 20:19:49
- * @LastEditors: Peng wenlei
+ * @LastEditTime: 2021-03-31 11:34:20
+ * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \my_blog\src\views\home\index.vue
 -->
 <template>
-    <div class="outer">
+    <div class="outer" @scroll="handleScroll" ref="mainCenter">
         <GiantScreen />
         <div class="content-wrap">
-            <Article
-                :datas="requestDatas"
-                :isLoading="isLoading"
-                :isNext="isNext"
-            />
+            <Article :datas="requestDatas" :isLoading="isLoading" :isNext="isNext" />
         </div>
     </div>
 </template>
@@ -35,6 +31,7 @@ export default {
                 pageIndex: 1
             },
             len: 0,
+            scroll: 0, // 记录滚动距离
             isLoading: false,
             isNext: true
         }
@@ -49,7 +46,10 @@ export default {
         }
     },
     activated() {
-        console.log(123)
+        if (this.scroll > 0) {
+            window.scrollTo(0, this.scroll)
+            this.scroll = 0
+        }
         bottomHandle(
             () => this.isNext,
             () => {
@@ -62,10 +62,15 @@ export default {
     deactivated() {
         clearBottomHandle()
     },
-	destroyed() {
-		clearBottomHandle()
-	},
+    destroyed() {
+        clearBottomHandle()
+    },
     methods: {
+        // 获取当前容器的滚动位置
+        handleScroll() {
+            this.scroll = this.$refs.mainCenter.scrollTop
+        },
+        // 获取文章列表
         async getArticleList() {
             const { data } = await getArticleList(this.page)
             console.log(data)
@@ -76,6 +81,7 @@ export default {
                 this.isLoading = false
                 this.len = this.requestDatas.length
                 this.isNext = this.len !== total
+                this.scroll = document.documentElement.scrollTop || document.body.scrollTop || window.pageYOffset
             }, 500)
         }
     }

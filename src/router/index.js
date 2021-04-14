@@ -1,8 +1,13 @@
 /*
  * @Author: your name
  * @Date: 2020-11-12 16:13:13
+<<<<<<< HEAD
  * @LastEditTime: 2021-03-25 21:07:29
  * @LastEditors: Peng wenlei
+=======
+ * @LastEditTime: 2021-03-31 18:10:48
+ * @LastEditors: Please set LastEditors
+>>>>>>> ec5c9ef733a5a65700040fd52abd21da58edb69a
  * @Description:router 路由配置
  * @FilePath: \my_blog\src\router\index.js
  */
@@ -50,12 +55,12 @@ const routes = [
         }
     },
     {
-        path: '/setting',
-        name: 'Setting',
-        component: () => import(/* webpackChunkName: "about" */ '../views/setting/'),
+        path: '/rainy',
+        name: 'Rainy',
+        component: () => import(/* webpackChunkName: "about" */ '../views/rainy/'),
         meta: {
             keepAlive: true,
-            title: '编辑信息'
+            title: '听雨'
         }
     },
     {
@@ -72,6 +77,7 @@ const routes = [
 const router = new VueRouter({
     mode: 'history',
     base: process.env.BASE_URL,
+    scrollBehavior: () => ({ y: 0 }),
     routes
 })
 

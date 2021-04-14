@@ -10,7 +10,11 @@
                 <span>阅读：{{ detail.visitsNum }}</span>
                 <span>字数：{{ content.length }}</span>
                 <!-- <span>评论：{{ commentList.total }}</span> -->
+<<<<<<< HEAD
                 <span>评论：10</span>
+=======
+                <span>评论：{{ commentList.length }}</span>
+>>>>>>> ec5c9ef733a5a65700040fd52abd21da58edb69a
                 <span>喜欢: {{ detail.likeNum }}</span>
             </div>
             <div class="content markdown-body">
@@ -79,17 +83,28 @@ export default {
     },
     filters: {
         formatDate(val) {
+<<<<<<< HEAD
             return formatDate(val, 'yyyy-MM-dd hh:mm:ss')
         }
     },
-    async created() {
-        await this.getDetail(
-            this.$route.params.id
-            // JSON.parse(localStorage.getItem('userInfo')).id
-        ) // 获取详情
+=======
+            return formatDate(val, 'yyyy-MM-dd hh:mm')
+        }
+    },
+    async activated() {
+        await this.getDetail(this.$route.params.id) // 获取详情
         await this.markdownRender() // markdown 加载
         this.setInputHeight()
+    },
+>>>>>>> ec5c9ef733a5a65700040fd52abd21da58edb69a
+    async created() {
+        await this.getDetail(this.$route.params.id) // 获取详情
+        await this.markdownRender() // markdown 加载
+        this.setInputHeight()
+<<<<<<< HEAD
         console.log(this.$route)
+=======
+>>>>>>> ec5c9ef733a5a65700040fd52abd21da58edb69a
     },
     mounted() {
         this.getComData() // 加载留言列表
@@ -122,10 +137,6 @@ export default {
                 articleId: id
             }
             const { data } = await getArticleDetail(params)
-            // const data = await this.$store.dispatch(
-            //     'dataHandle',
-            //     result.data.data
-            // )
             document.title = data.title // 动态设置页面的title
             this.detail = data
         },

@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2020-11-12 16:56:17
- * @LastEditTime: 2021-03-01 10:53:21
+ * @LastEditTime: 2021-04-14 18:28:58
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \my_blog\src\utils\index.js
@@ -60,69 +60,95 @@ export async function valiFunc(arr) {
     return res
 }
 
+export function parseTime(time, cFormat) {
+    if (arguments.length === 0) {
+        return null
+    }
+    const format = cFormat || '{y}-{m}-{d} {h}:{i}:{s}'
+    let date
+    if (typeof time === 'object') {
+        date = time
+    } else {
+        if (('' + time).length === 10) time = parseInt(time) * 1000
+        date = new Date(time)
+    }
+    const formatObj = {
+        y: date.getFullYear(),
+        m: date.getMonth() + 1,
+        d: date.getDate(),
+        h: date.getHours(),
+        i: date.getMinutes(),
+        s: date.getSeconds(),
+        a: date.getDay()
+    }
+    const timeStr = format.replace(/{(y|m|d|h|i|s|a)+}/g, (result, key) => {
+        let value = formatObj[key]
+        // Note: getDay() returns 0 on Sunday
+        if (key === 'a') {
+            return ['日', '一', '二', '三', '四', '五', '六'][value]
+        }
+        if (result.length > 0 && value < 10) {
+            value = '0' + value
+        }
+        return value || 0
+    })
+    return timeStr
+}
+
 /**
  * @param {number} time
  * @param {string} option
  * @returns {string}
  */
 export function formatTime(time, option) {
-  if (('' + time).length === 10) {
-    time = parseInt(time) * 1000
-  } else {
-    time = +time
-  }
-  const d = new Date(time)
-  const now = Date.now()
+    if (('' + time).length === 10) {
+        time = parseInt(time) * 1000
+    } else {
+        time = +time
+    }
+    const d = new Date(time)
+    const now = Date.now()
 
-  const diff = (now - d) / 1000
+    const diff = (now - d) / 1000
 
-  if (diff < 30) {
-    return '刚刚'
-  } else if (diff < 3600) {
-    // less 1 hour
-    return Math.ceil(diff / 60) + '分钟前'
-  } else if (diff < 3600 * 24) {
-    return Math.ceil(diff / 3600) + '小时前'
-  } else if (diff < 3600 * 24 * 2) {
-    return '1天前'
-  }
-  if (option) {
-    return parseTime(time, option)
-  } else {
-    return (
-      d.getMonth() +
-      1 +
-      '月' +
-      d.getDate() +
-      '日' +
-      d.getHours() +
-      '时' +
-      d.getMinutes() +
-      '分'
-    )
-  }
+    if (diff < 30) {
+        return '刚刚'
+    } else if (diff < 3600) {
+        // less 1 hour
+        return Math.ceil(diff / 60) + '分钟前'
+    } else if (diff < 3600 * 24) {
+        return Math.ceil(diff / 3600) + '小时前'
+    } else if (diff < 3600 * 24 * 2) {
+        return '1天前'
+    }
+    if (option) {
+        return parseTime(time, option)
+    } else {
+        return d.getMonth() + 1 + '月' + d.getDate() + '日' + d.getHours() + '时' + d.getMinutes() + '分'
+    }
 }
 
 export function formatDate(date, format) {
-  if (typeof format === 'string') format = format.replace(/-/g, '/').replace(/\./g, '/') // 兼容safari
-  var dateObj = new Date(date)
-  console.log(dateObj)
-  var year = dateObj.getFullYear()
-  var month = dateObj.getMonth() + 1
-  var day = dateObj.getDate()
-  var hour = dateObj.getHours()
-  var minute = dateObj.getMinutes()
-  var second = dateObj.getSeconds()
-  //  console.log(month)
-  var formatStr = format || 'yyyy/MM/dd hh:mm:ss'
+    console.log(format)
+    var isMac = /macintosh|mac os x/i.test(navigator.userAgent)
+    if (typeof format === 'string') format = isMac ? format.replace(/-/g, '/').replace(/\./g, '/') : format // 兼容safari
+    var dateObj = new Date(date)
+    var year = dateObj.getFullYear()
+    var month = dateObj.getMonth() + 1
+    var day = dateObj.getDate()
+    var hour = dateObj.getHours()
+    var minute = dateObj.getMinutes()
+    var second = dateObj.getSeconds()
+    var formatStr = format || 'yyyy/MM/dd hh:mm:ss'
+    console.log(formatStr)
 
-  return formatStr
-    .replace(/yyyy/g, year)
-    .replace(/MM/g, ('0' + month).slice(-2))
-    .replace(/dd/g, ('0' + day).slice(-2))
-    .replace(/hh/g, ('0' + hour).slice(-2))
-    .replace(/mm/g, ('0' + minute).slice(-2))
-    .replace(/ss/g, ('0' + second).slice(-2))
+    return formatStr
+        .replace(/yyyy/g, year)
+        .replace(/MM/g, ('0' + month).slice(-2))
+        .replace(/dd/g, ('0' + day).slice(-2))
+        .replace(/hh/g, ('0' + hour).slice(-2))
+        .replace(/mm/g, ('0' + minute).slice(-2))
+        .replace(/ss/g, ('0' + second).slice(-2))
 }
 
 // 滚动监听
@@ -139,19 +165,11 @@ export function clearBottomHandle() {
 function scrollChange(isScroll, callback) {
     if (!isScroll) return
     // 滚动的距离
-    const scrollTop = Math.ceil(
-        document.documentElement.scrollTop ||
-            document.body.scrollTop ||
-            window.pageYOffset
-    )
+    const scrollTop = Math.ceil(document.documentElement.scrollTop || document.body.scrollTop || window.pageYOffset)
     // 窗口高度
-    const windowHeight =
-        document.documentElement.clientHeight || document.body.clientHeight
+    const windowHeight = document.documentElement.clientHeight || document.body.clientHeight
     // 滚动的高度
-    const scrollHeight =
-        document.documentElement.scrollHeight ||
-        document.body.scrollHeight ||
-        window.scrollHeight
+    const scrollHeight = document.documentElement.scrollHeight || document.body.scrollHeight || window.scrollHeight
     if (scrollTop + windowHeight >= scrollHeight) {
         console.log(scrollTop, windowHeight, scrollHeight)
         callback()
@@ -159,5 +177,4 @@ function scrollChange(isScroll, callback) {
 }
 
 // 节流滚动方法
-const throttleScroll = (isScroll, callback) =>
-    throttle(scrollChange.bind(null, isScroll, callback))
+const throttleScroll = (isScroll, callback) => throttle(scrollChange.bind(null, isScroll, callback))

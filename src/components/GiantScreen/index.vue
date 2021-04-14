@@ -7,7 +7,7 @@
         </div>
         <div class="header flex align-center space-between">
             <img src="@img/textlogo.png" alt="" />
-            <router-link :to="{ name: 'Home' }" tag="div" class="icon"><i class="el-icon-s-unfold"></i></router-link>
+            <div class="icon" @click="showModal"><i class="el-icon-s-unfold"></i></div>
         </div>
         <div class="mask"></div>
         <div class="info">
@@ -19,21 +19,27 @@
                 </transition>
             </div>
             <div class="content">
-                时间万般美好事物，我们最高处见。
+                世间万般美好事物，我们高处再相见!
             </div>
         </div>
+        <Menu @showModal="showModal" :showMenu="showMenu" />
     </div>
 </template>
 <script>
 import Parallax from 'parallax-js'
 import { setTimeout } from 'timers'
+import Menu from '../Menu'
 export default {
     name: 'giantScreen',
+    components: {
+        Menu
+    },
     data() {
         return {
             imgWidth: null,
             imgHeight: null,
             hiddenText: false,
+            showMenu: false, // 是否显示菜单
             date: {}
         }
     },
@@ -57,6 +63,10 @@ export default {
         this.hiddenTextEmit()
     },
     methods: {
+        // 是否显示菜单
+        showModal() {
+            this.showMenu = !this.showMenu
+        },
         async getYearMonthDay() {
             const date = new Date()
             const year = date.getFullYear()
@@ -99,7 +109,7 @@ export default {
     height: 100vh;
     overflow: hidden;
     position: relative;
-    z-index: 9999;
+    z-index: 1;
     .img-outer {
         width: 100%;
         height: 100%;
@@ -128,9 +138,9 @@ export default {
     top: 70px;
     width: 100%;
     height: auto;
-    z-index: 99999;
+    z-index: 1;
     img {
-        width: 100px;
+        width: 40px;
         height: 44px;
         cursor: pointer;
     }
@@ -202,7 +212,7 @@ export default {
     .info {
         bottom: 8%;
         left: 5%;
-        top: auto;
+        top: 50%;
         width: 70%;
         transform: none;
     }

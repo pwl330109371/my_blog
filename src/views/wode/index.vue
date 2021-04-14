@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2021-03-01 14:58:10
- * @LastEditTime: 2021-03-05 14:51:38
+ * @LastEditTime: 2021-03-30 14:14:53
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \my_blog\src\views\wode\index.vue
@@ -93,6 +93,7 @@ export default {
         line-height: 30px;
         margin: 0 0 18px;
         font-size: 16px;
+        text-align: left;
     }
     ul {
         margin: 0 0 18px;

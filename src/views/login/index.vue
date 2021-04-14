@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2021-03-03 10:54:16
- * @LastEditTime: 2021-03-25 21:58:24
+ * @LastEditTime: 2021-03-29 22:40:05
  * @LastEditors: Peng wenlei
  * @Description: In User Settings Edit
  * @FilePath: \vue-blog-admin\src\views\login\index1.vue
@@ -134,7 +134,6 @@ export default {
                 if (valid) {
                     this.loading = true
                     if (this.type === 1) {
-                        debugger
                         this.$store
                             .dispatch('user/login', this.loginForm)
                             .then(userId => {

@@ -84,7 +84,7 @@ export default {
     },
     filters: {
         formatDate(val) {
-            return formatDate(val, 'yyyy-MM-dd hh:mm:ss')
+            return formatDate(val, 'yyyy-MM-dd hh:mm')
         }
     },
     methods: {

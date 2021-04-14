@@ -1,17 +1,38 @@
 <template>
     <div class="flex flex-column align-center" v-loading.fullscreen.lock="pageLoad">
         <Header />
-        <Article :datas="requestDatas" />
+        <div class="list">
+            <ul class="monUl">
+                <router-link tag="ul" :to="{ name: 'Detail', params: { id: thunk.id } }" class="mContent fadeInUp" :class="`wow${thunk.index}`" v-for="thunk in requestDatas" :key="thunk.id">
+                    <li class="monTitle">{{ thunk.createdAt | formatDate }}</li>
+                    <li class="mCLi flex space-between">
+                        <div class="mCLeft flex align-center">
+                            <img :src="thunk.picture" :title="thunk.title" :alt="thunk.title" />
+                            <div class="mCLText flex flex-column space-around">
+                                <span>{{ thunk.title }}</span>
+                                <span>{{ thunk.likeNum }} 喜欢 / {{ thunk.visitsNum }} 读</span>
+                            </div>
+                        </div>
+                        <span class="mCRight flex align-center">{{ thunk.day }}</span>
+                    </li>
+                </router-link>
+            </ul>
+        </div>
+        <div class="footer">
+            <Loader v-show="isLoading && !pageLoad" />
+            <span class="notMany" v-show="!isLoading && !pageLoad">没有更多了~~O(∩_∩)O</span>
+        </div>
     </div>
 </template>
 <script>
-import Article from '@/components/Article'
+import Loader from '@/components/Loading'
 import { WOW } from 'wowjs'
-import { bottomHandle, clearBottomHandle } from '@/utils'
+import { bottomHandle, clearBottomHandle, formatDate } from '@/utils'
 import { getArticleList } from '@/api/article'
+
 export default {
     name: 'articleList',
-    components: { Article },
+    components: { Loader },
     data() {
         return {
             page: {
@@ -39,6 +60,11 @@ export default {
                     }).init()
                 })
             }
+        }
+    },
+    filters: {
+        formatDate(val) {
+            return formatDate(val, 'yyyy-MM-dd hh:mm')
         }
     },
     created() {
@@ -76,7 +102,7 @@ export default {
 
 <style lang="scss" scoped>
 .list {
-    width: 640px;
+    width: 960px;
     padding: 80px 0 0px;
     .monUl {
         .monTitle {
@@ -134,6 +160,7 @@ export default {
                             color: #a1a0d6;
                             font-size: 13px;
                             letter-spacing: 0;
+                            text-align: left;
                         }
                     }
                 }

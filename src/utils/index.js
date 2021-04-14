@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2020-11-12 16:56:17
- * @LastEditTime: 2021-03-31 11:16:07
+ * @LastEditTime: 2021-04-14 18:28:58
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \my_blog\src\utils\index.js
@@ -129,7 +129,9 @@ export function formatTime(time, option) {
 }
 
 export function formatDate(date, format) {
-    if (typeof format === 'string') format = format.replace(/-/g, '/').replace(/\./g, '/') // 兼容safari
+    console.log(format)
+    var isMac = /macintosh|mac os x/i.test(navigator.userAgent)
+    if (typeof format === 'string') format = isMac ? format.replace(/-/g, '/').replace(/\./g, '/') : format // 兼容safari
     var dateObj = new Date(date)
     var year = dateObj.getFullYear()
     var month = dateObj.getMonth() + 1
@@ -137,8 +139,8 @@ export function formatDate(date, format) {
     var hour = dateObj.getHours()
     var minute = dateObj.getMinutes()
     var second = dateObj.getSeconds()
-    //  console.log(month)
     var formatStr = format || 'yyyy/MM/dd hh:mm:ss'
+    console.log(formatStr)
 
     return formatStr
         .replace(/yyyy/g, year)

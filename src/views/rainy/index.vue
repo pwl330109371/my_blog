@@ -6,7 +6,7 @@
 
         <!-- <span class="logo iconfont icon-logo4" @click="toIndex"></span> -->
 
-        <img class="rain-bg" src="https://qiheizhiya.oss-cn-shenzhen.aliyuncs.com/image/rain-bg.gif" draggable="fals /e" />
+        <img class="rain-bg" src="https://thewind-1302955814.cos.ap-shanghai.myqcloud.com/rainy/rain-bg.gif" draggable="fals /e" />
         <img class="words" src="@/assets/rain/words.png" draggable="fa /lse" />
 
         <ul class="option flex align-center" v-show="show">
@@ -35,19 +35,19 @@ export default {
                 {
                     on: require('@/assets/rain/rain_on.png'),
                     off: require('@/assets/rain/rain_off.png'),
-                    music: 'https://qiheizhiya.oss-cn-shenzhen.aliyuncs.com/image/thunder.mp3',
+                    music: 'https://thewind-1302955814.cos.ap-shanghai.myqcloud.com/rainy/thunder.mp3',
                     active: false
                 },
                 {
                     on: require('@/assets/rain/rain2_on.png'),
                     off: require('@/assets/rain/rain2_off.png'),
-                    music: 'https://qiheizhiya.oss-cn-shenzhen.aliyuncs.com/image/loudThunder.mp3',
+                    music: 'https://thewind-1302955814.cos.ap-shanghai.myqcloud.com/rainy/loudThunder.mp3',
                     active: false
                 },
                 {
                     on: require('@/assets/rain/rain3_on.png'),
                     off: require('@/assets/rain/rain3_off.png'),
-                    music: 'https://qiheizhiya.oss-cn-shenzhen.aliyuncs.com/image/rain.mp3',
+                    music: 'https://thewind-1302955814.cos.ap-shanghai.myqcloud.com/rainy/rain.mp3',
                     active: false
                 },
                 {

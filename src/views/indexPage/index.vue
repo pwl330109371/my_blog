@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2021-03-02 15:02:28
- * @LastEditTime: 2021-03-03 16:21:10
+ * @LastEditTime: 2021-04-14 18:47:17
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \my_blog\src\views\indexPage\index.vue
@@ -156,6 +156,44 @@ export default {
         }
         100% {
             transform: scale(1);
+        }
+    }
+}
+
+@media screen and (max-width: 900px) {
+    .index-page {
+        padding: 0;
+
+        .index-page-title {
+            margin-left: 15px;
+            margin-top: 15px;
+            h3 {
+                font-size: 24px;
+            }
+        }
+        .index-page-left {
+            width: 100%;
+            position: absolute;
+            box-sizing: border-box;
+            z-index: 1;
+            .index-page-text {
+                max-width: 100%;
+                margin: 8.6% 15px;
+                text-align: center;
+                .welcome-title {
+                    text-align: left;
+                }
+                .welcome-text {
+                    font-size: 24px;
+                }
+            }
+        }
+        .index-page-right {
+            width: 100%;
+            box-sizing: border-box;
+            position: absolute;
+            top: 40%;
+            z-index: 0;
         }
     }
 }

@@ -9,7 +9,7 @@
                 <span>阅读：{{ detail.visitsNum }}</span>
                 <span>字数：{{ content.length }}</span>
                 <!-- <span>评论：{{ commentList.total }}</span> -->
-                <span>评论：10</span>
+                <span>评论：{{ commentList.length }}</span>
                 <span>喜欢: {{ detail.likeNum }}</span>
             </div>
             <div class="content markdown-body">
@@ -78,7 +78,7 @@ export default {
     },
     filters: {
         formatDate(val) {
-            return formatDate(val, 'yyyy-MM-dd hh:mm:ss')
+            return formatDate(val, 'yyyy-MM-dd hh:mm')
         }
     },
     async activated() {

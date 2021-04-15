@@ -2,7 +2,7 @@
     <div class="max">
         <div id="scene" class="img-outer">
             <div data-depth="0.4" class="layer">
-                <img src="https://image.raindays.cn/Mood/image/1594348066004.png" class="moveImg" :width="imgWidth" :height="imgHeight" />
+                <img src="https://thewind-1302955814.cos.ap-shanghai.myqcloud.com/thewind/1594348066004.png" class="moveImg" :width="imgWidth" :height="imgHeight" />
             </div>
         </div>
         <div class="header flex align-center space-between">
@@ -53,6 +53,9 @@ export default {
             this.imgHeight = 960
         }
         this.getYearMonthDay()
+    },
+    activated() {
+        this.showMenu = false
     },
     mounted() {
         const scene = document.getElementById('scene')
@@ -174,12 +177,13 @@ export default {
     transform: translateY(-50%);
     color: #ffffff;
     font-size: 0.5rem;
+    text-align: left;
     .time {
         font-size: 14px;
     }
     .title {
         font-size: 1rem;
-        margin: 15px 0 30px;
+        margin: 15px 0;
     }
     .content {
         font-size: 15px;
@@ -212,7 +216,7 @@ export default {
     .info {
         bottom: 8%;
         left: 5%;
-        top: 50%;
+        top: 68%;
         width: 70%;
         transform: none;
     }

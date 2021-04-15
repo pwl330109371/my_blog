@@ -7,7 +7,7 @@
                 <div class="block flex align-center ">
                     <i class="iconfont icon-weixin1"></i>
                     <div class="hide-block">
-                        <img src="https://qiheizhiya.oss-cn-shenzhen.aliyuncs.com/image/wxImg.jpg" alt="" />
+                        <img src="https://thewind-1302955814.cos.ap-shanghai.myqcloud.com/rainy/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20210415142905.jpg" alt="" />
                     </div>
                 </div>
                 <div class="block flex align-center ">
@@ -17,7 +17,7 @@
                     </div>
                 </div>
                 <div class="block flex align-center ">
-                    <a href="https://github.com/qiheizhiya/myBlog" target="_blank">
+                    <a href="https://github.com/pwl330109371/my_blog" target="_blank">
                         <i class="iconfont icon-GitHub"></i>
                     </a>
                     <div class="hide-block flex align-center justify-center">

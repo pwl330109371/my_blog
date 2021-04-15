@@ -1,7 +1,7 @@
 <!--
  * @Author: pwl
  * @Date: 2020-12-14 22:53:54
- * @LastEditTime: 2021-03-30 15:37:48
+ * @LastEditTime: 2021-04-15 15:20:14
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \my_blog\public\index.html
@@ -19,6 +19,15 @@
       <link href="<%= htmlWebpackPlugin.options.cdn.css[i] %>" rel="stylesheet">
     <% } %>
     <title>从前慢的时光驿站</title>
+    <script>
+      var _hmt = _hmt || [];
+      (function() {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?78f739731d064c625dfe3d984ff95bfc";
+        var s = document.getElementsByTagName("script")[0]; 
+        s.parentNode.insertBefore(hm, s);
+      })();
+    </script>
   </head>
   <body>
     <noscript>

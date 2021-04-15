@@ -10,7 +10,7 @@
         <div class="right flex align-center">
             <i class="iconfont" :class="isLike === 1 ? 'icon-xin' : 'icon-xinheart118'" v-if="showLike" @click="$emit('like', isLike)"></i>
             <router-link :to="{ name: 'Wode' }">
-                <img src="https://qiheizhiya.oss-cn-shenzhen.aliyuncs.com/image/adminAvatar.jpg" alt />
+                <img src="https://thewind-1302955814.cos.ap-shanghai.myqcloud.com/rainy/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20210415142326.jpg" alt />
             </router-link>
         </div>
         <div class="progressBar" :style="{ width: progressBarWidth + '%' }"></div>
@@ -32,7 +32,7 @@ export default {
     props: {
         music: {
             type: String,
-            default: 'https://qiheizhiya.oss-cn-shenzhen.aliyuncs.com/image/xingzhisuozai.mp3'
+            default: 'https://thewind-1302955814.cos.ap-shanghai.myqcloud.com/thewind/KWXZ%20-%20ESti%20-%20Wind%20from%20the%20Far%20East%EF%BC%88%E4%B8%8A%E4%BA%AC%EF%BC%89%EF%BC%88%E9%98%BF%E6%B4%B2%20remix%EF%BC%89.mp3'
         },
         isLike: {
             type: Number,

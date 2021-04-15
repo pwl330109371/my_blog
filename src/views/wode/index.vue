@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2021-03-01 14:58:10
- * @LastEditTime: 2021-03-30 14:14:53
+ * @LastEditTime: 2021-04-15 14:34:22
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \my_blog\src\views\wode\index.vue
@@ -15,7 +15,7 @@
                 <div class="block flex align-center ">
                     <i class="iconfont icon-weixin1"></i>
                     <div class="hide-block">
-                        <img src="https://qiheizhiya.oss-cn-shenzhen.aliyuncs.com/image/wxImg.jpg" alt="" />
+                        <img src="https://thewind-1302955814.cos.ap-shanghai.myqcloud.com/rainy/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20210415142905.jpg" alt="" />
                     </div>
                 </div>
                 <div class="block flex align-center ">
@@ -156,6 +156,9 @@ export default {
             }
             span {
                 text-align: center;
+            }
+            img {
+                width: 100%;
             }
         }
         &:hover {

@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2021-03-03 10:54:16
- * @LastEditTime: 2021-03-29 18:33:40
+ * @LastEditTime: 2021-04-15 15:23:15
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \vue-blog-admin\src\views\login\index1.vue
@@ -89,7 +89,7 @@ export default {
         }
         return {
             loginForm: {
-                username: 'pwl201314',
+                username: 'youke001',
                 password: '123456',
                 confirmPwd: ''
             },

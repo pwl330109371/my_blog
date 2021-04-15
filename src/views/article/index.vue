@@ -112,6 +112,7 @@ export default {
             margin: 30px 0 10px;
             list-style: none;
             position: relative;
+            text-align: left;
             &::before {
                 content: '';
                 width: 12px;
@@ -119,7 +120,7 @@ export default {
                 display: inline-block;
                 background-color: #dce8ec;
                 border: 3px solid #afcfff;
-                margin-right: 22px;
+                margin-right: 10px;
                 border-radius: 50%;
                 box-sizing: border-box;
             }

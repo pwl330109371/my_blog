@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2021-03-02 15:02:28
- * @LastEditTime: 2021-04-14 18:47:17
+ * @LastEditTime: 2021-04-15 09:52:03
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \my_blog\src\views\indexPage\index.vue
@@ -164,18 +164,18 @@ export default {
     .index-page {
         padding: 0;
 
-        .index-page-title {
-            margin-left: 15px;
-            margin-top: 15px;
-            h3 {
-                font-size: 24px;
-            }
-        }
         .index-page-left {
             width: 100%;
             position: absolute;
             box-sizing: border-box;
             z-index: 1;
+            .index-page-title {
+                margin-left: 15px;
+                margin-top: 15px;
+                h3 {
+                    font-size: 24px;
+                }
+            }
             .index-page-text {
                 max-width: 100%;
                 margin: 8.6% 15px;
@@ -186,10 +186,18 @@ export default {
                 .welcome-text {
                     font-size: 24px;
                 }
+                .index-page-btn {
+                    margin-top: 3%;
+                    button {
+                        width: 150px;
+                        height: 50px;
+                    }
+                }
             }
         }
         .index-page-right {
             width: 100%;
+            padding: 15px;
             box-sizing: border-box;
             position: absolute;
             top: 40%;

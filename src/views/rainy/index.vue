@@ -1,13 +1,13 @@
 <template>
     <div class="rain">
         <div class="logo-img" @click="toIndex">
-            <!-- <img src="@img/whitelogo.png" / /> -->
+            <img src="@img/whitelogo.png" />
         </div>
 
         <!-- <span class="logo iconfont icon-logo4" @click="toIndex"></span> -->
 
-        <img class="rain-bg" src="https://thewind-1302955814.cos.ap-shanghai.myqcloud.com/rainy/rain-bg.gif" draggable="fals /e" />
-        <img class="words" src="@/assets/rain/words.png" draggable="fa /lse" />
+        <img class="rain-bg" src="https://thewind-1302955814.cos.ap-shanghai.myqcloud.com/rainy/rain-bg.gif" draggable="false" />
+        <img class="words" src="@/assets/rain/words.png" draggable="false" />
 
         <ul class="option flex align-center" v-show="show">
             <li v-for="(item, index) in rainIcon" :key="index">
@@ -70,6 +70,15 @@ export default {
         document.documentElement.removeEventListener('click', this.oncePlay)
         this.rainIcon.forEach(item => this.$set(item, 'active', false))
     },
+    mounted() {
+        this.audioDom = document.getElementsByClassName('music')
+        this.userToast()
+        document.documentElement.addEventListener('click', this.oncePlay)
+    },
+    destroyed() {
+        document.documentElement.removeEventListener('click', this.oncePlay)
+        this.rainIcon.forEach(item => this.$set(item, 'active', false))
+    },
     methods: {
         toIndex() {
             this.$router.push('/')
@@ -88,7 +97,7 @@ export default {
             const h = this.$createElement
             this.$notify({
                 title: '提示',
-                message: h('s pan', { style: 'color: #008c8c' }, '请点击一次页面开始聆听雨声哦！也可  以在右下角关闭或者打开其声音。右上角logo可以回到首页')
+                message: h('span', { style: 'color: #008c8c' }, '请点击一次页面开始聆听雨声哦！也可  以在右下角关闭或者打开其声音。左上角logo可以回到首页')
             })
         }
     }
@@ -114,7 +123,7 @@ export default {
         width: 100px;
         height: 44px;
         img {
-            width: 100%;
+            width: 40px;
         }
     }
     .rain-bg {

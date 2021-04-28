@@ -1,14 +1,14 @@
 <!--
  * @Author: your name
  * @Date: 2021-03-01 14:58:10
- * @LastEditTime: 2021-04-15 14:34:22
+ * @LastEditTime: 2021-04-17 16:23:01
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \my_blog\src\views\wode\index.vue
 -->
 <template>
     <div>
-        <Header />
+        <Header midText="从前慢" />
         <div class="content markdown-body">
             <div v-html="content" v-highlight></div>
             <div class="me flex">

@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2021-03-03 10:54:16
- * @LastEditTime: 2021-04-15 15:23:15
+ * @LastEditTime: 2021-04-28 11:29:48
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \vue-blog-admin\src\views\login\index1.vue
@@ -112,7 +112,9 @@ export default {
             immediate: true
         }
     },
-    mounted() {},
+    mounted() {
+        console.log()
+    },
     methods: {
         // 显示密码
         showPwd() {
@@ -154,8 +156,7 @@ export default {
                                         .dispatch('user/login', this.loginForm)
                                         .then(() => {
                                             this.$message
-                                            // this.$router.push({ path: this.redirect || '/' })
-                                            this.$router.go(-1)
+                                            this.$router.push({ path: this.redirect || '/' })
                                             this.loading = false
                                         })
                                         .catch(() => {

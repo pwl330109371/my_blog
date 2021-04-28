@@ -34,6 +34,7 @@ const cdn = {
         ]
     }
 }
+
 function resolve(dir) {
     return path.join(__dirname, dir)
 }
@@ -43,7 +44,7 @@ module.exports = {
     publicPath: '/',
     assetsDir: './',
     // 输出文件目录
-    outputDir: isProduction ? path.resolve(__dirname, '../public/pc') : 'devdist',
+    outputDir: isProduction ? path.resolve(__dirname, '../public/my_blog') : 'devdist',
     // eslint-loader 是否在保存的时候检查
     lintOnSave: false,
     // 默认情况下，生成的静态资源在它们的文件名中包含了 hash 以便更好的控制缓存。

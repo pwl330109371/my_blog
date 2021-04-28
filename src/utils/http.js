@@ -3,7 +3,7 @@
  * @作者: L
  * @Date: 2020-09-25
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2021-03-31 17:50:52
+ * @LastEditTime: 2021-04-28 11:26:07
  * @Author: L
  */
 import axios from 'axios'
@@ -49,7 +49,7 @@ serve.interceptors.response.use(
                         center: true,
                         type: 'warning'
                     }).then(() => {
-                        route.push('/login')
+                        route.push('/login?redirect=' + route.history._startLocation)
                     })
                 } else {
                     Message({

@@ -3,13 +3,14 @@
  * @作者: L
  * @Date: 2020-09-25
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2021-04-28 11:26:07
+ * @LastEditTime: 2021-04-28 15:39:24
  * @Author: L
  */
 import axios from 'axios'
 import { getCookie } from '@/utils/auth'
 import { Message, MessageBox } from 'element-ui'
 import route from '@/router'
+import Vue from 'vue'
 // 设置axios请求默认配置
 const serve = axios.create({
     baseURL: process.env.VUE_APP_BASE_API, // api的base_url前缀
@@ -49,7 +50,8 @@ serve.interceptors.response.use(
                         center: true,
                         type: 'warning'
                     }).then(() => {
-                        route.push('/login?redirect=' + route.history._startLocation)
+                        const path = route.app._route.fullPath
+                        route.push('/login?redirect=' + path)
                     })
                 } else {
                     Message({
@@ -67,7 +69,7 @@ serve.interceptors.response.use(
             case 401:
                 // 返回 401 清除token信息并跳转到登录页面
                 MessageBox.confirm('您登录时间过长，请重新返回登录页面进行登录', '确定登出', {
-                        confirmButtonText: '重新登录',
+                    confirmButtonText: '重新登录',
                     showCancelButton: false,
                     closeOnClickModal: false,
                     showClose: false,

@@ -136,19 +136,20 @@ export default {
 }
 .header {
     padding: 0 40px;
-    position: absolute;
+    position: fixed;
     left: 0;
-    top: 70px;
+    top: 50px;
     width: 100%;
     height: auto;
     z-index: 1;
+    cursor: pointer;
     img {
         width: 40px;
         height: 44px;
-        cursor: pointer;
     }
     .icon {
-        font-size: 20px;
+        cursor: pointer;
+        font-size: 30px;
         color: #ff3600;
         background: rgba(255, 255, 255, 0.8);
         width: 30px;

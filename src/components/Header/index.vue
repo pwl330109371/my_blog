@@ -9,8 +9,9 @@
         </div>
         <div class="right flex align-center">
             <i class="iconfont" :class="isLike === 1 ? 'icon-xin' : 'icon-xinheart118'" v-if="showLike" @click="$emit('like', isLike)"></i>
-            <router-link :to="{ name: 'Wode' }">
-                <img src="https://thewind-1302955814.cos.ap-shanghai.myqcloud.com/rainy/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20210415142326.jpg" alt />
+            <router-link :to="{ name: 'Wode', query: { id: userInfo.id } }">
+                <!-- <img :src="userInfo.picture" alt /> -->
+                <el-image style="width: 40px; height: 40px" :src="userInfo.picture" fit="fill"></el-image>
             </router-link>
         </div>
         <div class="progressBar" :style="{ width: progressBarWidth + '%' }"></div>
@@ -37,6 +38,17 @@ export default {
         isLike: {
             type: Number,
             default: 2
+        },
+        userInfo: {
+            type: Object,
+            default: () => {
+                return {
+                    gender: 1,
+                    nickName: '从前慢',
+                    picture: 'https://thewind-1302955814.cos.ap-shanghai.myqcloud.com/rainy/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20210415142326.jpg',
+                    id: 1
+                }
+            }
         },
         midText: {
             type: String,
@@ -164,7 +176,7 @@ export default {
     .mid.hid {
         opacity: 0;
     }
-    .right {
+    ::v-deep.right {
         .iconfont {
             font-size: 26px;
             margin: 0 16px;
@@ -178,9 +190,9 @@ export default {
                 color: #ef6d57;
             }
         }
-        img {
-            width: 30px;
-            height: auto;
+        .el-image__inner {
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
         }
     }

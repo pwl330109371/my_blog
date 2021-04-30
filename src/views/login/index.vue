@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2021-03-03 10:54:16
- * @LastEditTime: 2021-04-28 11:29:48
+ * @LastEditTime: 2021-04-30 14:29:42
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \vue-blog-admin\src\views\login\index1.vue
@@ -54,7 +54,6 @@
 </template>
 
 <script>
-import { validUsername } from '@/utils/validate'
 import canvasBg from './components/canvsBg'
 import star from './components/star'
 export default {
@@ -65,15 +64,15 @@ export default {
     },
     data() {
         const validateUsername = (rule, value, callback) => {
-            if (!validUsername(value)) {
-                callback(new Error('Please enter the correct user name'))
+            if (value.length < 3) {
+                callback(new Error('用户名长度不能小于六位数!'))
             } else {
                 callback()
             }
         }
         const validatePassword = (rule, value, callback) => {
             if (value.length < 6) {
-                callback(new Error('The password can not be less than 6 digits'))
+                callback(new Error('密码长度不能小于六位数!'))
             } else {
                 callback()
             }

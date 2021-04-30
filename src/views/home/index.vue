@@ -1,7 +1,7 @@
 <!--
  * @Author: pwl
  * @Date: 2020-11-12 18:47:15
- * @LastEditTime: 2021-03-31 11:34:20
+ * @LastEditTime: 2021-04-30 15:21:49
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \my_blog\src\views\home\index.vue
@@ -12,6 +12,7 @@
         <div class="content-wrap">
             <Article :datas="requestDatas" :isLoading="isLoading" :isNext="isNext" />
         </div>
+        <div style="padding-bottom: 15px; cursor: pointer" @click="goHref">鄂ICP备2021007829号</div>
     </div>
 </template>
 <script>
@@ -83,6 +84,10 @@ export default {
                 this.isNext = this.len !== total
                 this.scroll = document.documentElement.scrollTop || document.body.scrollTop || window.pageYOffset
             }, 500)
+        },
+        // 跳转工信部网站
+        goHref() {
+            window.open('https://beian.miit.gov.cn/', '_blank')
         }
     }
 }

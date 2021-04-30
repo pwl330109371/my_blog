@@ -1,7 +1,7 @@
 <template>
     <div class="flex flex-column align-center">
         <scrollBar />
-        <Header @like="likeChange" :isLike="isStar" :midText="detail.title" :showLike="true" :music="detail.musicUrl" />
+        <Header @like="likeChange" :isLike="isStar" :midText="detail.title" :userInfo="detail.user" :showLike="true" :music="detail.musicUrl" />
         <div class="detail">
             <h1 class="title">{{ detail.title }}</h1>
             <div class="status flex align-center">
@@ -10,9 +10,15 @@
                 <span>字数：{{ content.length }}</span>
                 <!-- <span>评论：{{ commentList.total }}</span> -->
                 <span>评论：{{ commentList.length }}</span>
-                <span>喜欢: {{ detail.likeNum }}</span>
+                <span v-if="detail.user">
+                    作者: <span :class="detail.user.gender == '1' ? 'boy' : detail.user.gender == '2' ? 'girl' : ''">{{ detail.user.nickName }}</span>
+                    <svg-icon :icon-class="detail.user.gender == '1' ? 'boy' : detail.user.gender == '2' ? 'girl' : ''" />
+                </span>
             </div>
             <div class="content markdown-body">
+                <div class="picture">
+                    <img :src="detail.picture" alt="" srcset="" />
+                </div>
                 <!-- <pre class="language-markup">
                     <code v-html="detail.content" v-highlight></code>
                 </pre> -->
@@ -160,14 +166,16 @@ export default {
                 toUid: this.toUid // 被评论人id
             }
             try {
-                const reqResult = await addComment(data)
+                await addComment(data)
                 this.getComData()
                 this.$message({
                     type: 'success',
                     message: '评论成功~~',
                     offset: 60
                 })
-            } catch (e) {}
+            } catch (e) {
+                console.log(e)
+            }
         },
         // 获取评论列表
         async getComData() {
@@ -249,12 +257,31 @@ export default {
             font-size: 13px;
             margin-right: 10px;
         }
+        .boy {
+            color: rgb(117, 185, 235);
+            margin-right: 0;
+        }
+        .girl {
+            color: rgb(255, 62, 201);
+            margin-right: 0;
+        }
     }
     .content {
-        padding-top: 100px;
+        padding-top: 40px;
         font-size: 14px;
         text-align: left;
         line-height: 30px;
+    }
+    .picture {
+        margin-bottom: 20px;
+        max-height: 540px;
+        overflow: hidden;
+        border-radius: 10px;
+        img {
+            width: 100%;
+            height: 100%;
+            border-radius: 10px;
+        }
     }
 }
 

@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2021-03-02 15:02:28
- * @LastEditTime: 2021-04-15 09:52:03
+ * @LastEditTime: 2021-04-30 15:25:00
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \my_blog\src\views\indexPage\index.vue
@@ -31,6 +31,7 @@
                 <img src="@/assets/indexPageBg.jpg" alt="" srcset="" />
             </div>
         </transition>
+        <div class="wb-href" @click="goHref">鄂ICP备2021007829号</div>
     </div>
 </template>
 
@@ -50,6 +51,10 @@ export default {
     methods: {
         goHome() {
             this.$router.replace('/home')
+        },
+        // 跳转工信部网站
+        goHref() {
+            window.open('https://beian.miit.gov.cn/', '_blank')
         }
     }
 }
@@ -158,6 +163,13 @@ export default {
             transform: scale(1);
         }
     }
+}
+.wb-href {
+    width: 100%;
+    position: absolute;
+    text-align: center;
+    bottom: 15px;
+    cursor: pointer;
 }
 
 @media screen and (max-width: 900px) {

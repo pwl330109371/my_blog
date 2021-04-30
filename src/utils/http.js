@@ -3,14 +3,13 @@
  * @作者: L
  * @Date: 2020-09-25
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2021-04-28 15:39:24
+ * @LastEditTime: 2021-04-28 16:00:53
  * @Author: L
  */
 import axios from 'axios'
 import { getCookie } from '@/utils/auth'
 import { Message, MessageBox } from 'element-ui'
 import route from '@/router'
-import Vue from 'vue'
 // 设置axios请求默认配置
 const serve = axios.create({
     baseURL: process.env.VUE_APP_BASE_API, // api的base_url前缀

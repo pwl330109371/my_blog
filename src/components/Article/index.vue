@@ -110,7 +110,7 @@ export default {
         font-size: 0;
         position: relative;
         cursor: pointer;
-        z-index: 3;
+        z-index: 1;
         overflow: hidden;
         border-radius: 6px;
         border: 1px solid #f3fafd;

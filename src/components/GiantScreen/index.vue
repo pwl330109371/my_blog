@@ -112,7 +112,7 @@ export default {
     height: 100vh;
     overflow: hidden;
     position: relative;
-    z-index: 1;
+    z-index: 9;
     .img-outer {
         width: 100%;
         height: 100%;

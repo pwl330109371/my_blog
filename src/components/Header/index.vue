@@ -11,7 +11,7 @@
             <i class="iconfont" :class="isLike === 1 ? 'icon-xin' : 'icon-xinheart118'" v-if="showLike" @click="$emit('like', isLike)"></i>
             <router-link :to="{ name: 'Wode', query: { id: userInfo.id } }">
                 <!-- <img :src="userInfo.picture" alt /> -->
-                <el-image style="width: 40px; height: 40px" :src="userInfo.picture" fit="fill"></el-image>
+                <el-image style="width: 40px; height: 40px" :src="userInfo.picture + '/thumbnail/40x40'" fit="fill"></el-image>
             </router-link>
         </div>
         <div class="progressBar" :style="{ width: progressBarWidth + '%' }"></div>

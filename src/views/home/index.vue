@@ -1,7 +1,7 @@
 <!--
  * @Author: pwl
  * @Date: 2020-11-12 18:47:15
- * @LastEditTime: 2021-04-30 15:21:49
+ * @LastEditTime: 2021-05-06 11:32:33
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \my_blog\src\views\home\index.vue
@@ -35,6 +35,11 @@ export default {
             scroll: 0, // 记录滚动距离
             isLoading: false,
             isNext: true
+        }
+    },
+    watch: {
+        $route() {
+            clearBottomHandle()
         }
     },
     created() {

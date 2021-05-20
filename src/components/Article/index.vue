@@ -2,7 +2,7 @@
     <div>
         <div class="article flex align-center fadeInUp" :class="`wow${item.index}`" v-for="item in datas" :key="item.id">
             <div class="img-outer flex align-center justify-center" @click="toDetail(item.id)">
-                <img :src="item.picture" alt />
+                <img :src="item.picture + '/thumbnail/647x438'" alt />
             </div>
             <div class="text-outer">
                 <div class="info">
@@ -40,7 +40,7 @@
 <script>
 import Loader from '@/components/Loading'
 import { WOW } from 'wowjs'
-import { formatDate } from '@/utils/'
+import { formatDate, clearBottomHandle } from '@/utils'
 export default {
     components: { Loader },
     props: {
@@ -68,6 +68,12 @@ export default {
                 this.wowNum++
             })
         }
+    },
+    deactivated() {
+        clearBottomHandle()
+    },
+    destroyed() {
+        clearBottomHandle()
     },
     data() {
         return {

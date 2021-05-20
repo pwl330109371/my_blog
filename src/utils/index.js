@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2020-11-12 16:56:17
- * @LastEditTime: 2021-04-14 18:28:58
+ * @LastEditTime: 2021-05-06 11:28:48
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \my_blog\src\utils\index.js
@@ -159,6 +159,7 @@ export function bottomHandle(isScroll, callback) {
 
 // 清除滚动监听
 export function clearBottomHandle() {
+    console.log(123123)
     window.removeEventListener('scroll', throttleScroll)
 }
 

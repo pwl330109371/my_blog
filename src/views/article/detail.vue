@@ -17,7 +17,7 @@
             </div>
             <div class="content markdown-body">
                 <div class="picture">
-                    <img :src="detail.picture" alt="" srcset="" />
+                    <img :src="detail.picture + '/thumbnail/900x540'" alt="" srcset="" />
                 </div>
                 <!-- <pre class="language-markup">
                     <code v-html="detail.content" v-highlight></code>

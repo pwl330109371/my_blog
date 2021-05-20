@@ -2,7 +2,7 @@
     <div class="max">
         <div id="scene" class="img-outer">
             <div data-depth="0.4" class="layer">
-                <img src="https://thewind-1302955814.cos.ap-shanghai.myqcloud.com/thewind/1594348066004.png" class="moveImg" :width="imgWidth" :height="imgHeight" />
+                <img src="https://thewind-1302955814.cos.ap-shanghai.myqcloud.com/thewind/1594348066004.png?imageMogr2/quality/10" class="moveImg" :width="imgWidth" :height="imgHeight" />
             </div>
         </div>
         <div class="header flex align-center space-between">

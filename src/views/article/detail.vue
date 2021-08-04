@@ -10,11 +10,7 @@
                 <span>阅读：{{ detail.visitsNum }}</span>
                 <span>字数：{{ content.length }}</span>
                 <!-- <span>评论：{{ commentList.total }}</span> -->
-<<<<<<< HEAD
-                <span>评论：10</span>
-=======
                 <span>评论：{{ commentList.length }}</span>
->>>>>>> ec5c9ef733a5a65700040fd52abd21da58edb69a
                 <span>喜欢: {{ detail.likeNum }}</span>
             </div>
             <div class="content markdown-body">
@@ -38,7 +34,7 @@ import scrollBar from './components/scrollBar'
 import MessageInput from './components/messageInput'
 import { addComment, getCommentList } from '@/api/articleComments'
 import { getArticleDetail } from '@/api/article'
-import { isCollection, collectionArticle, unCollectionArticle } from '@/api/collection'
+import { isCollection, collectionArticle } from '@/api/collection'
 import { bottomHandle, clearBottomHandle, formatDate } from '@/utils'
 export default {
     name: 'detail',
@@ -83,11 +79,6 @@ export default {
     },
     filters: {
         formatDate(val) {
-<<<<<<< HEAD
-            return formatDate(val, 'yyyy-MM-dd hh:mm:ss')
-        }
-    },
-=======
             return formatDate(val, 'yyyy-MM-dd hh:mm')
         }
     },
@@ -96,15 +87,10 @@ export default {
         await this.markdownRender() // markdown 加载
         this.setInputHeight()
     },
->>>>>>> ec5c9ef733a5a65700040fd52abd21da58edb69a
     async created() {
         await this.getDetail(this.$route.params.id) // 获取详情
         await this.markdownRender() // markdown 加载
         this.setInputHeight()
-<<<<<<< HEAD
-        console.log(this.$route)
-=======
->>>>>>> ec5c9ef733a5a65700040fd52abd21da58edb69a
     },
     mounted() {
         this.getComData() // 加载留言列表
@@ -175,6 +161,7 @@ export default {
                 toUid: this.toUid // 被评论人id
             }
             try {
+                // eslint-disable-next-line no-unused-vars
                 const reqResult = await addComment(data)
                 this.getComData()
                 this.$message({

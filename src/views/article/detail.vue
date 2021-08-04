@@ -167,12 +167,7 @@ export default {
                 toUid: this.toUid // 被评论人id
             }
             try {
-<<<<<<< HEAD
-                // eslint-disable-next-line no-unused-vars
-                const reqResult = await addComment(data)
-=======
                 await addComment(data)
->>>>>>> 285d6d967963bc34bd2189a8c87f2fd8178032f5
                 this.getComData()
                 this.$message({
                     type: 'success',

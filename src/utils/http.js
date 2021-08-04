@@ -3,7 +3,7 @@
  * @作者: L
  * @Date: 2020-09-25
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2021-03-31 17:50:52
+ * @LastEditTime: 2021-04-28 16:00:53
  * @Author: L
  */
 import axios from 'axios'
@@ -49,7 +49,8 @@ serve.interceptors.response.use(
                         center: true,
                         type: 'warning'
                     }).then(() => {
-                        route.push('/login')
+                        const path = route.app._route.fullPath
+                        route.push('/login?redirect=' + path)
                     })
                 } else {
                     Message({
@@ -67,7 +68,7 @@ serve.interceptors.response.use(
             case 401:
                 // 返回 401 清除token信息并跳转到登录页面
                 MessageBox.confirm('您登录时间过长，请重新返回登录页面进行登录', '确定登出', {
-                        confirmButtonText: '重新登录',
+                    confirmButtonText: '重新登录',
                     showCancelButton: false,
                     closeOnClickModal: false,
                     showClose: false,

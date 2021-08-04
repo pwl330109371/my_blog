@@ -6,7 +6,7 @@
             <div class="parent">
                 <div class="ml-info flex align-center space-between">
                     <div class="avatar-name flex align-center">
-                        <img :src="list.user.picture" />
+                        <el-image :src="list.user.picture + '/thumbnail/40x40'" fit="cover" />
                     </div>
                     <div class="reply-date flex align-center space-between">
                         <div class="name flex align-center">
@@ -28,7 +28,7 @@
                 <div class="ml-info flex align-center space-between">
                     <div class="avatar-name flex align-center">
                         <!-- <img :src="children.user.picture" /> -->
-                        <el-image :src="children.user.picture">
+                        <el-image :src="children.targetUser.picture">
                             <div slot="error" class="image-slot">
                                 <i class="el-icon-picture-outline"></i>
                             </div>
@@ -36,11 +36,11 @@
                     </div>
                     <div class="reply-date flex align-center space-between">
                         <div class="name flex align-center">
-                            {{ children.user.nickName }}
+                            {{ children.targetUser.nickName }}
+                           <span class="user-nickName">@{{ children.user.nickName }}</span>
                             <el-tag class="master" effect="dark" size="mini" v-if="children.user.role === 1">站主</el-tag>
                             <el-tag class="master" effect="dark" size="mini" v-if="children.user.role === 2">管理员</el-tag>
                             <!-- <el-tag class="master" effect="dark" size="mini" v-if="children.user.role === 2">管理员</el-tag> -->
-                            @{{ children.targetUser.nickName }}
                         </div>
                         <div class="flex algin-center">
                             <div class="reply" @click="setInput(children.user, list.id)">
@@ -187,6 +187,11 @@ export default {
             font-size: 14px;
             word-break: break-all;
             text-align: left;
+        }
+        .user-nickName {
+            color: #409eff;
+            border-bottom: none;
+            margin-left: 5px;
         }
     }
 }

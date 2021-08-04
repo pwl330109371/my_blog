@@ -1,8 +1,13 @@
 <!--
  * @Author: your name
  * @Date: 2021-03-03 10:54:16
+<<<<<<< HEAD
  * @LastEditTime: 2021-04-14 21:53:30
  * @LastEditors: Peng wenlei
+=======
+ * @LastEditTime: 2021-04-30 14:29:42
+ * @LastEditors: Please set LastEditors
+>>>>>>> 285d6d967963bc34bd2189a8c87f2fd8178032f5
  * @Description: In User Settings Edit
  * @FilePath: \vue-blog-admin\src\views\login\index1.vue
 -->
@@ -54,7 +59,6 @@
 </template>
 
 <script>
-import { validUsername } from '@/utils/validate'
 import canvasBg from './components/canvsBg'
 import star from './components/star'
 export default {
@@ -65,15 +69,15 @@ export default {
     },
     data() {
         const validateUsername = (rule, value, callback) => {
-            if (!validUsername(value)) {
-                callback(new Error('Please enter the correct user name'))
+            if (value.length < 3) {
+                callback(new Error('用户名长度不能小于六位数!'))
             } else {
                 callback()
             }
         }
         const validatePassword = (rule, value, callback) => {
             if (value.length < 6) {
-                callback(new Error('The password can not be less than 6 digits'))
+                callback(new Error('密码长度不能小于六位数!'))
             } else {
                 callback()
             }
@@ -89,7 +93,7 @@ export default {
         }
         return {
             loginForm: {
-                username: 'pwl201314',
+                username: 'youke001',
                 password: '123456',
                 confirmPwd: ''
             },
@@ -112,7 +116,9 @@ export default {
             immediate: true
         }
     },
-    mounted() {},
+    mounted() {
+        console.log()
+    },
     methods: {
         // 显示密码
         showPwd() {
@@ -154,8 +160,7 @@ export default {
                                         .dispatch('user/login', this.loginForm)
                                         .then(() => {
                                             this.$message
-                                            // this.$router.push({ path: this.redirect || '/' })
-                                            this.$router.go(-1)
+                                            this.$router.push({ path: this.redirect || '/' })
                                             this.loading = false
                                         })
                                         .catch(() => {

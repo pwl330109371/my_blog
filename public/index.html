@@ -1,7 +1,7 @@
 <!--
  * @Author: pwl
  * @Date: 2020-12-14 22:53:54
- * @LastEditTime: 2021-03-30 15:37:48
+ * @LastEditTime: 2021-05-19 15:32:42
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \my_blog\public\index.html
@@ -12,6 +12,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
     <link rel="icon" href="<%= BASE_URL %>favicon.ico">
     <!-- 使用CDN加速的CSS文件，配置在vue.config.js下 -->
     <% for (var i in htmlWebpackPlugin.options.cdn&&htmlWebpackPlugin.options.cdn.css) { %>
@@ -19,6 +20,15 @@
       <link href="<%= htmlWebpackPlugin.options.cdn.css[i] %>" rel="stylesheet">
     <% } %>
     <title>从前慢的时光驿站</title>
+    <script>
+      var _hmt = _hmt || [];
+      (function() {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?78f739731d064c625dfe3d984ff95bfc";
+        var s = document.getElementsByTagName("script")[0]; 
+        s.parentNode.insertBefore(hm, s);
+      })();
+    </script>
   </head>
   <body>
     <noscript>

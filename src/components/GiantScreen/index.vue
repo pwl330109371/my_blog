@@ -2,7 +2,7 @@
     <div class="max">
         <div id="scene" class="img-outer">
             <div data-depth="0.4" class="layer">
-                <img src="https://image.raindays.cn/Mood/image/1594348066004.png" class="moveImg" :width="imgWidth" :height="imgHeight" />
+                <img src="https://thewind-1302955814.cos.ap-shanghai.myqcloud.com/thewind/1594348066004.png?imageMogr2/quality/10" class="moveImg" :width="imgWidth" :height="imgHeight" />
             </div>
         </div>
         <div class="header flex align-center space-between">
@@ -53,6 +53,9 @@ export default {
             this.imgHeight = 960
         }
         this.getYearMonthDay()
+    },
+    activated() {
+        this.showMenu = false
     },
     mounted() {
         const scene = document.getElementById('scene')
@@ -109,7 +112,7 @@ export default {
     height: 100vh;
     overflow: hidden;
     position: relative;
-    z-index: 1;
+    z-index: 9;
     .img-outer {
         width: 100%;
         height: 100%;
@@ -133,19 +136,20 @@ export default {
 }
 .header {
     padding: 0 40px;
-    position: absolute;
+    position: fixed;
     left: 0;
-    top: 70px;
+    top: 50px;
     width: 100%;
     height: auto;
     z-index: 1;
+    cursor: pointer;
     img {
         width: 40px;
         height: 44px;
-        cursor: pointer;
     }
     .icon {
-        font-size: 20px;
+        cursor: pointer;
+        font-size: 30px;
         color: #ff3600;
         background: rgba(255, 255, 255, 0.8);
         width: 30px;
@@ -174,12 +178,13 @@ export default {
     transform: translateY(-50%);
     color: #ffffff;
     font-size: 0.5rem;
+    text-align: left;
     .time {
         font-size: 14px;
     }
     .title {
         font-size: 1rem;
-        margin: 15px 0 30px;
+        margin: 15px 0;
     }
     .content {
         font-size: 15px;
@@ -212,7 +217,7 @@ export default {
     .info {
         bottom: 8%;
         left: 5%;
-        top: 50%;
+        top: 68%;
         width: 70%;
         transform: none;
     }

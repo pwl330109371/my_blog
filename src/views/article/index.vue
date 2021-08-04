@@ -7,7 +7,7 @@
                     <li class="monTitle">{{ thunk.createdAt | formatDate }}</li>
                     <li class="mCLi flex space-between">
                         <div class="mCLeft flex align-center">
-                            <img :src="thunk.picture" :title="thunk.title" :alt="thunk.title" />
+                            <el-image :src="thunk.picture + '/thumbnail/45x45'" :title="thunk.title" :alt="thunk.title" fil="cover" />
                             <div class="mCLText flex flex-column space-around">
                                 <span>{{ thunk.title }}</span>
                                 <span>{{ thunk.likeNum }} 喜欢 / {{ thunk.visitsNum }} 读</span>
@@ -112,6 +112,7 @@ export default {
             margin: 30px 0 10px;
             list-style: none;
             position: relative;
+            text-align: left;
             &::before {
                 content: '';
                 width: 12px;
@@ -119,7 +120,7 @@ export default {
                 display: inline-block;
                 background-color: #dce8ec;
                 border: 3px solid #afcfff;
-                margin-right: 22px;
+                margin-right: 10px;
                 border-radius: 50%;
                 box-sizing: border-box;
             }
@@ -132,7 +133,7 @@ export default {
                 padding: 25px 0;
                 border-bottom: 1px solid #f3fafd;
                 .mCLeft {
-                    img {
+                    .el-image {
                         flex-shrink: 0;
                         width: 45px;
                         height: 45px;

@@ -1,27 +1,27 @@
 /*
  * @Author: your name
  * @Date: 2020-11-12 16:13:13
- * @LastEditTime: 2021-03-05 18:07:38
- * @LastEditors: Please set LastEditors
- * @Description: In User Settings Edit
- * @FilePath: \my_blog\src\main.js
+ * @LastEditTime: 2025-12-10 10:12:00
+ * @LastEditors: Vue 3 Migration
+ * @Description: Main entry file for Vue 3
+ * @FilePath: /my_blog/src/main.js
  */
-import Vue from 'vue'
+import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'
-import store from './store'
-import('element-ui').then(ele => {
-    Vue.use(ele)
-})
-import('element-ui/lib/theme-chalk/index.css')
+import { createPinia } from 'pinia'
+
+// Element Plus
+import ElementPlus from 'element-plus'
+import 'element-plus/dist/index.css'
 
 // 引入全局组件Header
 import Header from '@/components/Header'
-Vue.component('Header', Header)
+import SvgIcon from '@/components/SvgIcon'
 
 // 引入 iconfont
 import '@/assets/font/iconfont.css'
-import '@/icons' // icon
+import 'virtual:svg-icons-register' // SVG icons
 
 // 富文本渲染主题样式
 import 'highlight.js/styles/atom-one-dark.css'
@@ -32,17 +32,38 @@ import '@/style/prism.css'
 import hljs from 'highlight.js/lib/core'
 import javascript from 'highlight.js/lib/languages/javascript'
 hljs.registerLanguage('javascript', javascript)
-Vue.directive('highlight', function(el) {
-    let blocks = el.querySelectorAll('pre code')
-    blocks.forEach(block => {
-        hljs.highlightBlock(block)
-    })
+
+// 创建应用实例
+const app = createApp(App)
+
+// 创建 Pinia 实例
+const pinia = createPinia()
+
+// 注册全局组件
+app.component('Header', Header)
+app.component('SvgIcon', SvgIcon)
+
+// 注册自定义指令 - Vue 3 directive API
+app.directive('highlight', {
+    mounted(el) {
+        let blocks = el.querySelectorAll('pre code')
+        blocks.forEach(block => {
+            hljs.highlightElement(block) // Vue 3 + highlight.js v11 API
+        })
+    },
+    updated(el) {
+        let blocks = el.querySelectorAll('pre code')
+        blocks.forEach(block => {
+            hljs.highlightElement(block)
+        })
+    }
 })
 
-Vue.config.productionTip = false
+// 使用插件
+app.use(ElementPlus)
+app.use(router)
+app.use(pinia)
 
-new Vue({
-    router,
-    store,
-    render: h => h(App)
-}).$mount('#app')
+// 挂载应用
+app.mount('#app')
+

@@ -1,24 +1,13 @@
 /*
  * @Author: your name
  * @Date: 2020-11-12 16:13:13
- * @LastEditTime: 2021-03-05 22:03:47
- * @LastEditors: Peng wenlei
- * @Description: In User Settings Edit
- * @FilePath: \my_blog\src\store\index.js
+ * @LastEditTime: 2025-12-10 10:12:00
+ * @LastEditors: Vue 3 Migration
+ * @Description: Pinia stores export
+ * @FilePath: /my_blog/src/store/index.js
  */
-import Vue from 'vue'
-import Vuex from 'vuex'
-// import getters from './getters'
-import app from './modules/app'
-import user from './modules/user'
 
-Vue.use(Vuex)
+// Export Pinia stores for easy importing
+export { useAppStore } from './modules/app'
+export { useUserStore } from './modules/user'
 
-const store = new Vuex.Store({
-    modules: {
-        app,
-        user
-    }
-})
-
-export default store

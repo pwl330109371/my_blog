@@ -1,9 +1,8 @@
-import Vue from 'vue'
-import SvgIcon from '@/components/SvgIcon'// svg component
+// SVG icons are now registered via vite-plugin-svg-icons
+// The plugin automatically processes all SVG files in src/icons/svg
+// Import 'virtual:svg-icons-register' in main.js to register them
 
-// register globally
-Vue.component('svg-icon', SvgIcon)
+import SvgIcon from '@/components/SvgIcon' // svg component
 
-const req = require.context('./svg', false, /\.svg$/)
-const requireAll = requireContext => requireContext.keys().map(requireContext)
-requireAll(req)
+export default SvgIcon
+

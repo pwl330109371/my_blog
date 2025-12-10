@@ -11,10 +11,7 @@
  * @Description:router 路由配置
  * @FilePath: \my_blog\src\router\index.js
  */
-import Vue from 'vue'
-import VueRouter from 'vue-router'
-
-Vue.use(VueRouter)
+import { createRouter, createWebHistory } from 'vue-router'
 
 const routes = [
     {
@@ -25,6 +22,10 @@ const routes = [
             keepAlive: true,
             title: '从前慢的时光驿站'
         }
+    },
+    {
+        path: '/index',
+        redirect: '/'
     },
     {
         path: '/home',
@@ -74,11 +75,11 @@ const routes = [
     }
 ]
 
-const router = new VueRouter({
-    mode: 'history',
-    base: process.env.BASE_URL,
-    scrollBehavior: () => ({ y: 0 }),
+const router = createRouter({
+    history: createWebHistory(import.meta.env.BASE_URL),
+    scrollBehavior: () => ({ top: 0 }),
     routes
 })
 
 export default router
+

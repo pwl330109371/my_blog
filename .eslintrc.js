@@ -9,26 +9,22 @@
 module.exports = {
   root: true,
   env: {
-    node: true
+    node: true,
+    browser: true,
+    es2021: true
   },
-  extends: ["plugin:vue/essential", "eslint:recommended", "@vue/prettier"],
+  extends: [
+    'plugin:vue/vue3-essential',
+    'eslint:recommended',
+    '@vue/prettier'
+  ],
   parserOptions: {
-    parser: "babel-eslint"
+    ecmaVersion: 'latest',
+    sourceType: 'module'
   },
   rules: {
-    "indent": ["error", 4],
-    "quotes": [
-        "error",
-        "single",
-        {
-          "allowTemplateLiterals": true
-        }
-    ],
-    "semi": [
-        "error",
-        "never"
-    ],
-    "no-console": process.env.NODE_ENV === "production" ? "warn" : "off",
-    "no-debugger": process.env.NODE_ENV === "production" ? "warn" : "warn"
+    'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
+    'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
+    'vue/multi-word-component-names': 'off'
   }
-};
+}

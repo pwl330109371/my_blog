@@ -85,7 +85,7 @@ const formatDateFilter = (val: string) => {
  * 跳转到文章详情
  */
 const toDetail = (id: string) => {
-  router.push({ name: 'detail-id', params: { id } })
+  router.push(`/detail/${id}`)
 }
 
 // 监听数据变化，初始化 WOW 动画

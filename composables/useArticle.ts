@@ -13,10 +13,11 @@ export const useArticle = () => {
         })
     }
 
-    const addFavorite = (params: any) => {
-        return useApi('/favorite/addFavorite', {
+    // 兼容旧命名：收藏文章实际上对应后端的 collection
+    const addFavorite = (data: any) => {
+        return useApi('/collection/collectionArticle', {
             method: 'POST',
-            params
+            body: data
         })
     }
 

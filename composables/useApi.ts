@@ -12,9 +12,6 @@ export const useApi = async <T>(url: string, options: any = {}) => {
         headers: token.value ? { Authorization: token.value } : {},
         credentials: 'include',
         onResponse({ response }: any) {
-            const res = response._data || response.data // Adapt to how backend returns data
-            // If backend returns raw data in _data or just data
-
             // Check status code from response or payload
             // Original logic: if (res.status === 200) ...
             // fetch returns the response object. _data is the body.

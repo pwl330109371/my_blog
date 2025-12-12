@@ -39,6 +39,15 @@ export default defineNuxtConfig({
           additionalData: `@use "~/assets/css/variables.scss" as *; @use "~/assets/css/mixin.scss" as *;`
         }
       }
+    },
+    // Dev 模式下使用 Vite proxy，更可靠
+    server: {
+      proxy: {
+        '/api': {
+          target: 'http://127.0.0.1:3001',
+          changeOrigin: true
+        }
+      }
     }
   },
 
@@ -52,15 +61,9 @@ export default defineNuxtConfig({
   ssr: true,
 
   nitro: {
-    devProxy: {
-      '/api': {
-        target: 'http://127.0.0.1:3001',
-        changeOrigin: true
-      }
-    },
-    // Production proxy rules if needed, or rely on Nginx
+    // Production proxy: 把 /api/** 原封不动转发到后端
     routeRules: {
-      '/api/**': { proxy: 'http://127.0.0.1:3001/**' }
+      '/api/**': { proxy: 'http://127.0.0.1:3001' }
     }
   }
 })

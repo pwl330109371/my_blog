@@ -18,7 +18,7 @@
         v-if="showLike"
         @click="$emit('like', isLike)"
       ></i>
-      <nuxt-link :to="{ name: 'Wode', query: { id: userInfo.id } }" v-if="userInfo && userInfo.id">
+      <nuxt-link :to="`/wode?id=${userInfo.id}`" v-if="userInfo && userInfo.id">
         <el-image
           style="width: 40px; height: 40px"
           :src="userInfo.picture + '/thumbnail/40x40'"

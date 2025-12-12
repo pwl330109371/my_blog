@@ -19,7 +19,7 @@
                 fit="cover"
               />
               <div class="mCLText flex flex-column space-around">
-                <nuxt-link :to="{ name: 'detail-id', params: { id: thunk.id } }">
+                <nuxt-link :to="`/detail/${thunk.id}`">
                     <span>{{ thunk.title }}</span>
                 </nuxt-link>
                 <span>{{ thunk.likeNum }} 喜欢 / {{ thunk.visitsNum }} 读</span>
@@ -77,7 +77,18 @@ const getArticleList = async () => {
     if (error.value) throw error.value
     
     const res = data.value as any
-    const { total, rows } = res.data || res
+    // 添加空值检查
+    if (!res) {
+      console.warn('文章列表返回数据为空')
+      isLoading.value = false
+      pageLoad.value = false
+      return
+    }
+    
+    // 兼容两种数据结构：{ data: { total, rows } } 或 { total, rows }
+    const responseData = res.data || res
+    const total = responseData.total || 0
+    const rows = responseData.rows || responseData.list || []
 
     setTimeout(() => {
       requestDatas.value.push(...rows)

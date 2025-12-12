@@ -1,9 +1,12 @@
 export const getAboutMe = (userId: number | string) => {
-    return useApi(`/user/about?userId=${userId}`)
+    return useApi('/about/getAboutContent', {
+        method: 'GET',
+        params: { userId }
+    })
 }
 
 export const updateUserInfo = (data: any) => {
-    return useApi('/user/update', {
+    return useApi('/users/editUserInfo', {
         method: 'POST',
         body: data
     })

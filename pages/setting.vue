@@ -7,7 +7,7 @@
       <el-form-item label="头像">
         <el-upload
           class="avatar-uploader"
-          :action="mainUrl + '/ossUpload'"
+          :action="mainUrl + '/upload/uploadImg'"
           :disabled="userInfo?.id !== 1"
           :headers="uploadHeaders"
           :on-error="uploadError"
@@ -68,11 +68,9 @@ const mainUrl = computed(() => config.public.apiBase || '/api')
 
 // Upload headers
 const uploadHeaders = computed(() => {
-    // Only client side has localStorage/cookie
     const token = useCookie('token').value
-    return {
-        authorization: 'bearer ' + token
-    }
+    if (!token) return {}
+    return { Authorization: token }
 })
 
 /**
@@ -117,11 +115,29 @@ const uploadError = (e) => {
  */
 const onSubmit = async () => {
   try {
-    const res: any = await updateUserInfo(form.value)
-    const data = res.data || res
+    const payload = {
+      userId: form.value.id || userInfo.value?.id,
+      nickName: form.value.userName || userInfo.value?.nickName,
+      picture: form.value.avatar || userInfo.value?.picture,
+      city: userInfo.value?.city || '',
+      gender: userInfo.value?.gender,
+      role: userInfo.value?.role
+    }
+    const { data: fetchData, error } = await updateUserInfo(payload)
+    if (error.value) throw error.value
     
-    ElMessage.success(data.msg || '保存成功')
-    userStore.setUserInfo(data.data)
+    const res = fetchData.value as any
+    if (!res) {
+      ElMessage.error('保存失败，请重试')
+      return
+    }
+    
+    const data = res.data || res
+
+    ElMessage.success(data.msg || res.msg || '保存成功')
+    if (userStore.userId) {
+      await userStore.getInfo()
+    }
   } catch (error) {
     console.error('更新用户信息失败:', error)
     ElMessage.error('保存失败，请重试')

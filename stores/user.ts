@@ -2,12 +2,28 @@ import { defineStore } from 'pinia'
 
 export const useUserStore = defineStore('user', {
     state: () => ({
-        token: useCookie('token').value || null,
+        // 不在 state 初始化时调用 composable，改为在 hydrate 或 action 中获取
+        token: null as string | null,
         userId: '',
-        userInfo: null
+        userInfo: null as any
     }),
 
+    // Nuxt 3/4 Pinia 插件支持 hydrate，用于 SSR 时同步 cookie
+    hydrate(state) {
+        // 只在客户端执行时从 cookie 读取 token
+        if (import.meta.client) {
+            const cookie = useCookie('token')
+            state.token = cookie.value || null
+        }
+    },
+
     actions: {
+        // 初始化时调用，从 cookie 读取 token
+        initToken() {
+            const cookie = useCookie('token')
+            this.token = cookie.value || null
+        },
+
         setToken(token: string) {
             const cookie = useCookie('token')
             cookie.value = token
@@ -61,7 +77,7 @@ export const useUserStore = defineStore('user', {
             try {
                 // Assuming getInfo endpoint exists or using generic user info endpoint
                 // Original was getInfo(this.userId)
-                const { data, error } = await useApi(`/users/getInfo?userId=${this.userId}`)
+                const { data, error } = await useApi(`/users/getUserInfo?userId=${this.userId}`)
                 if (error.value) throw error.value
 
                 const res = data.value as any

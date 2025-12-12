@@ -51,11 +51,19 @@ const loadData = async () => {
     const { data, error } = await getArticleList(page.value)
     if (error.value) throw error.value
     
-    // According to useApi logic, data is Ref.
     const res = data.value as any
-    console.log('res', data)
     
-    const { total, rows } = res.data || res 
+    // 添加空值检查
+    if (!res) {
+      console.warn('文章列表返回数据为空')
+      isLoading.value = false
+      return
+    }
+    
+    // 兼容两种数据结构
+    const responseData = res.data || res
+    const total = responseData.total || 0
+    const rows = responseData.rows || responseData.list || []
     
     if (page.value.pageIndex === 1) {
        requestDatas.value = rows

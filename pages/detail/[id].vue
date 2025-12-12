@@ -127,7 +127,14 @@ const checkIsCollection = async () => {
     const params = {
       articleId: articleId.value
     }
-    const { data } = await isCollection(params) as any
+    const { data: fetchData, error } = await isCollection(params)
+    if (error.value) throw error.value
+    
+    const res = fetchData.value as any
+    if (!res) return
+    
+    // 获取收藏状态
+    const data = res.data !== undefined ? res.data : res
     isStar.value = data
   } catch (error) {
     console.error('检查收藏状态失败:', error)
@@ -142,7 +149,15 @@ const getDetail = async (id: string | string[]) => {
     const params = {
       articleId: id
     }
-    const res: any = await getArticleDetail(params)
+    const { data: fetchData, error } = await getArticleDetail(params)
+    if (error.value) throw error.value
+    
+    const res = fetchData.value as any
+    if (!res) {
+      console.warn('文章详情返回数据为空')
+      return
+    }
+    
     const data = res.data || res
     
     // Setting title in Nuxt 4
@@ -203,7 +218,9 @@ const handleComment = async (commentContent: string) => {
   }
 
   try {
-    await addComment(data)
+    const { error } = await addComment(data)
+    if (error.value) throw error.value
+    
     await getComData()
     ElMessage({
       type: 'success',
@@ -225,8 +242,20 @@ const handleComment = async (commentContent: string) => {
  */
 const getComData = async () => {
   try {
-    const result: any = await getCommentList(route.params.id)
-    const { len: dataLen, total, commentList: list } = result.data || result
+    const { data: fetchData, error } = await getCommentList(route.params.id)
+    if (error.value) throw error.value
+    
+    const result = fetchData.value as any
+    if (!result) {
+      console.warn('评论列表返回数据为空')
+      isLoading.value = false
+      return
+    }
+    
+    const responseData = result.data || result
+    const dataLen = responseData.len || 0
+    const total = responseData.total || 0
+    const list = responseData.commentList || responseData.list || []
 
     setTimeout(() => {
       commentList.value = list
@@ -246,11 +275,14 @@ const getComData = async () => {
 const likeChange = async (e: number) => {
   if (e === 2) {
     try {
-      const data = {
+      const payload = {
         articleId: detail.value.id
       }
-      const res: any = await collectionArticle(data)
-      const code = res.code || (res.data && res.data.code)
+      const { data: fetchData, error } = await collectionArticle(payload)
+      if (error.value) throw error.value
+      
+      const res = fetchData.value as any
+      const code = res?.code || (res?.data && res.data.code)
 
       if (code === 200) {
         ElMessage({

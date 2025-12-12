@@ -62,7 +62,15 @@ const markdownRender = (markdownContent: string) => {
  */
 const getDetail = async () => {
   try {
-    const res: any = await getAboutMe(1)
+    const { data: fetchData, error } = await getAboutMe(1)
+    if (error.value) throw error.value
+    
+    const res = fetchData.value as any
+    if (!res) {
+      console.warn('关于我返回数据为空')
+      return
+    }
+    
     const data = res.data || res
     
     // Note: If data is empty or fail, handle it.

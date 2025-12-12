@@ -25,7 +25,7 @@ export const useUserStore = defineStore('user', {
         async login(userInfo: any) {
             const { username, password } = userInfo
             try {
-                const { data, error } = await useApi('/user/login', {
+                const { data, error } = await useApi('/users/login', {
                     method: 'POST',
                     body: { userName: username.trim(), password }
                 })
@@ -46,7 +46,7 @@ export const useUserStore = defineStore('user', {
         async register(userInfo: any) {
             const { username, password } = userInfo
             try {
-                const { data, error } = await useApi('/user/register', {
+                const { data, error } = await useApi('/users/register', {
                     method: 'POST',
                     body: { userName: username.trim(), password, gender: 1 }
                 })
@@ -61,7 +61,7 @@ export const useUserStore = defineStore('user', {
             try {
                 // Assuming getInfo endpoint exists or using generic user info endpoint
                 // Original was getInfo(this.userId)
-                const { data, error } = await useApi(`/user/getInfo?userId=${this.userId}`)
+                const { data, error } = await useApi(`/users/getInfo?userId=${this.userId}`)
                 if (error.value) throw error.value
 
                 const res = data.value as any

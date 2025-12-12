@@ -10,6 +10,7 @@ export const useApi = async <T>(url: string, options: any = {}) => {
         baseURL: config.public.apiBase,
         // key: url, // Optional: key for deduplication
         headers: token.value ? { Authorization: token.value } : {},
+        credentials: 'include',
         onResponse({ response }: any) {
             const res = response._data || response.data // Adapt to how backend returns data
             // If backend returns raw data in _data or just data

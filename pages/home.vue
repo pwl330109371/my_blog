@@ -53,6 +53,8 @@ const loadData = async () => {
     
     // According to useApi logic, data is Ref.
     const res = data.value as any
+    console.log('res', data)
+    
     const { total, rows } = res.data || res 
     
     if (page.value.pageIndex === 1) {
@@ -113,7 +115,7 @@ onUnmounted(() => {
 
 <style lang="scss" scoped>
 .outer {
-  overflow-y: auto; // Ensure updated for scroll handling
+  overflow: auto; // Ensure updated for scroll handling
   height: 100vh;
 }
 

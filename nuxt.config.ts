@@ -54,13 +54,13 @@ export default defineNuxtConfig({
   nitro: {
     devProxy: {
       '/api': {
-        target: 'http://115.159.117.118:3001/',
+        target: 'http://127.0.0.1:3001',
         changeOrigin: true
       }
     },
     // Production proxy rules if needed, or rely on Nginx
     routeRules: {
-      '/api/**': { proxy: 'http://115.159.117.118:3001/api/**' }
+      '/api/**': { proxy: 'http://127.0.0.1:3001/**' }
     }
   }
 })

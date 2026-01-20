@@ -1,626 +1,644 @@
 <template>
-  <div class="index-page">
-    <div class="index-page-left">
-      <div class="index-page-title">
-        <h3>从前慢</h3>
-        <p>BEFORE SLOW</p>
+  <div class="galaxy-guide">
+    <canvas ref="canvasRef" class="starfield-canvas"></canvas>
+    
+    <div class="ui-overlay">
+      <!-- 左上角标题区域 -->
+      <div class="header-title">
+        <div class="glitch-wrapper">
+          <h1 class="glitch-text" data-text="THE WIND">THE WIND</h1>
+        </div>
+        <p class="subtitle">INTERSTELLAR TERMINAL</p>
       </div>
-      <transition name="bounce">
-        <div class="index-page-text" v-show="show">
-          <h1 class="welcome-title">欢迎来到从前慢的时光驿站!</h1>
-          <div class="welcome-xian"></div>
-          <div class="welcome-text">Welcome to time station!</div>
-          <div class="index-page-btn">
-            <button @click="goHome" class="enter-btn">
-              <span>点击进入</span>
-              <div class="btn-glow"></div>
-            </button>
+      
+      <!-- 底部控制区域 -->
+      <div class="bottom-controls">
+        <div class="system-status">
+          <div class="status-item">
+            <span class="label">SYSTEM</span>
+            <span class="value online">ONLINE</span>
+          </div>
+          <div class="status-item">
+            <span class="label">COORDINATES</span>
+            <span class="value">{{ coordinates }}</span>
           </div>
         </div>
-      </transition>
+
+        <button class="warp-btn" @click="engageWarp" :class="{ 'warping': isWarping }">
+          <span class="btn-text">ENGAGE WARP</span>
+          <span class="btn-bg"></span>
+          <span class="btn-glow"></span>
+        </button>
+      </div>
+      
+      <div class="footer-info" @click="goHref">
+        <span class="beian">鲁ICP备2025208345号-1</span>
+      </div>
     </div>
-
-    <transition name="el-zoom-in-center">
-      <div class="index-page-right" v-show="show">
-        <!-- 主图片容器 -->
-        <div class="image-container">
-          <img src="/images/indexPageBg.jpg" alt="欢迎页背景" class="main-image" />
-          
-          <!-- 星星特效层 -->
-          <div class="stars-container">
-            <!-- 闪烁的星星 -->
-            <div
-              v-for="star in stars"
-              :key="star.id"
-              class="star"
-              :style="{
-                left: star.left,
-                top: star.top,
-                animationDelay: star.delay,
-                animationDuration: star.duration
-              }"
-            ></div>
-            
-            <!-- 流星效果 -->
-            <div
-              v-for="meteor in meteors"
-              :key="meteor.id"
-              class="meteor"
-              :style="{
-                left: meteor.left,
-                top: meteor.top,
-                animationDelay: meteor.delay
-              }"
-            ></div>
-          </div>
-
-          <!-- 小人跑动动画遮罩 -->
-          <div class="character-animation"></div>
-        </div>
-      </div>
-    </transition>
-
-    <div class="wb-href" @click="goHref">鄂ICP备2021007829号-1</div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onBeforeUnmount } from 'vue'
+import { useRouter } from 'vue-router'
 
 definePageMeta({
-  layout: false // Landing page usually doesn't use the default layout
+  layout: false
 })
 
-// Router
 const router = useRouter()
+const canvasRef = ref<HTMLCanvasElement | null>(null)
+const isWarping = ref(false)
+const coordinates = ref('000.000.000')
 
-// 响应式数据
-const show = ref(false)
+// 动画相关变量
+let ctx: CanvasRenderingContext2D | null = null
+let animationFrameId: number
+let stars: Star[] = []
+let speed = 0.1
+let warpSpeed = 20
+let width = 0
+let height = 0
+let centerX = 0
+let centerY = 0
 
-// 生成随机星星位置
-interface Star {
-  id: number
-  left: string
-  top: string
-  delay: string
-  duration: string
-}
-interface Meteor {
-  id: number
-  left: string
-  top: string
-  delay: string
-}
+// 太阳系配置
+const TILT_ANGLE = 0.3 // 轨道倾角 (弧度)
+const PLANET_SCALE = 1.2 // 行星整体缩放
+const ORBIT_SCALE = 0.8 // 轨道整体缩放
 
-const stars = ref<Star[]>([])
-const meteors = ref<Meteor[]>([])
-
-/**
- * 生成星星数据
- */
-const generateStars = () => {
-  const starCount = 30
-  const newStars: Star[] = []
+class Star {
+  x: number
+  y: number
+  z: number
+  pz: number
   
-  for (let i = 0; i < starCount; i++) {
-    newStars.push({
-      id: i,
-      left: `${Math.random() * 100}%`,
-      top: `${Math.random() * 60}%`, // 主要在上半部分
-      delay: `${Math.random() * 3}s`,
-      duration: `${2 + Math.random() * 2}s`
-    })
+  constructor() {
+    this.x = (Math.random() - 0.5) * width * 2
+    this.y = (Math.random() - 0.5) * height * 2
+    this.z = Math.random() * width
+    this.pz = this.z
   }
   
-  stars.value = newStars
-}
-
-/**
- * 生成流星数据
- */
-const generateMeteors = () => {
-  const meteorCount = 5
-  const newMeteors: Meteor[] = []
-  
-  for (let i = 0; i < meteorCount; i++) {
-    newMeteors.push({
-      id: i,
-      left: `${20 + Math.random() * 60}%`,
-      top: `${Math.random() * 40}%`,
-      delay: `${i * 3 + Math.random() * 2}s`
-    })
+  update() {
+    // 移动星星（Z轴减小模拟向屏幕飞来）
+    this.z = this.z - speed * 20 // 速度倍率
+    
+    // 如果星星飞过屏幕，重置到远处
+    if (this.z < 1) {
+      this.z = width
+      this.x = (Math.random() - 0.5) * width * 2
+      this.y = (Math.random() - 0.5) * height * 2
+      this.pz = this.z
+    }
   }
   
-  meteors.value = newMeteors
+  draw() {
+    if (!ctx) return
+    
+    // 计算当前位置的投影
+    const sx = (this.x / this.z) * width + centerX
+    const sy = (this.y / this.z) * height + centerY
+    
+    // 计算上一帧位置的投影（用于绘制尾迹）
+    const r = (1 - this.z / width) * 4 // 距离越近越大
+    
+    // 尾迹效果
+    if (speed > 1) {
+       // Warp 模式下绘制线条
+       const px = (this.x / (this.z + speed * 5)) * width + centerX
+       const py = (this.y / (this.z + speed * 5)) * height + centerY
+       
+       ctx.beginPath()
+       ctx.moveTo(px, py)
+       ctx.lineTo(sx, sy)
+       ctx.strokeStyle = `rgba(200, 230, 255, ${Math.min(1, (1 - this.z / width) + 0.2)})`
+       ctx.lineWidth = r * 0.5
+       ctx.stroke()
+    } else {
+       // 普通模式绘制圆点
+       ctx.beginPath()
+       ctx.arc(sx, sy, r, 0, Math.PI * 2)
+       ctx.fillStyle = `rgba(255, 255, 255, ${1 - this.z / width})`
+       ctx.fill()
+    }
+  }
 }
 
-/**
- * 进入首页
- */
-const goHome = () => {
-  router.replace('/home')
+// 太阳系相关
+class CelestialBody {
+  type: 'sun' | 'planet'
+  name: string
+  distance: number
+  radius: number
+  speed: number
+  angle: number
+  color: string[]
+  hasRing: boolean
+  
+  // 3D 坐标
+  x: number = 0
+  y: number = 0
+  z: number = 0
+  scale: number = 1
+
+  constructor(config: any) {
+    this.type = config.type
+    this.name = config.name
+    this.distance = config.distance * ORBIT_SCALE
+    this.radius = config.radius * PLANET_SCALE
+    this.speed = config.speed
+    this.angle = Math.random() * Math.PI * 2
+    this.color = config.color
+    this.hasRing = config.hasRing || false
+  }
+
+  update() {
+    if (this.type === 'sun') return
+
+    // 更新角度 (跃迁时加速)
+    this.angle += this.speed * (isWarping.value ? 20 : 1)
+    
+    // 计算 3D 坐标 (假设轨道平面在 XZ 平面)
+    const rawX = Math.cos(this.angle) * this.distance
+    const rawZ = Math.sin(this.angle) * this.distance
+    
+    // 应用倾角旋转 (绕 X 轴旋转)
+    this.x = rawX
+    this.y = -rawZ * Math.sin(TILT_ANGLE)
+    this.z = rawZ * Math.cos(TILT_ANGLE)
+    
+    // 计算透视缩放 (简单的透视投影)
+    const cameraZ = 1000
+    this.scale = cameraZ / (cameraZ + this.z)
+  }
+
+  draw(ctx: CanvasRenderingContext2D) {
+    if (this.type === 'sun') {
+      this.drawSun(ctx)
+      return
+    }
+
+    const screenX = centerX + this.x * this.scale
+    const screenY = centerY + this.y * this.scale
+    const size = this.radius * this.scale
+
+    // 绘制星球本体
+    ctx.beginPath()
+    ctx.arc(screenX, screenY, size, 0, Math.PI * 2)
+    
+    // 星球光影
+    const lightAngle = Math.atan2(centerY - screenY, centerX - screenX)
+    const highlightX = screenX + Math.cos(lightAngle) * (size * 0.3)
+    const highlightY = screenY + Math.sin(lightAngle) * (size * 0.3)
+    
+    const gradient = ctx.createRadialGradient(
+      highlightX, highlightY, size * 0.1,
+      screenX, screenY, size
+    )
+    gradient.addColorStop(0, this.color[0] || '#fff')
+    gradient.addColorStop(0.5, this.color[1] || '#ccc')
+    gradient.addColorStop(1, '#000') // 背光面
+    
+    ctx.fillStyle = gradient
+    ctx.fill()
+    
+    // 绘制土星环
+    if (this.hasRing) {
+      ctx.beginPath()
+      ctx.ellipse(screenX, screenY, size * 2.5, size * 0.8, 0, 0, Math.PI * 2)
+      ctx.strokeStyle = 'rgba(200, 180, 150, 0.4)'
+      ctx.lineWidth = size * 0.5
+      ctx.stroke()
+    }
+  }
+
+  drawSun(ctx: CanvasRenderingContext2D) {
+    // 太阳呼吸效果
+    const pulse = 1 + Math.sin(Date.now() * 0.002) * 0.05
+    const size = this.radius * pulse
+    
+    // 外发光
+    const glow = ctx.createRadialGradient(centerX, centerY, size * 0.5, centerX, centerY, size * 4)
+    glow.addColorStop(0, 'rgba(255, 200, 50, 0.8)')
+    glow.addColorStop(0.2, 'rgba(255, 100, 0, 0.4)')
+    glow.addColorStop(1, 'rgba(255, 50, 0, 0)')
+    ctx.fillStyle = glow
+    ctx.beginPath()
+    ctx.arc(centerX, centerY, size * 4, 0, Math.PI * 2)
+    ctx.fill()
+    
+    // 太阳本体
+    const sunGradient = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, size)
+    sunGradient.addColorStop(0, '#FFF5E0')
+    sunGradient.addColorStop(0.3, '#FFD700')
+    sunGradient.addColorStop(0.8, '#FF4500')
+    sunGradient.addColorStop(1, '#8B0000')
+    
+    ctx.beginPath()
+    ctx.arc(centerX, centerY, size, 0, Math.PI * 2)
+    ctx.fillStyle = sunGradient
+    ctx.shadowBlur = 50
+    ctx.shadowColor = '#FF8C00'
+    ctx.fill()
+    ctx.shadowBlur = 0
+  }
 }
 
-/**
- * 跳转工信部网站
- */
+let bodies: CelestialBody[] = []
+
+const initSolarSystem = () => {
+  bodies = [
+    // 太阳
+    new CelestialBody({ type: 'sun', name: 'Sun', distance: 0, radius: 25, speed: 0, color: [] }),
+    // 水星
+    new CelestialBody({ type: 'planet', name: 'Mercury', distance: 80, radius: 3, speed: 0.04, color: ['#EBE3CF', '#A67F5D'] }),
+    // 金星
+    new CelestialBody({ type: 'planet', name: 'Venus', distance: 110, radius: 5.5, speed: 0.015, color: ['#FFE4C4', '#C68C53'] }),
+    // 地球
+    new CelestialBody({ type: 'planet', name: 'Earth', distance: 150, radius: 6, speed: 0.01, color: ['#4B9CD3', '#1E4D8C'] }),
+    // 火星
+    new CelestialBody({ type: 'planet', name: 'Mars', distance: 190, radius: 4.5, speed: 0.008, color: ['#E27B58', '#8B3E2F'] }),
+    // 木星
+    new CelestialBody({ type: 'planet', name: 'Jupiter', distance: 280, radius: 14, speed: 0.004, color: ['#E3DCCB', '#C88B3A'] }),
+    // 土星
+    new CelestialBody({ type: 'planet', name: 'Saturn', distance: 360, radius: 11, speed: 0.003, color: ['#F4E4BC', '#BFA878'], hasRing: true }),
+    // 天王星
+    new CelestialBody({ type: 'planet', name: 'Uranus', distance: 430, radius: 8, speed: 0.002, color: ['#AFDBF5', '#55ACEE'] }),
+    // 海王星
+    new CelestialBody({ type: 'planet', name: 'Neptune', distance: 490, radius: 7.8, speed: 0.001, color: ['#7B90D2', '#3E65EF'] })
+  ]
+}
+
+const drawOrbits = () => {
+  if (!ctx) return
+  
+  ctx.save()
+  // 压扁画布以模拟 3D 轨道倾角
+  ctx.translate(centerX, centerY)
+  ctx.scale(1, Math.sin(TILT_ANGLE)) 
+  
+  bodies.forEach(body => {
+    if (body.type === 'sun') return
+    
+    ctx!.beginPath()
+    ctx!.arc(0, 0, body.distance, 0, Math.PI * 2)
+    ctx!.strokeStyle = 'rgba(255, 255, 255, 0.08)'
+    ctx!.lineWidth = 1 / Math.sin(TILT_ANGLE) // 修正线宽
+    ctx!.stroke()
+  })
+  
+  ctx.restore()
+}
+
+const initCanvas = () => {
+  if (!canvasRef.value) return
+  const canvas = canvasRef.value
+  ctx = canvas.getContext('2d')
+  
+  const resize = () => {
+    width = window.innerWidth
+    height = window.innerHeight
+    canvas.width = width
+    canvas.height = height
+    centerX = width / 2
+    centerY = height / 2
+  }
+  
+  window.addEventListener('resize', resize)
+  resize()
+  
+  // 初始化星星
+  stars = Array.from({ length: 800 }, () => new Star())
+  
+  // 初始化太阳系
+  initSolarSystem()
+}
+
+const animate = () => {
+  if (!ctx || !canvasRef.value) return
+  
+  // 清空画布
+  ctx.fillStyle = isWarping.value ? 'rgba(0, 0, 0, 0.1)' : 'rgba(0, 0, 0, 1)'
+  ctx.fillRect(0, 0, width, height)
+  
+  // 1. 绘制星星背景
+  stars.forEach(star => {
+    star.update()
+    star.draw()
+  })
+  
+  // 2. 绘制轨道 (在所有星球底层)
+  drawOrbits()
+  
+  // 3. 更新所有天体位置
+  bodies.forEach(body => body.update())
+  
+  // 4. Z-Sort 深度排序 (关键：确保近的遮挡远的，太阳遮挡背后的行星)
+  // Z 轴正方向为远离摄像机 (Depth)，所以 Z 越大越远
+  // 画家算法：先画远的 (Z 大)，再画近的 (Z 小) -> 降序排列
+  const sortedBodies = [...bodies].sort((a, b) => b.z - a.z)
+  
+  // 5. 按顺序绘制天体
+  sortedBodies.forEach(body => body.draw(ctx!))
+  
+  // 更新坐标显示
+  if (Math.random() > 0.9) {
+     coordinates.value = `${Math.floor(Math.random()*999)}.${Math.floor(Math.random()*999)}.${Math.floor(Math.random()*999)}`
+  }
+  
+  animationFrameId = requestAnimationFrame(animate)
+}
+
+const engageWarp = () => {
+  if (isWarping.value) return
+  isWarping.value = true
+  
+  const accelerate = window.setInterval(() => {
+    speed = Math.min(warpSpeed, speed * 1.12)
+    if (speed >= warpSpeed) window.clearInterval(accelerate)
+  }, 50)
+
+  window.setTimeout(() => {
+    router.replace('/home')
+  }, 3200)
+}
+
 const goHref = () => {
   window.open('https://beian.miit.gov.cn/', '_blank')
 }
 
-// 组件挂载后显示动画
 onMounted(() => {
-  generateStars()
-  generateMeteors()
-  
-  setTimeout(() => {
-    show.value = true
-  }, 500)
+  initCanvas()
+  animate()
+})
+
+onBeforeUnmount(() => {
+  cancelAnimationFrame(animationFrameId)
+  window.removeEventListener('resize', () => {})
 })
 </script>
 
 <style lang="scss" scoped>
-.index-page {
-  padding: 3.65%;
-  background: #fff;
-  color: #000;
-  display: flex;
-  position: relative;
-  overflow: hidden;
+.galaxy-guide {
+  width: 100vw;
   height: 100vh;
-  box-sizing: border-box;
+  background: #000;
+  overflow: hidden;
+  position: relative;
+  font-family: 'Rajdhani', sans-serif;
 
-  .index-page-left {
+  .starfield-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
     height: 100%;
-    flex: 1;
-    position: relative;
+    z-index: 1;
+    background: radial-gradient(circle at center, #1a1a2e 0%, #000000 100%);
+  }
 
-    h1,
-    h3,
-    p {
-      padding: 0;
-      margin: 0;
-    }
+  .ui-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10;
+    pointer-events: none;
+  }
 
-    .index-page-title {
-      width: 149px;
-      text-align: justify;
-      text-align-last: justify;
-
-      h3 {
-        font-size: 36px;
-        font-weight: bold;
-        text-align: justify;
-        text-align-last: justify;
-        animation: titleFadeIn 1s ease-out;
-      }
-
-      p {
-        font-size: 14px;
-        color: #0f1741;
-        text-align: justify;
-        text-align-last: justify;
-        letter-spacing: 1px;
-        white-space: nowrap;
-        animation: titleFadeIn 1s ease-out 0.3s backwards;
-      }
-    }
-
-    .index-page-text {
-      max-width: 413px;
-      margin: 8.6% 100px;
-
-      .welcome-title {
-        font-size: 0.9rem;
-        color: #0f1741;
-        font-weight: 400; // Regular
-        font-family: '华康简综艺', Times, serif;
-      }
-
-      .welcome-xian {
-        width: 100px;
-        height: 3px;
-        margin-top: 5%;
-        margin-left: 5px;
-        margin-bottom: 4%;
-        background: rgba(15, 23, 65, 1);
-        opacity: 1;
-        border-radius: 33px;
-        animation: lineGrow 0.8s ease-out 0.5s backwards;
-      }
-
-      .welcome-text {
-        font-size: 30px;
-        font-family: 'DIN';
-        font-weight: bold;
-        line-height: 49px;
-      }
-
-      .index-page-btn {
-        margin-top: 7%;
-
-        .enter-btn {
-          width: 200px;
-          height: 71px;
-          background: linear-gradient(
-            180deg,
-            rgba(178, 228, 254, 1) 0%,
-            rgba(136, 212, 248, 1) 100%
-          );
-          box-shadow: 0px 10px 20px rgba(120, 204, 243, 0.6);
-          opacity: 1;
-          border-radius: 333px;
-          font-size: 20px;
-          font-family: PingFang SC;
-          font-weight: 800;
-          cursor: pointer;
-          outline: none;
-          border: none;
-          position: relative;
-          overflow: hidden;
-          transition: all 0.3s ease;
-
-          span {
-            position: relative;
-            z-index: 2;
-          }
-
-          .btn-glow {
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(
-              circle,
-              rgba(255, 255, 255, 0.3) 0%,
-              transparent 70%
-            );
-            animation: btnGlow 3s infinite;
-          }
-
-          &:hover {
-            transform: translateY(-3px);
-            box-shadow: 0px 15px 30px rgba(120, 204, 243, 0.8);
-          }
-
-          &:active {
-            transform: translateY(-1px);
-          }
-        }
-      }
-    }
-
-    .tip-text {
-      position: absolute;
-      bottom: 60px;
-      left: 40px;
+  /* 左上角标题区域 */
+  .header-title {
+    position: absolute;
+    top: 60px;
+    left: 60px;
+    text-align: left;
+    pointer-events: auto;
+    
+    .subtitle {
+      color: #0096ff;
+      letter-spacing: 8px;
       font-size: 14px;
-      color: #666;
-      line-height: 1.8;
-      animation: fadeInUp 1s ease-out 1s backwards;
-
-      p {
-        margin: 0;
-      }
+      margin-top: 5px;
+      opacity: 0.8;
+      text-shadow: 0 0 10px rgba(0, 150, 255, 0.5);
+      font-weight: 500;
     }
   }
 
-  .index-page-right {
-    width: 50%;
-    max-width: 1000px;
+  /* 故障文字效果 */
+  .glitch-wrapper {
     position: relative;
+    display: inline-block;
+  }
 
-    .image-container {
+  .glitch-text {
+    font-size: 64px;
+    font-weight: 900;
+    color: #fff;
+    letter-spacing: 4px;
+    position: relative;
+    margin: 0;
+    text-shadow: 2px 2px 0px #0096ff, -2px -2px 0px #ff0055;
+    
+    &::before, &::after {
+      content: attr(data-text);
+      position: absolute;
+      top: 0;
+      left: 0;
       width: 100%;
       height: 100%;
+      background: transparent;
+    }
+
+    &::before {
+      left: 2px;
+      text-shadow: -1px 0 #ff0055;
+      clip-path: inset(0 0 0 0);
+      animation: glitch-anim-2 3s infinite linear alternate-reverse;
+    }
+
+    &::after {
+      left: -2px;
+      text-shadow: -1px 0 #0096ff;
+      animation: glitch-anim 2.5s infinite linear alternate-reverse;
+    }
+  }
+
+  /* 底部控制区域 */
+  .bottom-controls {
+    position: absolute;
+    bottom: 100px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    pointer-events: auto;
+    width: 100%;
+    
+    .system-status {
+      display: flex;
+      gap: 40px;
+      margin-bottom: 30px;
+      
+      .status-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 5px;
+        
+        .label {
+          color: rgba(255, 255, 255, 0.5);
+          font-size: 10px;
+          letter-spacing: 2px;
+        }
+        
+        .value {
+          color: #fff;
+          font-family: monospace;
+          font-size: 14px;
+          
+          &.online {
+            color: #00ff88;
+            text-shadow: 0 0 8px rgba(0, 255, 136, 0.6);
+          }
+        }
+      }
+    }
+  }
+
+  /* 升级版跃迁按钮 */
+  .warp-btn {
+    position: relative;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(0, 150, 255, 0.3);
+    padding: 18px 60px;
+    cursor: pointer;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    backdrop-filter: blur(5px);
+    
+    /* 引导特效：呼吸发光边框 */
+    box-shadow: 0 0 15px rgba(0, 150, 255, 0.2), inset 0 0 10px rgba(0, 150, 255, 0.1);
+    animation: btn-breathe 3s infinite ease-in-out;
+
+    .btn-text {
+      color: #fff;
+      font-size: 18px;
+      letter-spacing: 6px;
+      font-weight: 700;
+      z-index: 2;
       position: relative;
-      border-radius: 20px;
-      overflow: hidden;
-      // box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
-
-      .main-image {
-        width: 100%;
-        height: 100%;
-        display: block;
-        animation: imageFloat 6s ease-in-out infinite;
-      }
-
-      // 星星容器
-      .stars-container {
-        position: absolute;
-        top: 0; 
-        left: 0;
-        width: 100%;
-        height: 100%;
-        pointer-events: none;
-        z-index: 2;
-
-        // 闪烁的星星
-        .star {
-          position: absolute;
-          width: 3px;
-          height: 3px;
-          background: #fff;
-          border-radius: 50%;
-          box-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #ffd700;
-          animation: starTwinkle 2s ease-in-out infinite;
-
-          &::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 6px;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, #fff, transparent);
-          }
-
-          &::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) rotate(90deg);
-            width: 6px;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, #fff, transparent);
-          }
-        }
-
-        // 流星效果
-        .meteor {
-          position: absolute;
-          width: 2px;
-          height: 2px;
-          background: #fff;
-          border-radius: 50%;
-          box-shadow: 0 0 10px #fff;
-          animation: meteorFall 3s linear infinite;
-          opacity: 0;
-
-          &::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 80px;
-            height: 2px;
-            background: linear-gradient(
-              90deg,
-              rgba(255, 255, 255, 0.8),
-              transparent
-            );
-            transform-origin: left center;
-            transform: rotate(-45deg);
-          }
-        }
-      }
-
-      // 小人跑动动画遮罩
-      .character-animation {
-        position: absolute;
-        bottom: 30%;
-        left: 35%;
-        width: 100px;
-        height: 100px;
-        pointer-events: none;
-        z-index: 3;
-        animation: characterRun 3s ease-in-out infinite;
-      }
     }
-  }
-
-  // 动画定义
-  .bounce-enter-active {
-    animation: bounce-in 1s;
-  }
-
-  .bounce-leave-active {
-    animation: bounce-in 1s reverse;
-  }
-
-  @keyframes bounce-in {
-    0% {
-      transform: scale(0);
-    }
-    50% {
-      transform: scale(1.2);
-    }
-    100% {
-      transform: scale(1);
-    }
-  }
-
-  // 标题淡入动画
-  @keyframes titleFadeIn {
-    from {
-      opacity: 0;
-      transform: translateY(-20px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  // 线条生长动画
-  @keyframes lineGrow {
-    from {
-      width: 0;
-    }
-    to {
-      width: 100px;
-    }
-  }
-
-  // 按钮光晕动画
-  @keyframes btnGlow {
-    0%,
-    100% {
-      transform: translate(-50%, -50%) scale(0);
-      opacity: 0;
-    }
-    50% {
-      transform: translate(-50%, -50%) scale(1);
-      opacity: 1;
-    }
-  }
-
-  // 图片浮动动画
-  @keyframes imageFloat {
-    0%,
-    100% {
-      transform: translateY(0) scale(1);
-    }
-    50% {
-      transform: translateY(-10px) scale(1.02);
-    }
-  }
-
-  // 星星闪烁动画
-  @keyframes starTwinkle {
-    0%,
-    100% {
-      opacity: 0.3;
-      transform: scale(1);
-    }
-    50% {
-      opacity: 1;
-      transform: scale(1.5);
-    }
-  }
-
-  // 流星下落动画
-  @keyframes meteorFall {
-    0% {
-      opacity: 0;
-      transform: translate(0, 0);
-    }
-    10% {
-      opacity: 1;
-    }
-    90% {
-      opacity: 0.5;
-    }
-    100% {
-      opacity: 0;
-      transform: translate(-200px, 200px);
-    }
-  }
-
-  // 小人跑动动画（模拟上下摆动和轻微旋转）
-  @keyframes characterRun {
-    0%,
-    100% {
-      transform: translateY(0) rotate(0deg);
-      filter: brightness(1);
-    }
-    25% {
-      transform: translateY(-8px) rotate(-2deg);
-      filter: brightness(1.1);
-    }
-    50% {
-      transform: translateY(0) rotate(0deg);
-      filter: brightness(1);
-    }
-    75% {
-      transform: translateY(-8px) rotate(2deg);
-      filter: brightness(1.1);
-    }
-  }
-
-  // 文字淡入上浮动画
-  @keyframes fadeInUp {
-    from {
-      opacity: 0;
-      transform: translateY(20px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-}
-
-.wb-href {
-  width: 100%;
-  position: absolute;
-  text-align: center;
-  bottom: 15px;
-  cursor: pointer;
-  transition: color 0.3s ease;
-  z-index: 10;
-
-  &:hover {
-    color: #409eff;
-  }
-}
-
-// 响应式设计
-@media screen and (max-width: 900px) {
-  .index-page {
-    padding: 0;
-
-    .index-page-left {
-      width: 100%;
+    
+    /* 按钮背景流光 */
+    .btn-bg {
       position: absolute;
-      box-sizing: border-box;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(0, 150, 255, 0.2), transparent);
+      transition: left 0.5s;
       z-index: 1;
-
-      .index-page-title {
-        margin-left: 15px;
-        margin-top: 15px;
-
-        h3 {
-          font-size: 24px;
-        }
-      }
-
-      .index-page-text {
-        max-width: 100%;
-        margin: 8.6% 15px;
-        text-align: center;
-
-        .welcome-title {
-          text-align: left;
-        }
-
-        .welcome-text {
-          font-size: 24px;
-        }
-
-        .index-page-btn {
-          margin-top: 3%;
-
-          .enter-btn {
-            width: 150px;
-            height: 50px;
-          }
-        }
-      }
-
-      .tip-text {
-        left: 15px;
-        bottom: 80px;
-        font-size: 12px;
-      }
+      animation: shine 3s infinite;
     }
 
-    .index-page-right {
-      width: 100%;
-      padding: 15px;
-      box-sizing: border-box;
-      position: absolute;
-      top: 40%;
-      z-index: 0;
+    &:hover {
+      border-color: #0096ff;
+      box-shadow: 0 0 30px rgba(0, 150, 255, 0.6), inset 0 0 20px rgba(0, 150, 255, 0.3);
+      transform: scale(1.05);
+      background: rgba(0, 150, 255, 0.1);
+      
+      .btn-text {
+        text-shadow: 0 0 10px rgba(255, 255, 255, 1);
+      }
+    }
+    
+    &.warping {
+      animation: warp-pulse 0.2s infinite;
+      border-color: #fff;
+      background: #fff;
+      box-shadow: 0 0 50px #fff;
+      
+      .btn-text {
+        color: #000;
+      }
+    }
+  }
 
-      .image-container {
-        .character-animation {
-          bottom: 25%;
-          left: 30%;
-        }
+  .footer-info {
+    position: absolute;
+    bottom: 20px;
+    width: 100%;
+    text-align: center;
+    pointer-events: auto;
+    
+    .beian {
+      color: rgba(255, 255, 255, 0.2);
+      font-size: 12px;
+      text-decoration: none;
+      transition: color 0.3s;
+      &:hover { color: #fff; }
+    }
+  }
+
+  /* 动画定义 */
+  @keyframes btn-breathe {
+    0%, 100% { box-shadow: 0 0 15px rgba(0, 150, 255, 0.2), inset 0 0 10px rgba(0, 150, 255, 0.1); border-color: rgba(0, 150, 255, 0.3); }
+    50% { box-shadow: 0 0 25px rgba(0, 150, 255, 0.5), inset 0 0 15px rgba(0, 150, 255, 0.3); border-color: rgba(0, 150, 255, 0.6); }
+  }
+
+  @keyframes shine {
+    0% { left: -100%; }
+    20% { left: 100%; }
+    100% { left: 100%; }
+  }
+
+  @keyframes warp-pulse {
+    0% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.02); opacity: 0.8; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+
+  @keyframes glitch-anim {
+    0% { clip-path: inset(10% 0 30% 0); transform: translate(-2px, 1px); }
+    20% { clip-path: inset(60% 0 10% 0); transform: translate(2px, -1px); }
+    40% { clip-path: inset(40% 0 50% 0); transform: translate(-2px, 2px); }
+    60% { clip-path: inset(80% 0 5% 0); transform: translate(2px, -2px); }
+    80% { clip-path: inset(20% 0 70% 0); transform: translate(-1px, 1px); }
+    100% { clip-path: inset(10% 0 30% 0); transform: translate(1px, -1px); }
+  }
+
+  @keyframes glitch-anim-2 {
+    0% { clip-path: inset(30% 0 10% 0); transform: translate(2px, -1px); }
+    20% { clip-path: inset(10% 0 60% 0); transform: translate(-2px, 1px); }
+    40% { clip-path: inset(50% 0 40% 0); transform: translate(2px, -2px); }
+    60% { clip-path: inset(5% 0 80% 0); transform: translate(-2px, 2px); }
+    80% { clip-path: inset(70% 0 20% 0); transform: translate(1px, -1px); }
+    100% { clip-path: inset(30% 0 10% 0); transform: translate(-1px, 1px); }
+  }
+
+  /* 移动端适配 */
+  @media screen and (max-width: 768px) {
+    .header-title {
+      top: 30px;
+      left: 30px;
+      
+      .glitch-text { font-size: 40px; }
+      .subtitle { font-size: 10px; letter-spacing: 4px; }
+    }
+    
+    .bottom-controls {
+      bottom: 80px;
+      
+      .system-status { margin-bottom: 20px; gap: 20px; }
+      
+      .warp-btn {
+        padding: 15px 40px;
+        .btn-text { font-size: 14px; }
       }
     }
   }

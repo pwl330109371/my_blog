@@ -7,7 +7,7 @@
         <div class="ml-info flex align-center space-between">
           <div class="avatar-name flex align-center">
             <el-image
-              :src="list.user.picture + '/thumbnail/40x40'"
+              :src="list.user.picture"
               fit="cover"
             />
           </div>
@@ -145,7 +145,7 @@ const setInput = (data: any, parentId: any) => {
 <style lang="scss" scoped>
 .message {
   width: 100%;
-  color: #333;
+  color: #e0e0e0;
   font-weight: 400;
   margin-bottom: 20px;
   display: inline-block;
@@ -156,13 +156,13 @@ const setInput = (data: any, parentId: any) => {
     &:first-of-type {
       font-size: 18px;
       margin-right: 8px;
-      border-bottom: 1px solid #666;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
     }
   }
 
   .messageList {
     padding: 25px 0;
-    border-bottom: 1px solid #f6f7f8;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 
     &:first-of-type {
       margin-top: 16px;
@@ -188,6 +188,7 @@ const setInput = (data: any, parentId: any) => {
           height: 44px;
           border-radius: 50%;
           margin-right: 12px;
+          border: 1px solid rgba(255, 255, 255, 0.1);
         }
       }
 
@@ -198,7 +199,7 @@ const setInput = (data: any, parentId: any) => {
         .reply {
           opacity: 0;
           font-size: 12px;
-          color: #89b603;
+          color: #0096ff;
           margin-right: 12px;
           cursor: pointer;
           transition: all 0.2s;
@@ -207,19 +208,19 @@ const setInput = (data: any, parentId: any) => {
         }
 
         .date {
-          color: #999;
+          color: rgba(255, 255, 255, 0.5);
           font-size: 13px;
           letter-spacing: 0;
         }
 
         .name {
           font-weight: 400;
-          color: #89b603;
+          color: #0096ff;
           font-size: 16px;
           height: 20px;
           transition: all 0.3s;
           position: relative;
-          border-bottom: 1px dashed #89b60331;
+          border-bottom: 1px dashed rgba(0, 150, 255, 0.3);
 
           .master {
             border-bottom: none;
@@ -231,7 +232,7 @@ const setInput = (data: any, parentId: any) => {
     }
 
     .ml-result {
-      color: #303030;
+      color: #d0d0d0;
       line-height: 22px;
       padding-left: 52px;
       white-space: pre-wrap;

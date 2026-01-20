@@ -4,7 +4,7 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 export const useApi = async <T>(url: string, options: any = {}) => {
     const config = useRuntimeConfig()
     const token = useCookie('token')
-    const router = useRouter() // Use router instance
+    const router = import.meta.client ? useRouter() : null
 
     const defaults = {
         baseURL: config.public.apiBase,
@@ -24,7 +24,7 @@ export const useApi = async <T>(url: string, options: any = {}) => {
                     return data
                 } else if (data.code === -1) {
                     // Not logged in
-                    if (import.meta.client) {
+                    if (import.meta.client && router) {
                         ElMessageBox.confirm('进行登录后才能操作哦！', '确定', {
                             confirmButtonText: '确定',
                             showCancelButton: false,
@@ -49,7 +49,7 @@ export const useApi = async <T>(url: string, options: any = {}) => {
         },
         onResponseError({ response }: any) {
             if (response.status === 401) {
-                if (import.meta.client) {
+                if (import.meta.client && router) {
                     ElMessageBox.confirm('您登录时间过长，请重新返回登录页面进行登录', '确定登出', {
                         confirmButtonText: '重新登录',
                         showCancelButton: false,
@@ -67,5 +67,5 @@ export const useApi = async <T>(url: string, options: any = {}) => {
     // Merge options
     const params = defu(options, defaults)
 
-    return useFetch(url, params)
+    return await useFetch(url, params)
 }

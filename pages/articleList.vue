@@ -1,5 +1,6 @@
 <template>
-  <div class="flex flex-column align-center" v-loading.fullscreen.lock="pageLoad">
+  <div class="flex flex-column align-center">
+    <PageLoading v-if="pageLoad" />
     <Header />
     <div class="list">
       <ul class="monUl">
@@ -13,13 +14,13 @@
           <div class="mCLi flex space-between">
             <div class="mCLeft flex align-center">
               <el-image
-                :src="(thunk.picture || '') + '/thumbnail/45x45'"
+                :src="(thunk.picture || '')"
                 :title="thunk.title"
                 :alt="thunk.title"
                 fit="cover"
               />
               <div class="mCLText flex flex-column space-around">
-                <nuxt-link :to="`/detail/${thunk.id}`">
+                <nuxt-link :to="{ name: 'detail-id', params: { id: thunk.id } }">
                     <span>{{ thunk.title }}</span>
                 </nuxt-link>
                 <span>{{ thunk.likeNum }} 喜欢 / {{ thunk.visitsNum }} 读</span>
@@ -42,6 +43,7 @@
 <script setup lang="ts">
 import { ref, watch, nextTick, onActivated, onDeactivated, onMounted } from 'vue'
 import { bottomHandle, clearBottomHandle, formatDate } from '@/utils'
+import PageLoading from '@/components/common/PageLoading.vue'
 // Use useArticle composable
 const { getArticleList: fetchArticleList } = useArticle()
 
@@ -77,18 +79,7 @@ const getArticleList = async () => {
     if (error.value) throw error.value
     
     const res = data.value as any
-    // 添加空值检查
-    if (!res) {
-      console.warn('文章列表返回数据为空')
-      isLoading.value = false
-      pageLoad.value = false
-      return
-    }
-    
-    // 兼容两种数据结构：{ data: { total, rows } } 或 { total, rows }
-    const responseData = res.data || res
-    const total = responseData.total || 0
-    const rows = responseData.rows || responseData.list || []
+    const { total, rows } = res.data || res
 
     setTimeout(() => {
       requestDatas.value.push(...rows)
@@ -134,7 +125,7 @@ onMounted(() => {
 // 组件激活时设置底部加载监听
 onActivated(() => {
   bottomHandle(
-    isNext.value,
+    () => isNext.value,
     () => {
       page.value.pageIndex += 1
       getArticleList()

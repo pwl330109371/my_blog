@@ -1,23 +1,26 @@
 export const useArticle = () => {
-    const getArticleList = (params: any) => {
+    const getArticleList = (params: any, fetchOptions: any = {}) => {
         return useApi('/article/getArticleList', {
             method: 'GET',
-            params
+            params,
+            ...fetchOptions
         })
     }
 
-    const getArticleDetail = (params: any) => {
+    const getArticleDetail = (params: any, fetchOptions: any = {}) => {
         return useApi('/article/getArticleDetail', {
             method: 'GET',
-            params
+            params,
+            ...fetchOptions
         })
     }
 
     // 兼容旧命名：收藏文章实际上对应后端的 collection
-    const addFavorite = (data: any) => {
+    const addFavorite = (data: any, fetchOptions: any = {}) => {
         return useApi('/collection/collectionArticle', {
             method: 'POST',
-            body: data
+            body: data,
+            ...fetchOptions
         })
     }
 

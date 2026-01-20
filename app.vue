@@ -1,5 +1,8 @@
 <template>
   <div id="app">
+    <ClientOnly>
+      <SleekLineCursor />
+    </ClientOnly>
     <NuxtLayout>
       <NuxtPage 
         :keepalive="{ include: ['home', 'detail'], max: 3 }" 

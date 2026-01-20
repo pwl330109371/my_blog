@@ -11,10 +11,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onActivated, onDeactivated, onUnmounted, onMounted } from 'vue'
+import { ref, watch, onActivated, onDeactivated, onUnmounted } from 'vue'
 import { bottomHandle, clearBottomHandle } from '@/utils'
 // Use useArticle composable
-const { getArticleList } = useArticle()
+const config = useRuntimeConfig()
+const token = useCookie<string | null>('token')
 
 defineOptions({
   name: 'home'
@@ -33,6 +34,21 @@ const len = ref(0)
 const scroll = ref(0) // 记录滚动距离
 const isLoading = ref(false)
 const isNext = ref(true)
+const listFetchSeed = ref(0)
+const activatedOnce = ref(false)
+
+const { data: listRes, pending, error, refresh } = await useAsyncData(
+  () => `home-article-list-${listFetchSeed.value}-${page.value.pageIndex}`,
+  async () => {
+    return await $fetch('/article/getArticleList', {
+      baseURL: config.public.apiBase,
+      params: page.value,
+      headers: token.value ? { Authorization: token.value } : {},
+      credentials: 'include'
+    })
+  },
+  { server: false, immediate: true }
+)
 
 /**
  * 获取当前的滚动位置
@@ -43,42 +59,12 @@ const handleScroll = () => {
   }
 }
 
-/**
- * 获取文章列表
- */
-const loadData = async () => {
-  try {
-    const { data, error } = await getArticleList(page.value)
-    if (error.value) throw error.value
-    
-    const res = data.value as any
-    
-    // 添加空值检查
-    if (!res) {
-      console.warn('文章列表返回数据为空')
-      isLoading.value = false
-      return
-    }
-    
-    // 兼容两种数据结构
-    const responseData = res.data || res
-    const total = responseData.total || 0
-    const rows = responseData.rows || responseData.list || []
-    
-    if (page.value.pageIndex === 1) {
-       requestDatas.value = rows
-    } else {
-       requestDatas.value.push(...rows)
-    }
-
-    isLoading.value = false
-    len.value = requestDatas.value.length
-    isNext.value = len.value !== total
-    
-  } catch (error) {
-    console.error('获取文章列表失败:', error)
-    isLoading.value = false
-  }
+const resetAndLoad = async () => {
+  isNext.value = true
+  page.value.pageIndex = 1
+  requestDatas.value = []
+  listFetchSeed.value += 1
+  await refresh()
 }
 
 /**
@@ -88,24 +74,61 @@ const goHref = () => {
   window.open('https://beian.miit.gov.cn/', '_blank')
 }
 
-// 初始化
-onMounted(() => {
-    loadData()
-})
+watch(
+  pending,
+  (p) => {
+    isLoading.value = p
+  },
+  { immediate: true }
+)
+
+watch(
+  error,
+  (e) => {
+    if (e) console.error('获取文章列表失败:', e)
+  },
+  { immediate: true }
+)
+
+watch(
+  listRes,
+  (res: any) => {
+    const payload = (res && (res.data != null ? res.data : res)) || null
+    if (!payload) return
+
+    const total = payload.total ?? 0
+    const rows = Array.isArray(payload.rows) ? payload.rows : []
+
+    if (page.value.pageIndex === 1) {
+      requestDatas.value = rows
+    } else {
+      requestDatas.value.push(...rows)
+    }
+
+    len.value = requestDatas.value.length
+    isNext.value = len.value !== total
+  },
+  { immediate: true }
+)
 
 // 组件激活时恢复滚动位置并监听底部
 onActivated(() => {
+  if (!activatedOnce.value) {
+    activatedOnce.value = true
+  } else if (requestDatas.value.length === 0) {
+    resetAndLoad()
+  }
+
   if (scroll.value > 0 && mainCenterRef.value) {
     mainCenterRef.value.scrollTo(0, scroll.value)
     scroll.value = 0
   }
 
   bottomHandle(
-    isNext.value,
+    () => isNext.value,
     () => {
-      isLoading.value = true
       page.value.pageIndex += 1
-      loadData()
+      refresh()
     }
   )
 })
@@ -125,6 +148,8 @@ onUnmounted(() => {
 .outer {
   overflow: auto; // Ensure updated for scroll handling
   height: 100vh;
+  // 移除可能存在的背景色
+  background: transparent;
 }
 
 .content-wrap {
@@ -138,10 +163,18 @@ onUnmounted(() => {
     transform: translateX(-50%);
     top: 0;
     position: absolute;
-    background: #eaeaea;
+    // 修改为发光线条
+    background: linear-gradient(
+      to bottom,
+      transparent,
+      rgba(0, 150, 255, 0.3) 20%,
+      rgba(0, 150, 255, 0.3) 80%,
+      transparent
+    );
     z-index: 0;
     width: 1px;
     height: 100%;
+    box-shadow: 0 0 10px rgba(0, 150, 255, 0.5);
   }
 }
 

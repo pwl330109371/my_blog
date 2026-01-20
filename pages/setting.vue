@@ -8,7 +8,7 @@
         <el-upload
           class="avatar-uploader"
           :action="mainUrl + '/upload/uploadImg'"
-          :disabled="userInfo?.id !== 1"
+          :disabled="userId !== 1"
           :headers="uploadHeaders"
           :on-error="uploadError"
           :show-file-list="false"
@@ -52,7 +52,15 @@ const userStore = useUserStore()
 const formRef = ref(null)
 
 // 响应式数据
-const form = ref({
+type UserFormState = {
+  userName: string
+  birthday: string
+  motto: string
+  avatar: string
+  id: string
+}
+
+const form = ref<UserFormState>({
   userName: '',
   birthday: '',
   motto: '',
@@ -62,6 +70,7 @@ const form = ref({
 
 // 计算属性
 const userInfo = computed(() => userStore.userInfo || {})
+const userId = computed(() => (userStore.userInfo ? (userStore.userInfo as any).id : undefined))
 // Runtime config for API base
 const config = useRuntimeConfig()
 const mainUrl = computed(() => config.public.apiBase || '/api')
@@ -76,7 +85,7 @@ const uploadHeaders = computed(() => {
 /**
  * 头像上传成功
  */
-const handleAvatarSuccess = (res, file) => {
+const handleAvatarSuccess = (res: any, file: any) => {
   form.value.avatar = res.data
   ElMessage.success('图片上传成功')
 }
@@ -84,7 +93,7 @@ const handleAvatarSuccess = (res, file) => {
 /**
  * 上传前验证
  */
-const beforeAvatarUpload = (file) => {
+const beforeAvatarUpload = (file: any) => {
   const isJPG = file.type === 'image/jpeg' || file.type === 'image/png'
   // const isLt2M = file.size / 1024 / 1024 < 2
 
@@ -101,7 +110,7 @@ const beforeAvatarUpload = (file) => {
 /**
  * 上传失败
  */
-const uploadError = (e) => {
+const uploadError = (e: any) => {
   try {
     const errorMsg = JSON.parse(e.message).msg
     ElMessage.error(errorMsg)
@@ -115,26 +124,19 @@ const uploadError = (e) => {
  */
 const onSubmit = async () => {
   try {
+    const currentUser = (userInfo.value || {}) as any
     const payload = {
-      userId: form.value.id || userInfo.value?.id,
-      nickName: form.value.userName || userInfo.value?.nickName,
-      picture: form.value.avatar || userInfo.value?.picture,
-      city: userInfo.value?.city || '',
-      gender: userInfo.value?.gender,
-      role: userInfo.value?.role
+      userId: form.value.id || currentUser.id,
+      nickName: form.value.userName || currentUser.nickName,
+      picture: form.value.avatar || currentUser.picture,
+      city: currentUser.city || '',
+      gender: currentUser.gender,
+      role: currentUser.role
     }
-    const { data: fetchData, error } = await updateUserInfo(payload)
-    if (error.value) throw error.value
-    
-    const res = fetchData.value as any
-    if (!res) {
-      ElMessage.error('保存失败，请重试')
-      return
-    }
-    
+    const res: any = await updateUserInfo(payload)
     const data = res.data || res
 
-    ElMessage.success(data.msg || res.msg || '保存成功')
+    ElMessage.success(data.msg || '保存成功')
     if (userStore.userId) {
       await userStore.getInfo()
     }
@@ -150,9 +152,11 @@ const onSubmit = async () => {
 watch(
   userInfo,
   (newval) => {
-    for (let key in form.value) {
-      if (newval[key]) {
-        form.value[key] = newval[key]
+    const source = (newval || {}) as Record<string, any>
+    for (const key of Object.keys(form.value) as Array<keyof UserFormState>) {
+      const nextValue = source[key as string]
+      if (nextValue != null && nextValue !== '') {
+        form.value[key] = String(nextValue) as any
       }
     }
   },

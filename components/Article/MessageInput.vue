@@ -90,84 +90,46 @@ const tagClose = () => {
 
 <style lang="scss" scoped>
 .inputContent {
-  border: 1px solid #eee;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.2);
   border-radius: 6px;
   padding: 15px 12px;
   transition: all 0.3s;
   font-size: 14px;
-  color: #333333;
+  color: #e0e0e0;
 
   &.hiddenOuter {
+    display: none;
+  }
+  
+  :deep(.el-textarea__inner) {
+    background: transparent;
+    box-shadow: none;
+    color: #e0e0e0;
     border: none;
     padding: 0;
-  }
-
-  .tag {
-    margin-top: 10px;
-    border-radius: 20px;
-  }
-
-  .userName.outerInput {
-    border: 1px dashed #f0f0f0;
-
-    :deep(.el-input__inner) {
-      border: 1px dashed #f0f0f0 !important;
-
-      &:focus {
-        border-color: #008c8c !important;
-      }
+    
+    &::placeholder {
+      color: rgba(255, 255, 255, 0.4);
     }
   }
-
-  .userName,
-  .userContent {
-    width: 50%;
-    font-size: 14px;
-    margin-right: 12px;
-    transition: all 0.3s;
-    border: none;
-    border-radius: 4px;
-    border-bottom: 1px dashed #f0f0f0;
-    outline: none;
-
-    :deep(.el-input__inner) {
-      border: none;
-      border-bottom: 1px dashed #dcdff6;
-
-      &:focus {
-        border-color: #008c8c;
-      }
-    }
-
-    :deep(.el-textarea__inner) {
-      border: 1px dashed #dcdff6;
-
-      &:focus {
-        border-color: #008c8c;
-      }
-    }
+  
+  :deep(.el-input__count) {
+    background: transparent;
+    color: rgba(255, 255, 255, 0.4);
   }
+}
 
-  .submit {
-    width: 100px;
-    font-size: 14px;
-    color: #5f5f5f;
-    border-radius: 6px;
-    background: #eaeaea;
-    cursor: pointer;
-    outline: none;
-    border: none;
-    margin-right: 12px;
-    transition: all 0.3s;
-  }
+.userContent {
+  margin-bottom: 10px;
+}
 
-  .userContent {
-    width: 100%;
-    margin: 10px 0;
-  }
+.submit-btn {
+  display: flex;
+  justify-content: flex-end;
+}
 
-  .submit-btn {
-    text-align: right;
-  }
+.tag {
+  margin-bottom: 10px;
 }
 </style>

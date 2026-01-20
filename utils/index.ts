@@ -44,7 +44,8 @@ export const formatDate = (dateStr: string) => {
     if (dateStr.includes('-')) {
         let [y, m, other] = dateStr.split('-')
         const d = other ? other.split(' ')[0] : '01'
-        m = arr[parseInt(m)]
+        const monthIndex = Number.parseInt(m || '0', 10)
+        m = arr[monthIndex] || ''
         return {
             year: y,
             month: m,
@@ -134,14 +135,25 @@ export function formatTime(time: any, option?: string) {
 }
 
 // 滚动监听
-export function bottomHandle(isScroll: boolean, callback: Function) {
-    // window.onscroll = throttle(scrollChange.bind(null, isScroll, callback), 200)
-    window.addEventListener('scroll', throttleScroll(isScroll, callback)) // Removed delay arg as it's part of throttle closure
+let bottomScrollListener: ((e: Event) => void) | null = null
+
+export function bottomHandle(isScroll: boolean | (() => boolean), callback: Function) {
+    if (typeof window === 'undefined') return
+    clearBottomHandle()
+    const getIsScroll = typeof isScroll === 'function' ? isScroll : () => isScroll
+    const listener = throttle(() => {
+        scrollChange(getIsScroll(), callback)
+    }, 200) as (e: Event) => void
+    bottomScrollListener = listener
+    window.addEventListener('scroll', listener, { passive: true })
 }
 
 // 清除滚动监听
 export function clearBottomHandle() {
-    window.removeEventListener('scroll', throttleScroll as any)
+    if (typeof window === 'undefined') return
+    if (!bottomScrollListener) return
+    window.removeEventListener('scroll', bottomScrollListener)
+    bottomScrollListener = null
 }
 
 function scrollChange(isScroll: boolean, callback: Function) {
@@ -157,23 +169,3 @@ function scrollChange(isScroll: boolean, callback: Function) {
         callback()
     }
 }
-
-// 节流滚动方法 - Fixed throttle usage to return function properly referenceable
-// To removeEventListener, we need the exact function reference.
-// The original code was creating a new function every time throttleScroll was called?
-// No, throttleScroll is a const.
-const throttleScroll = (isScroll: boolean, callback: Function) => {
-    // This implementation is tricky for removeEventListener because it returns a new function
-    // But original code passed `throttleScroll` to removeEventListener?
-    // Wait, original: window.addEventListener('scroll', throttleScroll(isScroll, callback), 200)
-    // And remove: window.removeEventListener('scroll', throttleScroll)
-    // This looks wrong in original code if throttleScroll returns a function.
-    // If throttleScroll IS the listener, it should accept event.
-    // But it accepts isScroll, callback.
-    // I'll simplify: just export a function that does the logic.
-    return throttle(function () { scrollChange(isScroll, callback) }, 200)
-}
-// Note: The clearBottomHandle in original code likely didn't work as intended or relied on specific behavior.
-// I will implement a simpler listener management if needed or keep closer to original but valid.
-// Since I can't easily export the specific throttled instance created inside bottomHandle,
-// I'll rely on the component to manage lifecycle if possible, or just mock it for now.

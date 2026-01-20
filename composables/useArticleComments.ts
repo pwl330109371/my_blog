@@ -1,15 +1,17 @@
 export const useArticleComments = () => {
-    const addComment = (data: any) => {
+    const addComment = (data: any, fetchOptions: any = {}) => {
         return useApi('/comment/createComment', {
             method: 'POST',
-            body: data
+            body: data,
+            ...fetchOptions
         })
     }
 
-    const getCommentList = (articleId: number | string) => {
+    const getCommentList = (articleId: number | string, fetchOptions: any = {}) => {
         return useApi('/comment/getCommentList', {
             method: 'GET',
-            params: { articleId }
+            params: { articleId },
+            ...fetchOptions
         })
     }
 

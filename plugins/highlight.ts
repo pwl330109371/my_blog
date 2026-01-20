@@ -3,9 +3,9 @@ import 'highlight.js/styles/monokai-sublime.css' // Style chosen from original p
 
 export default defineNuxtPlugin((nuxtApp) => {
     nuxtApp.vueApp.directive('highlight', (el) => {
-        const blocks = el.querySelectorAll('pre code')
-        blocks.forEach((block: any) => {
-            hljs.highlightBlock(block)
+        const blocks = el.querySelectorAll('pre code') as NodeListOf<HTMLElement>
+        blocks.forEach((block: HTMLElement) => {
+            hljs.highlightElement(block)
         })
     })
 })

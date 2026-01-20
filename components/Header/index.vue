@@ -2,66 +2,56 @@
   <div class="header" ref="headRef">
     <div class="left flex align-center">
       <img @click="toIndex" src="/images/textlogo.png" alt="Logo" />
+    </div>
+
+    <!-- 中间导航菜单 -->
+    <div class="center-nav">
+      <nuxt-link :to="{ name: 'home' }" class="nav-item">首页</nuxt-link>
+      <!-- <nuxt-link :to="{ name: 'articleList' }" class="nav-item">文章</nuxt-link> -->
+      <nuxt-link :to="{ name: 'gallery' }" class="nav-item">图库</nuxt-link>
+      <nuxt-link :to="{ name: 'message' }" class="nav-item">留言</nuxt-link>
+      <nuxt-link :to="{ name: 'rainy' }" class="nav-item">听雨</nuxt-link>
+    </div>
+
+    <div class="mid" :class="musicIcon === 'show' ? 'show' : 'hid'" v-if="false">
+      {{ midText }}
+    </div>
+
+    <div class="right flex align-center">
+      <!-- 音乐控制 -->
       <i
         class="iconfont"
         @click="changeMusic"
         :class="isPlay ? 'icon-zanting' : 'icon-bofang'"
+        style="margin-right: 20px; font-size: 20px;"
       ></i>
-    </div>
-    <div class="mid" :class="musicIcon === 'show' ? 'show' : 'hid'">
-      {{ midText }}
-    </div>
-    <div class="right flex align-center">
+
       <i
         class="iconfont"
         :class="isLike === 1 ? 'icon-xin' : 'icon-xinheart118'"
         v-if="showLike"
         @click="$emit('like', isLike)"
       ></i>
-      <nuxt-link :to="`/wode?id=${userInfo.id}`" v-if="userInfo && userInfo.id">
+      
+      <nuxt-link :to="{ name: 'wode', query: { id: userInfo.id } }" v-if="userInfo && userInfo.id">
         <el-image
-          style="width: 40px; height: 40px"
-          :src="userInfo.picture + '/thumbnail/40x40'"
+          style="width: 36px; height: 36px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.3);"
+          :src="userInfo.picture"
           fit="fill"
         ></el-image>
       </nuxt-link>
+      <nuxt-link :to="{ name: 'login' }" v-else class="login-btn">
+        登录
+      </nuxt-link>
     </div>
+    
     <div class="progressBar" :style="{ width: progressBarWidth + '%' }"></div>
-    <div class="music-btn" @click="changeMusic" :class="[musicIcon]">
-      <svg
-        class="progress-circle"
-        viewBox="0 0 100 100"
-        version="1.1"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <circle
-          class="progress-background"
-          r="50"
-          cx="50"
-          cy="50"
-          fill="transparent"
-        />
-        <circle
-          class="progress-bar"
-          r="50"
-          cx="50"
-          cy="50"
-          fill="transparent"
-          :stroke-dasharray="dashArray"
-          :stroke-dashoffset="dashOffset"
-        />
-      </svg>
-      <span
-        class="iconfont"
-        :class="isPlay ? 'icon-zanting' : 'icon-bofang'"
-      ></span>
-    </div>
     <audio loop id="music" :src="music"></audio>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onDeactivated } from 'vue'
+import { ref, computed, onMounted, onDeactivated, watch } from 'vue'
 import { throttle } from '@/utils/index'
 
 // Props
@@ -96,15 +86,13 @@ const props = defineProps({
 })
 
 // Emits
-defineEmits(['like'])
+const emit = defineEmits(['like'])
 
 // Router
 const router = useRouter()
 
 // Refs
 const headRef = ref(null)
-
-// 响应式数据
 const isPlay = ref(false)
 const startListen = ref(false)
 const dashArray = Math.PI * 100
@@ -112,6 +100,7 @@ const progressBarWidth = ref(0)
 const musicIcon = ref('')
 const audioDom = ref<HTMLAudioElement | null>(null)
 const timer = ref<any>(null)
+const showMenu = ref(false)
 
 /**
  * 计算进度条偏移量
@@ -198,13 +187,6 @@ onMounted(() => {
   listenScroll()
 })
 
-// Nuxt handles activation differently (keep-alive), relying on mounted for initial setup
-// For checking reactivation in keep-alive we can use onActivated if <NuxtPage> is wrapped in keep-alive
-// Assuming keep-alive is used in App.vue or Layout
-// But for now, just migrate onMounted logic.
-
-// onDeactivated logic
-// Note: onDeactivated only works if component is inside <KeepAlive>
 onDeactivated(() => {
   document.body.onscroll = null
   if (audioDom.value) {
@@ -221,39 +203,78 @@ onDeactivated(() => {
   position: fixed;
   top: 0;
   left: 0;
-  height: 50px;
+  height: 60px;
   width: 100%;
-  border-bottom: 1px solid #f6f7f8;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  color: #666;
-  padding: 0 15px;
-  background: #fff;
+  color: #ccc;
+  padding: 0 30px;
+  background: rgba(9, 10, 15, 0.6);
+  backdrop-filter: blur(12px);
   z-index: 99999;
   transition: all 0.3s;
 
   .left {
     img {
-      width: 30px;
-      height: auto;
-      opacity: 0.8;
+      height: 30px;
+      width: auto;
+      opacity: 0.9;
       cursor: pointer;
       transition: all 0.2s;
+      filter: brightness(100); 
 
       &:hover {
-        animation: jump 1s infinite alternate;
+        opacity: 1;
+        transform: scale(1.05);
       }
     }
+  }
 
-    .iconfont {
-      color: #888;
-      margin-left: 20px;
-      cursor: pointer;
+  /* 导航链接样式 */
+  .center-nav {
+    display: flex;
+    gap: 50px;
+    /* 使用 Flex 布局替代绝对定位，防止重叠 */
+    flex: 1;
+    justify-content: center;
+    align-items: center;
+
+    .nav-item {
+      color: rgba(255, 255, 255, 0.7);
+      text-decoration: none;
+      font-size: 16px;
+      font-weight: 500;
       transition: all 0.3s;
+      position: relative;
+      padding: 5px 0;
+      white-space: nowrap; /* 防止换行 */
+
+      &::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 0;
+        height: 2px;
+        background: #0096ff;
+        transition: width 0.3s;
+      }
 
       &:hover {
-        color: #303033;
+        color: #fff;
+        text-shadow: 0 0 8px rgba(0, 150, 255, 0.5);
+        &::after {
+          width: 100%;
+        }
+      }
+      
+      &.router-link-active {
+        color: #0096ff;
+        &::after {
+          width: 100%;
+        }
       }
     }
   }
@@ -261,6 +282,7 @@ onDeactivated(() => {
   .mid {
     font-weight: 600;
     transition: all 0.4s ease-in;
+    color: #fff;
 
     &.hid {
       opacity: 0;
@@ -268,26 +290,42 @@ onDeactivated(() => {
   }
 
   :deep(.right) {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end; /* 右侧对齐 */
+    min-width: 200px; /* 保证右侧空间 */
+
     .iconfont {
-      font-size: 26px;
-      margin: 0 16px;
+      font-size: 22px;
+      margin: 0 10px;
       cursor: pointer;
       transition: all 0.3s;
+      color: #aaa;
 
-      &.icon-xin {
-        color: #ef6d57;
-        font-weight: bold;
+      &:hover {
+        color: #fff;
+        text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
       }
 
-      &.icon-xinheart118:hover {
+      &.icon-xin {
         color: #ef6d57;
       }
     }
 
-    .el-image__inner {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
+    .login-btn {
+      color: #fff;
+      text-decoration: none;
+      padding: 6px 16px;
+      border: 1px solid rgba(255,255,255,0.3);
+      border-radius: 20px;
+      font-size: 14px;
+      transition: all 0.3s;
+      margin-left: 10px;
+
+      &:hover {
+        background: rgba(255,255,255,0.1);
+        border-color: #fff;
+      }
     }
   }
 
@@ -296,125 +334,47 @@ onDeactivated(() => {
     top: 0;
     left: 0;
     width: 0;
-    height: 50px;
-    background-color: #eee;
+    height: 60px;
+    background-color: rgba(255, 255, 255, 0.03);
     z-index: -1;
+    transition: width 0.1s linear;
   }
 }
 
-.music-btn {
-  position: fixed;
-  right: 30px;
-  bottom: 30px;
-  width: 36px;
-  padding: 3px;
-  height: 36px;
-  color: #fff;
-  opacity: 0.8;
-  cursor: pointer;
-  z-index: 9999999;
-  border-radius: 50%;
-  background: rgba(0, 0, 0, 0.6);
-  display: none;
+  /* 响应式设计 - 移动端适配 */
+  @media screen and (max-width: 900px) {
+    .header {
+      padding: 0 15px;
+      height: 56px;
 
-  .progress-circle {
-    height: 30px;
-    width: 30px;
-
-    circle {
-      stroke-width: 10px;
-      transform-origin: center;
-
-      &.progress-background {
-        transform: scale(0.9);
-        stroke: #fff;
+      .left {
+        img {
+          height: 24px; /* 移动端缩小 Logo */
+        }
       }
 
-      &.progress-bar {
-        transform: scale(0.9) rotate(-90deg);
-        stroke: #50bcb6;
+      /* 缩小导航间距以适应移动端 */
+      .center-nav {
+        gap: 15px;
+        
+        .nav-item {
+          font-size: 14px;
+        }
+      }
+
+      :deep(.right) {
+        min-width: auto; /* 取消最小宽度限制 */
+        
+        .iconfont {
+          font-size: 20px;
+          margin: 0 5px;
+        }
+
+        .login-btn {
+          padding: 4px 12px;
+          font-size: 12px;
+        }
       }
     }
   }
-
-  .iconfont {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    display: inline-block;
-    font-size: 13px;
-
-    &.icon-bofang {
-      padding: 1px 0 0 3px;
-    }
-
-    &.icon-pause {
-      padding-left: 1px;
-    }
-  }
-}
-
-// 响应式设计
-@media screen and (max-width: 600px) {
-  .header {
-    position: absolute;
-  }
-
-  .mid {
-    font-size: 14px;
-  }
-
-  .music-btn {
-    opacity: 0;
-
-    &.show {
-      display: block;
-      visibility: visible;
-      animation: fadeInTop 0.6s both;
-    }
-
-    &.exit {
-      display: block;
-      opacity: 0;
-      animation: fadeInDown 0.6s both;
-    }
-  }
-}
-
-// 动画定义
-@keyframes jump {
-  0% {
-    transform: translateY(0px) scale(1);
-  }
-  60% {
-    transform: translateY(2px) scale(1.1);
-  }
-  100% {
-    transform: translateY(-4px) scale(1);
-  }
-}
-
-@keyframes fadeInTop {
-  from {
-    opacity: 0;
-    transform: translate(0, 30px);
-  }
-  to {
-    opacity: 1;
-    transform: translate(0, 0);
-  }
-}
-
-@keyframes fadeInDown {
-  from {
-    opacity: 1;
-    transform: translate(0, 0px);
-  }
-  to {
-    opacity: 0;
-    visibility: hidden;
-    transform: translate(0, 30px);
-  }
-}
 </style>

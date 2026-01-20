@@ -43,17 +43,16 @@ const content = ref('')
  * Markdown 渲染
  */
 const markdownRender = (markdownContent: string) => {
-  marked.setOptions({
-    renderer: new marked.Renderer(),
-    pedantic: false,
-    gfm: true,
-    breaks: false,
-    sanitize: false,
-    smartLists: true,
-    smartypants: false,
-    xhtml: false
-  })
-  content.value = marked(markdownContent) as string
+  const anyMarked = marked as any
+  if (anyMarked && typeof anyMarked.parse === 'function') {
+    content.value = anyMarked.parse(markdownContent)
+    return
+  }
+  if (typeof anyMarked === 'function') {
+    content.value = anyMarked(markdownContent)
+    return
+  }
+  content.value = markdownContent
 }
 
 // 注意：此页面为预留页面

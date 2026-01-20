@@ -85,7 +85,9 @@ const toIndex = () => {
  * 切换音乐播放状态
  */
 const music = (type: number, active: boolean) => {
-  rainIcon.value[type].active = !active
+  const icon = rainIcon.value[type]
+  if (!icon) return
+  icon.active = !active
   const audio = audioDom.value[type]
   if (audio) {
       !active ? audio.play() : audio.pause()

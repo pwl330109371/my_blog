@@ -5,7 +5,7 @@
       <Article :datas="requestDatas" :isLoading="isLoading" :isNext="isNext" />
     </div>
     <div style="padding-bottom: 15px; cursor: pointer; text-align: center;" @click="goHref">
-      鄂ICP备2021007829号-1
+      鲁ICP备2025208345号-1
     </div>
   </div>
 </template>

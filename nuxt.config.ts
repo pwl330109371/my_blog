@@ -2,7 +2,7 @@
  * Author: pengwenlei 330109371@qq.com
  * Date: 2025-12-12 09:39:36
  * LastEditors: pengwenlei 330109371@qq.com
- * LastEditTime: 2026-01-16 15:36:09
+ * LastEditTime: 2026-01-20 10:48:58
  */
 import svgLoader from 'vite-svg-loader'
 import tailwindcss from '@tailwindcss/vite'
@@ -41,7 +41,7 @@ export default defineNuxtConfig({
     plugins: [
       svgLoader(),
       tailwindcss()
-    ],
+      ],
     css: {
       preprocessorOptions: {
         scss: {

@@ -554,7 +554,7 @@ onMounted(() => {
     color: #00f3ff;
     margin: 0;
     letter-spacing: 2px;
-    font-size: 1.2rem;
+    font-size: 1rem;
   }
   
   .close-btn {
@@ -592,10 +592,8 @@ onMounted(() => {
     border: none;
     color: #fff;
     font-family: 'Rajdhani', sans-serif;
-    font-size: 1.2rem;
-    padding: 10px 0;
-    font-size: 1.1rem;
-    
+    font-size: 1rem;
+    padding: 10px 0;    
     &:focus { outline: none; }
   }
   

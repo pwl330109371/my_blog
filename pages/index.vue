@@ -519,10 +519,32 @@ onBeforeUnmount(() => {
     overflow: hidden;
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     backdrop-filter: blur(5px);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     
     /* 引导特效：呼吸发光边框 */
     box-shadow: 0 0 15px rgba(0, 150, 255, 0.2), inset 0 0 10px rgba(0, 150, 255, 0.1);
     animation: btn-breathe 3s infinite ease-in-out;
+
+    &.astral-btn {
+      margin-left: 20px;
+      border-color: rgba(188, 19, 254, 0.3);
+
+      .btn-text {
+        color: #bc13fe;
+      }
+
+      .btn-bg {
+        background: rgba(188, 19, 254, 0.1);
+      }
+
+      &:hover {
+        border-color: #bc13fe;
+        box-shadow: 0 0 20px rgba(188, 19, 254, 0.4);
+      }
+    }
 
     .btn-text {
       color: #fff;

@@ -43,6 +43,7 @@
 </template>
 
 <script setup lang="ts">
+import { ref, onMounted, onUnmounted } from 'vue'
 
 interface Meteor {
   id: number
@@ -56,9 +57,16 @@ interface Meteor {
 }
 
 const meteors = ref<Meteor[]>([])
+const mouseX = ref(0)
+const mouseY = ref(0)
+
+const handleMouseMove = (e: MouseEvent) => {
+  mouseX.value = (e.clientX / window.innerWidth) * 2 - 1
+  mouseY.value = (e.clientY / window.innerHeight) * 2 - 1
+}
 
 const createMeteors = () => {
-  const count = 6 // Reduced count for less frequent appearance
+  const count = 6 
   const newMeteors: Meteor[] = []
   
   // Lighter/Pastel Neon colors
@@ -69,10 +77,10 @@ const createMeteors = () => {
       id: i,
       x: Math.random() * 100,
       y: Math.random() * 50 - 20,
-      duration: 4 + Math.random() * 5, // Slower duration
-      delay: Math.random() * 15, // Increased delay for less frequent appearance
+      duration: 4 + Math.random() * 5, 
+      delay: Math.random() * 15, 
       angle: -45 + (Math.random() * 10 - 5),
-      scale: 0.4 + Math.random() * 0.4, // Smaller scale (0.4 - 0.8)
+      scale: 0.4 + Math.random() * 0.4, 
       color: colors[Math.floor(Math.random() * colors.length)]!
     })
   }
@@ -82,6 +90,11 @@ const createMeteors = () => {
 
 onMounted(() => {
   createMeteors()
+  window.addEventListener('mousemove', handleMouseMove)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('mousemove', handleMouseMove)
 })
 </script>
 
@@ -111,6 +124,7 @@ onMounted(() => {
   opacity: 0.4;
   animation: nebulaPulse 15s ease-in-out infinite alternate;
   z-index: 2;
+  transition: transform 0.2s ease-out;
 }
 
 .nebula-1 {
@@ -120,6 +134,7 @@ onMounted(() => {
   height: 50vw;
   background: radial-gradient(circle, #4c1d95 0%, transparent 70%);
   animation-duration: 20s;
+  transform: translate(v-bind('mouseX * -20 + "px"'), v-bind('mouseY * -20 + "px"'));
 }
 
 .nebula-2 {
@@ -130,6 +145,7 @@ onMounted(() => {
   background: radial-gradient(circle, #0c4a6e 0%, transparent 70%);
   animation-duration: 25s;
   animation-delay: -5s;
+  transform: translate(v-bind('mouseX * -30 + "px"'), v-bind('mouseY * -30 + "px"'));
 }
 
 .nebula-3 {
@@ -141,12 +157,15 @@ onMounted(() => {
   opacity: 0.2;
   animation-duration: 18s;
   animation-delay: -10s;
+  transform: translate(v-bind('mouseX * -15 + "px"'), v-bind('mouseY * -15 + "px"'));
 }
 
 .stars-container {
   position: absolute;
   inset: 0;
   z-index: 3;
+  transition: transform 0.1s ease-out;
+  transform: translate(v-bind('mouseX * -10 + "px"'), v-bind('mouseY * -10 + "px"'));
 }
 
 @function box-shadow-stars($n) {

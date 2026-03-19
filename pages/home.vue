@@ -47,7 +47,7 @@ const { data: listRes, pending, error, refresh } = await useAsyncData(
       credentials: 'include'
     })
   },
-  { server: false, immediate: true }
+  { immediate: true }
 )
 
 /**

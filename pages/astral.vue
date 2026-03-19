@@ -996,7 +996,7 @@ onBeforeUnmount(() => {
   align-items: center; /* 垂直居中 */
   pointer-events: auto;
   /* padding-top: 16vh;  Remove padding-top to allow true centering or slight offset if needed */
-  padding-bottom: 20vh; /* Add padding-bottom to push it visually higher than center */
+  padding-bottom: 35vh; /* Add padding-bottom to push it visually higher than center */
 }
 
 .input-modal {

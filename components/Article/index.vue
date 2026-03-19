@@ -6,21 +6,21 @@
       v-for="item in datas"
       :key="item.id || item._id"
     >
-      <div
+      <NuxtLink
         class="img-outer flex align-center justify-center"
-        @click="toDetail(item.id || item._id)"
+        :to="`/detail/${item.id || item._id}`"
       >
         <img :src="$qiniu(item.picture, { scene: 'list' })"
         loading="lazy" />
-      </div>
+      </NuxtLink>
       <div class="text-outer">
         <div class="info">
           <div class="time">
             {{ formatDateFilter(item.createdAt) }}
           </div>
-          <div class="title" @click="toDetail(item._id || item.id)">
-            <a>{{ item.title }}</a>
-          </div>
+          <NuxtLink class="title" :to="`/detail/${item._id || item.id}`">
+            {{ item.title }}
+          </NuxtLink>
           <div class="description">{{ item.describe }}</div>
           <div class="handle flex align-center">
             <div class="handle-thunk flex align-center">
@@ -69,9 +69,6 @@ const props = defineProps({
   }
 })
 
-// Router
-const router = useRouter()
-
 // 响应式数据
 const wowNum = ref(0)
 
@@ -80,13 +77,6 @@ const wowNum = ref(0)
  */
 const formatDateFilter = (val: string) => {
   return val
-}
-
-/**
- * 跳转到文章详情
- */
-const toDetail = (id: string) => {
-  router.push({ name: 'detail-id', params: { id } })
 }
 
 // 监听数据变化，初始化 WOW 动画
@@ -208,8 +198,7 @@ watch(
         -webkit-box-orient: vertical;
         overflow: hidden;
         font-weight: 600;
-
-        a {
+        color: #fff;
           font-size: 28px;
           line-height: 1.4;
           cursor: pointer;
@@ -221,12 +210,10 @@ watch(
           -webkit-text-fill-color: transparent;
           background-size: 200% auto;
           background-position: 0 0;
-
           &:hover {
             background-position: 100% 0;
             text-shadow: 0 0 10px rgba(0, 150, 255, 0.5);
           }
-        }
       }
 
       .description {

@@ -23,7 +23,7 @@
           </div>
           <div class="meta-item">
             <i class="el-icon-document"></i>
-            <span>字数：{{ content.length || 0 }}</span>
+            <span>字数：{{ wordCount }}</span>
           </div>
           <div class="meta-item">
             <i class="el-icon-chat-dot-round"></i>
@@ -55,10 +55,10 @@
         </div>
         
         <div class="content markdown-body">
-          <div class="picture" v-if="detail.picture">
-            <img :src="$qiniu(detail.picture, { scene: 'detail' })" loading="lazy" />
+          <div class="picture" v-if="pictureUrl">
+            <img :src="pictureUrl" loading="lazy" />
           </div>
-          <div v-html="content" v-highlight></div>
+          <div v-html="renderedContent" class="markdown-content" v-highlight></div>
         </div>
 
         <div class="divider"></div>
@@ -82,13 +82,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, nextTick, onMounted, onActivated } from 'vue'
+import { ref, computed, watch, nextTick, onMounted } from 'vue'
 import { marked } from 'marked'
 import { ElMessage } from 'element-plus'
-const { getArticleDetail } = useArticle()
 const { isCollection, collectionArticle } = useCollection()
 const { addComment, getCommentList } = useArticleComments()
 import { formatDate } from '@/utils'
+import { createQiniuImage } from '@/utils/qiniuImage'
 import MessageList from '@/components/Article/MessageList.vue'
 import ScrollBar from '@/components/Article/ScrollBar.vue'
 import MessageInput from '@/components/Article/MessageInput.vue'
@@ -96,6 +96,7 @@ import MessageInput from '@/components/Article/MessageInput.vue'
 const route = useRoute()
 const config = useRuntimeConfig()
 const cookieToken = useCookie<string | null>('token')
+const requestUrl = useRequestURL()
 
 // Store
 const userStore = useUserStore()
@@ -106,14 +107,10 @@ const commentList = ref<any[]>([])
 const aiteName = ref('')
 const floorId = ref('')
 const toUid = ref('')
-const content = ref('')
 const isStar = ref(2) // 1 收藏 2 未收藏
 const rows = ref(6)
 const isLoading = ref(false)
 const isNext = ref(true)
-const detailFetchSeed = ref(0)
-const commentFetchSeed = ref(0)
-const activatedOnce = ref(false)
 
 /**
  * 计算属性
@@ -126,13 +123,86 @@ const articleId = computed(() => {
   return id ? String(id) : ''
 })
 
+const qiniuImage = createQiniuImage(config.public.qiniuCdn)
+
+const pictureUrl = computed(() => {
+  const p = detail.value && detail.value.picture ? String(detail.value.picture) : ''
+  return p ? qiniuImage(p, { scene: 'detail' }) : ''
+})
+
+const renderMarkdown = (rawContent: string) => {
+  const anyMarked = marked as any
+  if (anyMarked && typeof anyMarked.parse === 'function') return anyMarked.parse(rawContent)
+  if (typeof anyMarked === 'function') return anyMarked(rawContent)
+  return rawContent
+}
+
+const renderedContent = computed(() => {
+  const rawContent = (detail.value && detail.value.content) ? String(detail.value.content) : ''
+  try {
+    return renderMarkdown(rawContent)
+  } catch (e) {
+    return rawContent
+  }
+})
+
+const plainText = computed(() => {
+  const html = renderedContent.value || ''
+  return String(html)
+    .replace(/<script[\s\S]*?<\/script>/gi, ' ')
+    .replace(/<style[\s\S]*?<\/style>/gi, ' ')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+})
+
+const wordCount = computed(() => {
+  const t = plainText.value
+  return t ? t.length : 0
+})
+
+const canonicalUrl = computed(() => {
+  const u = new URL(requestUrl.href)
+  u.pathname = route.path
+  u.search = ''
+  u.hash = ''
+  return u.toString()
+})
+
+const seoTitle = computed(() => {
+  const t = detail.value && detail.value.title ? String(detail.value.title) : ''
+  return t ? `${t} | TheWind` : 'TheWind'
+})
+
+const seoDescription = computed(() => {
+  const t = plainText.value
+  if (!t) return 'TheWind\'s blog'
+  return t.length > 160 ? t.slice(0, 160) : t
+})
+
+useHead(() => ({
+  title: seoTitle.value,
+  link: [
+    { rel: 'canonical', href: canonicalUrl.value }
+  ]
+}))
+
+useSeoMeta({
+  title: seoTitle,
+  description: seoDescription,
+  ogTitle: computed(() => detail.value && detail.value.title ? String(detail.value.title) : 'TheWind'),
+  ogDescription: seoDescription,
+  ogType: 'article',
+  ogUrl: canonicalUrl,
+  ogImage: computed(() => pictureUrl.value || undefined)
+})
+
 /**
  * 格式化日期
  */
 const formatDateFilter = (val: string) => {
     const d = formatDate(val)
     if (d && (d as any).year) return `${(d as any).year}-${(d as any).month}-${(d as any).day}`
-    // Original util probably returned string format
     return val
 }
 
@@ -156,52 +226,29 @@ const checkIsCollection = async () => {
 /**
  * 获取文章详情
  */
-const getDetail = async (id: string | string[]) => {
-  try {
-    const idStr = Array.isArray(id) ? (id[0] ? String(id[0]) : '') : (id ? String(id) : '')
-    if (!idStr) return
+const fetchDetail = async () => {
+  const idStr = articleId.value
+  if (!idStr) return null
 
-    const res = await $fetch('/article/getArticleDetail', {
-      baseURL: config.public.apiBase,
-      params: { articleId: idStr },
-      headers: cookieToken.value ? { Authorization: cookieToken.value } : {},
-      credentials: 'include'
-    })
-    const article = (res && (res as any).data != null ? (res as any).data : res) as any
-
-    if (!article) return
-
-    useHead({
-      title: article.title || ''
-    })
-
-    detail.value = article
-  } catch (error) {
-    console.error('获取文章详情失败:', error)
-  }
+  const res = await $fetch('/article/getArticleDetail', {
+    baseURL: config.public.apiBase,
+    params: { articleId: idStr },
+    headers: cookieToken.value ? { Authorization: cookieToken.value } : {},
+    credentials: 'include'
+  })
+  const article = (res && (res as any).data != null ? (res as any).data : res) as any
+  return article || null
 }
 
-/**
- * Markdown 渲染
- */
-const markdownRender = () => {
-  try {
-    const rawContent = (detail.value && detail.value.content) ? detail.value.content : ''
-    const anyMarked = marked as any
-    if (anyMarked && typeof anyMarked.parse === 'function') {
-      content.value = anyMarked.parse(rawContent)
-      return
-    }
-    if (typeof anyMarked === 'function') {
-      content.value = anyMarked(rawContent)
-      return
-    }
-    content.value = rawContent
-  } catch (e) {
-    console.error('Markdown parsing failed:', e)
-    content.value = (detail.value && detail.value.content) ? detail.value.content : ''
-  }
-}
+const { data: detailData } = await useAsyncData(
+  () => `detail-${articleId.value}`,
+  fetchDetail,
+  { watch: [articleId] }
+)
+
+watch(detailData, (v) => {
+  detail.value = v || {}
+}, { immediate: true })
 
 /**
  * 子层评论回复
@@ -316,15 +363,6 @@ const setInputHeight = () => {
 }
 
 /**
- * 初始化页面数据
- */
-const initPage = async () => {
-  await getDetail(articleId.value)
-  markdownRender()
-  setInputHeight()
-}
-
-/**
  * 监听 token 变化
  */
 watch(
@@ -344,32 +382,21 @@ watch(
 watch(
   articleId,
   async (id) => {
+    if (!import.meta.client) return
     if (!id) return
-    detailFetchSeed.value += 1
-    commentFetchSeed.value += 1
-    await initPage()
     await getComData()
+    setInputHeight()
+    if (token.value) {
+      nextTick(() => {
+        checkIsCollection()
+      })
+    }
   },
   { immediate: true }
 )
 
 onMounted(() => {
   setInputHeight()
-})
-
-onActivated(async () => {
-  if (!activatedOnce.value) {
-    activatedOnce.value = true
-    return
-  }
-  if (!articleId.value) return
-  detailFetchSeed.value += 1
-  commentFetchSeed.value += 1
-  await initPage()
-  await getComData()
-  if (token.value) {
-    checkIsCollection()
-  }
 })
 </script>
 
@@ -441,7 +468,9 @@ onActivated(async () => {
       }
     }
   }
-
+  .markdown-content {
+    text-align: left;
+  }
   .content {
     color: #e0e0e0;
     font-size: 16px;

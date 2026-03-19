@@ -29,6 +29,7 @@
           <span class="btn-bg"></span>
           <span class="btn-glow"></span>
         </button>
+        <NuxtLink class="enter-blog-link" to="/home">进入博客</NuxtLink>
       </div>
       
       <div class="footer-info" @click="goHref">
@@ -589,6 +590,20 @@ onBeforeUnmount(() => {
         color: #000;
       }
     }
+  }
+
+  .enter-blog-link {
+    margin-top: 14px;
+    display: inline-block;
+    color: rgba(255, 255, 255, 0.6);
+    text-decoration: none;
+    font-size: 12px;
+    letter-spacing: 2px;
+    transition: color 0.3s ease;
+  }
+
+  .enter-blog-link:hover {
+    color: rgba(255, 255, 255, 1);
   }
 
   .footer-info {

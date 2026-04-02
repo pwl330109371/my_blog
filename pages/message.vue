@@ -79,8 +79,8 @@
           
           <div class="interface-body">
             <div class="cyber-input-group">
-              <label>代号</label>
-              <input v-model="form.nickname" type="text" placeholder="请输入代号..." maxlength="20">
+              <label>访客身份</label>
+              <input :value="identityLabel" type="text" readonly>
               <div class="input-line"></div>
             </div>
             <div class="cyber-input-group">
@@ -104,11 +104,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue'
+import { ref, reactive, onMounted, computed } from 'vue'
 import SpaceBackground from '../components/SpaceBackground.vue'
 import { useMessageApi } from '../composables/useMessageApi'
 
-const { getMessageList, addMessage } = useMessageApi()
+const { getMessageList, addMessage, getMessageIdentity } = useMessageApi()
+const MESSAGE_IDENTITY_KEY = 'thewind-message-identity'
 
 interface Message {
   id: number
@@ -136,9 +137,17 @@ const activeMessages = ref<Message[]>([])
 const showForm = ref(false)
 const submitting = ref(false)
 const hoveredId = ref<number | null>(null)
-const form = reactive({
+const visitorIdentity = ref({
   nickname: '',
+  ipLabel: ''
+})
+const form = reactive({
   content: ''
+})
+
+const identityLabel = computed(() => {
+  if (!visitorIdentity.value.nickname) return '身份生成中...'
+  return `${visitorIdentity.value.nickname} · ${visitorIdentity.value.ipLabel}`
 })
 
 const formatDate = (dateStr: string) => {
@@ -209,28 +218,64 @@ const openForm = () => {
   showForm.value = true
 }
 
+const readCachedIdentity = () => {
+  if (!import.meta.client) return ''
+  return localStorage.getItem(MESSAGE_IDENTITY_KEY) || ''
+}
+
+const writeCachedIdentity = (nickname: string) => {
+  if (!import.meta.client || !nickname) return
+  localStorage.setItem(MESSAGE_IDENTITY_KEY, nickname)
+}
+
+const ensureVisitorIdentity = async () => {
+  try {
+    const cachedNickname = readCachedIdentity()
+    const { data } = await getMessageIdentity(cachedNickname)
+    const payload = data.value as any
+    const identity = payload?.data || payload || {}
+    if (identity.nickname) {
+      visitorIdentity.value.nickname = identity.nickname
+      visitorIdentity.value.ipLabel = identity.ipLabel || ''
+      writeCachedIdentity(identity.nickname)
+    }
+  } catch (e) {
+    console.error('Get message identity error:', e)
+  }
+}
+
 const submitWish = async () => {
-  if (!form.nickname || !form.content) return
+  if (!visitorIdentity.value.nickname || !form.content) return
   
   submitting.value = true
   try {
-    const { data: res } = await addMessage(form)
+    const { data: res } = await addMessage({
+      nickname: visitorIdentity.value.nickname,
+      content: form.content
+    })
     
     const responseData = res.value as any
-    // console.log('res', responseData)
 
     if (responseData && (responseData.code === 200 || responseData.code === '200')) {
+      const payload = responseData.data || responseData
+      if (payload?.nickname) {
+        visitorIdentity.value.nickname = payload.nickname
+        writeCachedIdentity(payload.nickname)
+      }
+      if (payload?.ipLabel || payload?.ip_city) {
+        visitorIdentity.value.ipLabel = payload.ipLabel || payload.ip_city
+      }
+
       const newMsg = {
-        id: Date.now(),
-        nickname: form.nickname,
+        id: payload?.id || Date.now(),
+        nickname: payload?.nickname || visitorIdentity.value.nickname,
         content: form.content,
-        ip_city: 'UNKNOWN', 
-        createdAt: new Date().toISOString(),
+        ip_city: payload?.ip_city || visitorIdentity.value.ipLabel || 'UNKNOWN',
+        createdAt: payload?.createdAt || new Date().toISOString(),
         style: createOrbStyle()
       }
       activeMessages.value.unshift(newMsg)
       
-      form.nickname = ''
       form.content = ''
       showForm.value = false
       
@@ -247,6 +292,7 @@ const submitWish = async () => {
 }
 
 onMounted(() => {
+  ensureVisitorIdentity()
   fetchMessages()
 })
 </script>

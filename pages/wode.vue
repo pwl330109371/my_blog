@@ -68,6 +68,7 @@
 <script setup lang="ts">
 import { ref, watch, onMounted, onUnmounted } from 'vue'
 import { marked } from 'marked'
+import { SITE_OWNER_ID } from '@/composables/useSiteOwner'
 
 // 响应式数据
 const content = ref('')
@@ -75,7 +76,6 @@ const displayedHtml = ref('')
 const isTyping = ref(true)
 const spaceCanvas = ref<HTMLCanvasElement | null>(null)
 const config = useRuntimeConfig()
-const cookieToken = useCookie<string | null>('token')
 
 // Typewriter Logic
 let typeInterval: any = null
@@ -143,8 +143,7 @@ const { data: aboutRes, error } = await useAsyncData(
   async () => {
     return await $fetch('/about/getAboutContent', {
       baseURL: config.public.apiBase,
-      params: { userId: 1 },
-      headers: cookieToken.value ? { Authorization: cookieToken.value } : {},
+      params: { userId: SITE_OWNER_ID },
       credentials: 'include'
     })
   },

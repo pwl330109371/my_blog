@@ -66,6 +66,7 @@
         <div id="hash"></div>
         <MessageInput
           :aiteName="aiteName"
+          :identityLabel="commentIdentityLabel"
           @tagClose="tagClose"
           @comment="handleComment"
           :rows="rows"
@@ -87,6 +88,7 @@ import { marked } from 'marked'
 import { ElMessage } from 'element-plus'
 const { isCollection, collectionArticle } = useCollection()
 const { addComment, getCommentList } = useArticleComments()
+const { getMessageIdentity } = useMessageApi()
 import { formatDate } from '@/utils'
 import { createQiniuImage } from '@/utils/qiniuImage'
 import MessageList from '@/components/Article/MessageList.vue'
@@ -107,10 +109,16 @@ const commentList = ref<any[]>([])
 const aiteName = ref('')
 const floorId = ref('')
 const toUid = ref('')
+const targetNickname = ref('')
 const isStar = ref(2) // 1 收藏 2 未收藏
 const rows = ref(6)
 const isLoading = ref(false)
 const isNext = ref(true)
+const visitorIdentity = ref({
+  nickname: '',
+  ipLabel: ''
+})
+const MESSAGE_IDENTITY_KEY = 'thewind-message-identity'
 
 /**
  * 计算属性
@@ -167,6 +175,12 @@ const canonicalUrl = computed(() => {
   u.search = ''
   u.hash = ''
   return u.toString()
+})
+
+const commentIdentityLabel = computed(() => {
+  if (!visitorIdentity.value.nickname) return ''
+  if (!visitorIdentity.value.ipLabel) return visitorIdentity.value.nickname
+  return `${visitorIdentity.value.nickname} · ${visitorIdentity.value.ipLabel}`
 })
 
 const seoTitle = computed(() => {
@@ -256,7 +270,8 @@ watch(detailData, (v) => {
 const reply = (data: any) => {
   aiteName.value = data.nickName
   floorId.value = data.parentId
-  toUid.value = data.id
+  toUid.value = data.id || ''
+  targetNickname.value = data.nickName || ''
 }
 
 /**
@@ -265,24 +280,61 @@ const reply = (data: any) => {
 const tagClose = () => {
   aiteName.value = ''
   floorId.value = ''
+  toUid.value = ''
+  targetNickname.value = ''
+}
+
+const readCachedIdentity = () => {
+  if (!import.meta.client) return ''
+  return window.localStorage.getItem(MESSAGE_IDENTITY_KEY) || ''
+}
+
+const writeCachedIdentity = (nickname: string) => {
+  if (!import.meta.client || !nickname) return
+  window.localStorage.setItem(MESSAGE_IDENTITY_KEY, nickname)
+}
+
+const ensureVisitorIdentity = async () => {
+  try {
+    const { data, error } = await getMessageIdentity(readCachedIdentity()) as any
+    if (error && error.value) throw error.value
+    const payload = data && data.value ? data.value.data || data.value : null
+    if (!payload) return
+    visitorIdentity.value = {
+      nickname: payload.nickname || '',
+      ipLabel: payload.ipLabel || ''
+    }
+    if (visitorIdentity.value.nickname) {
+      writeCachedIdentity(visitorIdentity.value.nickname)
+    }
+  } catch (error) {
+    console.error('获取评论访客身份失败:', error)
+  }
 }
 
 /**
  * 提交评论
  */
 const handleComment = async (commentContent: string) => {
+  if (!visitorIdentity.value.nickname) {
+    await ensureVisitorIdentity()
+  }
+
   const data = {
     articleId: articleId.value,
     commentId: floorId.value,
     content: commentContent,
     type: aiteName.value ? 2 : 1,
-    toUid: toUid.value
+    toUid: toUid.value || null,
+    nickname: visitorIdentity.value.nickname,
+    targetNickname: targetNickname.value
   }
 
   try {
     const { error } = await addComment(data) as any
     if (error && error.value) throw error.value
     await getComData()
+    tagClose()
     ElMessage({
       type: 'success',
       message: '评论成功~~',
@@ -384,6 +436,7 @@ watch(
   async (id) => {
     if (!import.meta.client) return
     if (!id) return
+    await ensureVisitorIdentity()
     await getComData()
     setInputHeight()
     if (token.value) {
@@ -397,6 +450,7 @@ watch(
 
 onMounted(() => {
   setInputHeight()
+  ensureVisitorIdentity()
 })
 </script>
 

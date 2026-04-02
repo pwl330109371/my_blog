@@ -1,19 +1,19 @@
 <template>
   <div class="layout-default">
     <SpaceBackground />
-    <Header :userInfo="userInfo" />
+    <Header :userInfo="ownerInfo" />
     <slot />
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
 import SpaceBackground from '@/components/SpaceBackground.vue'
 import Header from '@/components/Header/index.vue'
-import { useUserStore } from '@/stores/user'
+import { useSiteOwner } from '@/composables/useSiteOwner'
 
-const userStore = useUserStore()
-const userInfo = computed(() => userStore.userInfo)
+const { ownerInfo, fetchOwnerInfo } = useSiteOwner()
+
+await fetchOwnerInfo()
 </script>
 
 <style lang="scss">
@@ -48,4 +48,3 @@ body {
   z-index: 1;
 }
 </style>
-

@@ -22,23 +22,13 @@
             @click="openPreview(item)"
           >
             <div class="img-wrapper">
-              <el-image 
-                :src="$qiniu(item.imgUrl, { scene: 'list' })" 
-                lazy 
-                fit="cover"
+              <img
+                :src="getImageUrl(item)"
+                loading="lazy"
                 class="gallery-image"
-              >
-                <template #placeholder>
-                  <div class="image-slot loading">
-                    <div class="loading-spinner"></div>
-                  </div>
-                </template>
-                <template #error>
-                  <div class="image-slot error">
-                    <el-icon><Picture /></el-icon>
-                  </div>
-                </template>
-              </el-image>
+                :alt="item.categoryName || 'gallery image'"
+                @error="handleImageError"
+              />
               <div class="img-overlay">
                 <div class="overlay-content">
                   <span class="category-tag" v-if="item.categoryName">{{ item.categoryName }}</span>
@@ -78,9 +68,10 @@
           
           <div class="image-container" @click.stop v-if="currentImage">
             <img 
-              :src="$qiniu(currentImage.imgUrl, { scene: 'detail' })" 
+              :src="getImageUrl(currentImage)" 
               class="preview-image" 
               alt="Preview"
+              @error="handleImageError"
             />
             <div class="preview-info">
               <h3>{{ currentImage.categoryName || '未分类' }}</h3>
@@ -100,13 +91,10 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, nextTick, computed } from 'vue'
 import { useImg } from '@/composables/useImg'
-import { Picture, ZoomIn, Close, ArrowLeft, ArrowRight } from '@element-plus/icons-vue'
+import { ZoomIn, Close, ArrowLeft, ArrowRight } from '@element-plus/icons-vue'
 // SpaceBackground 应该是全局注册或者自动导入的，如果没有需要手动导入
 // import SpaceBackground from '@/components/SpaceBackground.vue'
 import { parseTime } from '@/utils/index'
-
-// 注入七牛工具
-const { $qiniu } = useNuxtApp()
 
 // 状态定义
 const { getImgList } = useImg()
@@ -125,6 +113,24 @@ const loadingRef = ref<HTMLElement | null>(null)
 const previewVisible = ref(false)
 const currentImageIndex = ref(0)
 const currentImage = computed(() => allImages.value[currentImageIndex.value] || null)
+
+const buildRawImageUrl = (url: string) => {
+  if (!url) return ''
+  const trimmed = String(url).trim()
+  if (/^https?:\/\//.test(trimmed)) return trimmed
+  if (trimmed.startsWith('//')) return `https:${trimmed}`
+  return trimmed
+}
+
+const getImageUrl = (item: any) => {
+  return buildRawImageUrl(item?.imgUrl || '')
+}
+
+const handleImageError = (event: Event) => {
+  const target = event.target as HTMLImageElement | null
+  if (!target) return
+  target.style.display = 'none'
+}
 
 // 瀑布流配置
 const getColumnCount = () => {
@@ -157,8 +163,7 @@ const distributeImages = async (newImages: any[]) => {
     
     await new Promise<void>((resolve) => {
       const image = new Image()
-      // 使用小图进行预加载计算，速度更快
-      image.src = $qiniu(img.imgUrl, { scene: 'list' })
+      image.src = getImageUrl(img)
       image.onload = () => {
         const aspectRatio = image.height / image.width
         

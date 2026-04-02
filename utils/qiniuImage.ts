@@ -27,14 +27,42 @@ export function createQiniuImage(cdn: string) {
   ): string {
     if (!path) return ''
 
+    const normalizedCdn = cdn.replace(/\/+$/, '')
+    const cdnHost = (() => {
+      try {
+        return new URL(normalizedCdn).host
+      } catch {
+        return ''
+      }
+    })()
+
+    path = String(path).trim()
+
     // 已经是完整 URL（兼容老数据）
     if (/^https?:\/\//.test(path)) {
-      // 如果不是本站 CDN 域名，直接返回
-      if (!path.startsWith(cdn)) {
+      let parsed: URL
+      try {
+        parsed = new URL(path)
+      } catch {
         return path
       }
-      // 如果是本站 CDN 域名，去掉域名部分，继续处理（以便追加参数）
-      path = path.replace(cdn, '')
+
+      if (!cdnHost || parsed.host !== cdnHost) {
+        return path
+      }
+
+      path = `${parsed.pathname}${parsed.search}`
+    } else if (path.startsWith('//')) {
+      const fullUrl = `https:${path}`
+      try {
+        const parsed = new URL(fullUrl)
+        if (!cdnHost || parsed.host !== cdnHost) {
+          return fullUrl
+        }
+        path = `${parsed.pathname}${parsed.search}`
+      } catch {
+        return fullUrl
+      }
     }
 
     const {
@@ -54,7 +82,11 @@ export function createQiniuImage(cdn: string) {
       params += '/format/webp'
     }
 
-    const separator = path.includes('?') ? '&' : '?'
-    return `${cdn}${path}${separator}${params}`
+    const [pathname, search = ''] = path.split('?')
+    const normalizedPath = pathname.startsWith('/') ? pathname : `/${pathname}`
+    const encodedPath = encodeURI(normalizedPath)
+    const separator = search ? '&' : '?'
+
+    return `${normalizedCdn}${encodedPath}${search ? `?${search}` : ''}${separator}${params}`
   }
 }

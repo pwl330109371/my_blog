@@ -15,6 +15,9 @@
           </el-tag>
         </transition>
       </div>
+      <div v-if="identityLabel" class="identity-label">
+        当前身份：{{ identityLabel }}
+      </div>
       <el-input
         type="textarea"
         :rows="rows"
@@ -59,6 +62,10 @@ const props = defineProps({
   hiddenOuter: {
     type: Boolean,
     default: false
+  },
+  identityLabel: {
+    type: String,
+    default: ''
   }
 })
 
@@ -131,5 +138,11 @@ const tagClose = () => {
 
 .tag {
   margin-bottom: 10px;
+}
+
+.identity-label {
+  margin-bottom: 12px;
+  color: rgba(255, 255, 255, 0.68);
+  font-size: 13px;
 }
 </style>

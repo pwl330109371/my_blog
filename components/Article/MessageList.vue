@@ -31,6 +31,7 @@
                 管理员
               </el-tag>
             </div>
+            <div v-if="list.ipLabel" class="ip-label">{{ list.ipLabel }}</div>
             <div class="flex algin-center">
               <div class="reply" @click="setInput(list.user, list.id)">
                 回复
@@ -79,6 +80,7 @@
                 管理员
               </el-tag>
             </div>
+            <div v-if="children.ipLabel" class="ip-label">{{ children.ipLabel }}</div>
             <div class="flex algin-center">
               <div class="reply" @click="setInput(children.user, list.id)">
                 回复
@@ -211,6 +213,14 @@ const setInput = (data: any, parentId: any) => {
           color: rgba(255, 255, 255, 0.5);
           font-size: 13px;
           letter-spacing: 0;
+        }
+
+        .ip-label {
+          color: rgba(255, 255, 255, 0.42);
+          font-size: 12px;
+          margin-left: auto;
+          margin-right: 14px;
+          white-space: nowrap;
         }
 
         .name {

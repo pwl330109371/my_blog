@@ -75,22 +75,19 @@
         @click="$emit('like', isLike)"
       ></i>
       
-      <nuxt-link :to="{ name: 'wode', query: { id: userInfo.id } }" v-if="userInfo && userInfo.id">
+      <nuxt-link :to="{ name: 'wode', query: { id: userInfo.id || 1 } }">
         <el-image
           style="width: 36px; height: 36px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.3);"
-          :src="userInfo.picture"
+          :src="userInfo.picture || defaultAvatar"
           fit="fill"
         ></el-image>
-      </nuxt-link>
-      <nuxt-link :to="{ name: 'login' }" v-else class="login-btn">
-        登录
       </nuxt-link>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onDeactivated } from 'vue'
+import { ref, onMounted, onDeactivated } from 'vue'
 import { useRouter } from 'vue-router'
 import { throttle } from '@/utils/index'
 import { useMusicStore } from '@/stores/music'
@@ -127,6 +124,7 @@ const emit = defineEmits(['like'])
 // Router
 const router = useRouter()
 const musicStore = useMusicStore()
+const defaultAvatar = 'https://thewind-1302955814.cos.ap-shanghai.myqcloud.com/rainy/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20210415142326.jpg'
 
 // Refs
 const headRef = ref(null)

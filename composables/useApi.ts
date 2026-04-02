@@ -1,10 +1,9 @@
 import { defu } from 'defu'
-import { ElMessage, ElMessageBox } from 'element-plus'
+import { ElMessage } from 'element-plus'
 
 export const useApi = async <T>(url: string, options: any = {}) => {
     const config = useRuntimeConfig()
     const token = useCookie('token')
-    const router = import.meta.client ? useRouter() : null
 
     const defaults = {
         baseURL: config.public.apiBase,
@@ -23,15 +22,11 @@ export const useApi = async <T>(url: string, options: any = {}) => {
                     // Success
                     return data
                 } else if (data.code === -1) {
-                    // Not logged in
-                    if (import.meta.client && router) {
-                        ElMessageBox.confirm('进行登录后才能操作哦！', '确定', {
-                            confirmButtonText: '确定',
-                            showCancelButton: false,
-                            type: 'warning'
-                        }).then(() => {
-                            const path = router.currentRoute.value.fullPath
-                            router.push('/login?redirect=' + path)
+                    if (import.meta.client) {
+                        ElMessage({
+                            type: 'warning',
+                            message: '当前站点已关闭登录功能，这个操作暂不可用',
+                            offset: 60
                         })
                     }
                     return Promise.reject(new Error('Unauthorized'))
@@ -49,15 +44,11 @@ export const useApi = async <T>(url: string, options: any = {}) => {
         },
         onResponseError({ response }: any) {
             if (response.status === 401) {
-                if (import.meta.client && router) {
-                    ElMessageBox.confirm('您登录时间过长，请重新返回登录页面进行登录', '确定登出', {
-                        confirmButtonText: '重新登录',
-                        showCancelButton: false,
-                        type: 'warning'
-                    }).then(() => {
-                        // Clear token
-                        token.value = null
-                        router.push('/login')
+                if (import.meta.client) {
+                    ElMessage({
+                        type: 'warning',
+                        message: '当前站点已关闭登录功能，这个操作暂不可用',
+                        offset: 60
                     })
                 }
             }

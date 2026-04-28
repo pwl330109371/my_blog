@@ -166,7 +166,6 @@ function onMousemove(e: MouseEvent | TouchEvent) {
       pos.x = me.clientX
       pos.y = me.clientY
     }
-    e.preventDefault?.()
   }
   function touchStart(e: TouchEvent) {
     if (e.touches.length === 1) {
@@ -179,8 +178,8 @@ function onMousemove(e: MouseEvent | TouchEvent) {
   }
   document.removeEventListener('mousemove', onMousemove as any)
   document.removeEventListener('touchstart', onMousemove as any)
-  document.addEventListener('mousemove', cursor as any, { passive: false })
-  document.addEventListener('touchmove', cursor as any, { passive: false })
+  document.addEventListener('mousemove', cursor as any, { passive: true })
+  document.addEventListener('touchmove', cursor as any, { passive: true })
   document.addEventListener('touchstart', touchStart as any, { passive: true })
   cursor(e)
   initLines()
@@ -216,7 +215,7 @@ onMounted(() => {
   const _ctx: any = ctx
   _ctx.running = true
   _ctx.frame = 1
-  document.addEventListener('mousemove', onMousemove as any, { passive: false })
+  document.addEventListener('mousemove', onMousemove as any, { passive: true })
   document.addEventListener('touchstart', onMousemove as any, { passive: true })
   document.body.addEventListener('orientationchange', resize)
   window.addEventListener('resize', resize)

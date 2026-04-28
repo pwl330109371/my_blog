@@ -13,7 +13,11 @@ import { useSiteOwner } from '@/composables/useSiteOwner'
 
 const { ownerInfo, fetchOwnerInfo } = useSiteOwner()
 
-await fetchOwnerInfo()
+try {
+  await fetchOwnerInfo()
+} catch (error) {
+  console.warn('Default layout owner info fetch skipped:', error)
+}
 </script>
 
 <style lang="scss">
